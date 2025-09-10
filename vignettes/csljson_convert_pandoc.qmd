@@ -7,6 +7,18 @@ format:
     toc-depth: 3
     code-fold: show
     embed-resources: true
+    grid:
+        sidebar-width: 0px
+        body-width: 4000px
+        margin-width: 200px
+        gutter-width: 1.5rem
+    mermaid:
+      theme: neutral
+      init: |
+        {
+          "flowchart": { "htmlLabels": true, "useMaxWidth": true },
+          "themeVariables": { "nodeTextMaxWidth": 500 }
+        }
 vignette: >
   %\VignetteIndexEntry{csljson_convert_pandoc() - Converting CSL JSON via Pandoc}
   %\VignetteEngine{quarto::html}
@@ -15,8 +27,8 @@ execute:
   cache: false
   warning: false
   message: false
-  echo: true
-  eval: false
+  echo: false
+  eval: true
 ---
 
 # Introduction
@@ -67,6 +79,48 @@ to the nature of `csljson` and `to`:
 - Formatted documents (`to = "markdown" | "latex" | "docx" | "html" | "pdf"`):
   - `output` is the target file; the extension is appended if missing.
 
+## High‑level workflow
+
+```{mermaid}
+flowchart TD
+  A(["Input csljson<br/>(file &#124; chunk directory)"]) --> B{Target `to`}
+
+  B -->|bibtex / biblatex| C{Is directory?}
+  C -->|yes| D[Iterate chunk_*.json]
+  D --> E["Normalize JSON per chunk<br/>(jsonlite; drop very long abstracts)"]
+  E --> F["Pandoc convert → chunk_k.bib"]
+  C -->|no file| G["Normalize single JSON<br/>(re‑serialize)"]
+  G --> H["Pandoc convert → output.bib"]
+
+  B -->|docx / markdown / latex / html / pdf| I{Is directory?}
+  I -->|yes| J["Write refs.md (nocite: '@*')"]
+  J --> K["Pandoc with multiple --bibliography=chunk_*.json"]
+  K --> L["Write references.<ext> in output dir"]
+  I -->|no file| M["Write refs.md (nocite: '@*')"]
+  M --> N["Pandoc with --bibliography=input.json"]
+  N --> O["Write output file (ext appended if missing)"]
+```
+
+## JSON normalization preflight
+
+Normalization keeps Pandoc resilient to edge cases and standardizes the
+on‑disk JSON. For directory→Bib* it also drops pathological abstracts.
+
+```{mermaid}
+flowchart TD
+  X[Input JSON path] --> Y{Parse with jsonlite}
+  Y -->|array of items| Z[For each item: if abstract length > 10000 → drop]
+  Y -->|single object| Z2[If abstract length > 10000 → drop]
+  Z --> W["Re‑serialize via jsonlite::toJSON(auto_unbox=TRUE)"]
+  Z2 --> W
+  W --> P[Temp JSON passed to Pandoc]
+
+  %% Notes
+  %% - Directory→Bib*: drop threshold active
+  %% - File→Bib*: re‑serialize only (no drop)
+  %% - Formatted outputs: pass JSONs directly
+```
+
 ## Arguments
 
 - `csljson`: Path to a CSL JSON file (array) or a directory created by
@@ -100,9 +154,97 @@ to the nature of `csljson` and `to`:
 - Markdown post‑processing: When `to = "markdown"`, fences created by
   Pandoc’s Divs are removed to yield a cleaner `.md`.
 
+## Pandoc PDF options
+
+```{mermaid}
+flowchart LR
+  A[PDF options] --> B[pdf_engine]
+  A --> C[Fonts]
+
+  B --> E1["--pdf-engine=<engine>"]
+  E1 --> E2["Always also add --pdf-engine=xelatex"]
+
+  C --> M[mainfont]
+  C --> S[sansfont]
+  C --> O[monofont]
+  C --> CJM[CJKmainfont]
+  C --> CJO[CJKoptions]
+
+  M --> VM["-V mainfont=…"]
+  S --> VS["-V sansfont=…"]
+  O --> VO["-V monofont=…"]
+  CJM --> VCJM["-V CJKmainfont=…"]
+  CJO --> VCJO["-V CJKoptions=…"]
+
+  classDef node fill:#ffffff,stroke:#c7c7c7,color:#111,stroke-width:1px
+  class A,B,C,M,S,O,CJM,CJO,E1,E2,VM,VS,VO,VCJM,VCJO node;
+```
+
+## Helper structure
+
+```{mermaid}
+flowchart LR
+  M["csljson_convert_pandoc()"] --> P[".check_pandoc_ready()"]
+  M --> Q{"dir.exists(csljson)?"}
+
+  Q -->|yes| D[Directory]
+  Q -->|no| F[File]
+
+  D --> T1{to in bibtex/biblatex?}
+  T1 -->|yes| DB[".convert_dir_bib()"]
+  T1 -->|no| DF[".render_dir_formatted()"]
+
+  F --> T2{to in bibtex/biblatex?}
+  T2 -->|yes| FB[".convert_file_bib()"]
+  T2 -->|no| FF[".render_file_formatted()"]
+
+  DB --> N1[".normalize_json_for_pandoc()"]
+  FB --> N2[".normalize_json_for_pandoc()"]
+
+  DF --> OP1[".build_pandoc_options()"]
+  FF --> OP2[".build_pandoc_options()"]
+
+  DF --> MD1[".write_refs_md()"]
+  FF --> MD2[".write_refs_md()"]
+
+  DB --> ED1[".ensure_dir()"]
+  DF --> ED2[".ensure_dir()"]
+
+  classDef node fill:#ffffff,stroke:#c7c7c7,color:#111,stroke-width:1px
+  class M,P,Q,D,F,T1,DB,DF,T2,FB,FF,N1,N2,OP1,OP2,MD1,MD2,ED1,ED2 node;
+```
+
+## Error handling overview
+
+```{mermaid}
+flowchart TD
+  S[Start] --> A{rmarkdown installed?}
+  A -->|no| E1[stop: require rmarkdown]
+  A -->|yes| B{Pandoc available?}
+  B -->|no| E2[stop: Pandoc not available]
+  B -->|yes| C{`csljson` path exists?}
+  C -->|no| E3[stop: input does not exist]
+  C -->|yes| D{Is directory?}
+  D -->|yes| D1{chunk_*.json present?}
+  D1 -->|no| E4[stop: no chunks found]
+  D1 -->|yes| D2{to in bibtex/biblatex?}
+  D2 -->|yes| D3[Ensure output is directory]
+  D2 -->|no| D4[Ensure output is directory]
+  D3 --> OK1[Proceed]
+  D4 --> OK1
+  D -->|no file| F{to in bibtex/biblatex?}
+  F -->|yes| F1[Resolve output .bib path]
+  F -->|no| F2[Resolve output file + ext]
+  F1 --> OK2[Proceed]
+  F2 --> OK2
+```
+
 ## Basic usage
 
-```r
+```{r}
+#| echo: true
+#| eval: false
+
 # Assume we already created chunked CSL JSON from a corpus
 library(openalexConvert)
 
@@ -120,7 +262,7 @@ corpus_to_csljson(
 bib_dir <- tempfile("bib_")
 paths_bib <- csljson_convert_pandoc(
   csljson = csl_dir,
-  output  = bib_dir,
+  output = bib_dir,
   to = "bibtex",
   overwrite = TRUE
 )
@@ -129,7 +271,7 @@ paths_bib <- csljson_convert_pandoc(
 doc_dir <- tempfile("docs_")
 md_file <- csljson_convert_pandoc(
   csljson = csl_dir,
-  output  = doc_dir,
+  output = doc_dir,
   to = "markdown",
   overwrite = TRUE,
   references_csl = NULL # or a path to apa.csl
@@ -138,12 +280,15 @@ md_file <- csljson_convert_pandoc(
 
 ## Single‑file example
 
-```r
+```{r}
+#| echo: true
+#| eval: false
+
 # Load a single CSL JSON array and convert to BibLaTeX
 blx_file <- tempfile(fileext = ".bib")
 out_blx <- csljson_convert_pandoc(
   csljson = file.path(csl_dir, "chunk_1.json"),
-  output  = blx_file,
+  output = blx_file,
   to = "biblatex",
   overwrite = TRUE
 )
@@ -151,7 +296,7 @@ out_blx <- csljson_convert_pandoc(
 # Create a LaTeX references file from a single chunk
 tex_file <- csljson_convert_pandoc(
   csljson = file.path(csl_dir, "chunk_1.json"),
-  output  = tempfile(fileext = ".tex"),
+  output = tempfile(fileext = ".tex"),
   to = "latex",
   overwrite = TRUE
 )
@@ -173,27 +318,30 @@ Conceptual differences to expect:
 - Unicode: Modern BibLaTeX works well with Unicode (via `biber`), while
   BibTeX often requires escaping.
 
-```r
+```{r}
+#| echo: true
+#| eval: false
+
 # Produce both formats from the same chunked CSL JSON directory
-out_bibtex  <- tempfile("bibtex_")
+out_bibtex <- tempfile("bibtex_")
 out_biblatex <- tempfile("biblatex_")
 
 paths_btx <- csljson_convert_pandoc(
   csljson = csl_dir,
-  output  = out_bibtex,
+  output = out_bibtex,
   to = "bibtex",
   overwrite = TRUE
 )
 
 paths_blx <- csljson_convert_pandoc(
   csljson = csl_dir,
-  output  = out_biblatex,
+  output = out_biblatex,
   to = "biblatex",
   overwrite = TRUE
 )
 
 # Inspect a corresponding pair (chunk_1)
-btx <- readLines(file.path(out_bibtex,  "chunk_1.bib"),  warn = FALSE)
+btx <- readLines(file.path(out_bibtex, "chunk_1.bib"), warn = FALSE)
 blx <- readLines(file.path(out_biblatex, "chunk_1.bib"), warn = FALSE)
 
 utils::head(btx, 20)
@@ -208,10 +356,13 @@ setdiff(gsub("\\\s+", " ", blx), gsub("\\\s+", " ", btx))
 To control the appearance of formatted outputs, pass a CSL file via
 `references_csl`:
 
-```r
+```{r}
+#| echo: true
+#| eval: false
+
 md_file <- csljson_convert_pandoc(
   csljson = csl_dir,
-  output  = doc_dir,
+  output = doc_dir,
   to = "markdown",
   references_csl = "/path/to/apa.csl",
   overwrite = TRUE
@@ -243,18 +394,21 @@ These parameters are forwarded to Pandoc when `to = "pdf"`:
 
 Example with custom fonts and engine:
 
-```r
+```{r}
+#| echo: true
+#| eval: false
+
 pdf_file <- csljson_convert_pandoc(
   csljson = csl_dir,
-  output  = doc_dir,
+  output = doc_dir,
   to = "pdf",
   overwrite = TRUE,
   pdf_engine = "xelatex",
   pdf_mainfont = "Source Serif Pro",
   pdf_sansfont = "Source Sans Pro",
   pdf_monofont = "Source Code Pro",
-  pdf_cjk_mainfont = NULL,         # e.g., "Noto Sans CJK SC"
-  pdf_cjk_options = NULL           # e.g., "BoldFont=Noto Sans CJK SC Bold"
+  pdf_cjk_mainfont = NULL, # e.g., "Noto Sans CJK SC"
+  pdf_cjk_options = NULL # e.g., "BoldFont=Noto Sans CJK SC Bold"
 )
 ```
 
