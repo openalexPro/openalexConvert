@@ -1,0 +1,61 @@
+openalexConvert.code-workspace
+
+# R history and session data
+.Rhistory
+.Rapp.history
+.RData
+.RDataTmp
+.Ruserdata
+.Rprofile
+.Renviron
+
+# RStudio project files
+*.Rproj
+.Rproj.user/
+
+# Package build + check artifacts
+/*.tar.gz
+/*.Rcheck/
+doc/
+Meta/
+
+# Compiled code artifacts (if using src/)
+src/*.o
+src/*.so
+src/*.dll
+src/*.dylib
+src/*.a
+src/*.lib
+src/*.exp
+src/*.def
+
+# Vignette build outputs
+inst/doc/
+
+
+# Reverse dependency checks
+revdep/
+
+# Knitr / R Markdown intermediates
+*.utf8.md
+*.knit.md
+*_cache/
+cache/
+*_files/
+
+# OAuth tokens
+.httr-oauth
+
+# Pkgdown site/cache (keep docs/ if you publish it)
+pkgdown/
+
+# Quarto cache (if used)
+_freeze/
+.quarto/
+
+# macOS
+.DS_Store
+
+# Misc
+README.html
+docs

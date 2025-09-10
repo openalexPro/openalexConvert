@@ -1,0 +1,11 @@
+*.html
+*.pdf
+*.R
+*.tex
+*.log
+*.aux
+*.toc
+*.out
+
+/.quarto/
+/Workflow_files

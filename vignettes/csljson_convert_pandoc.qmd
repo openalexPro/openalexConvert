@@ -1,0 +1,277 @@
+---
+title: "Converting CSL JSON via Pandoc"
+subtitle: "Design and usage of csljson_convert_pandoc()"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: show
+    embed-resources: true
+vignette: >
+  %\VignetteIndexEntry{csljson_convert_pandoc() - Converting CSL JSON via Pandoc}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+execute: 
+  cache: false
+  warning: false
+  message: false
+  echo: true
+  eval: false
+---
+
+# Introduction
+
+`csljson_convert_pandoc()` turns CSL JSON into a variety of bibliographic
+outputs using Pandoc’s citeproc. It supports both single CSL JSON files
+and directories created by `corpus_to_csljson()` containing
+`chunk_*.json` files.
+
+## Supported targets (`to`)
+
+- Bibliography files: `"bibtex"`, `"biblatex"`
+- Formatted documents: `"markdown"`, `"latex"`, `"docx"`, `"html"`, `"pdf"`
+
+## Why Pandoc citeproc?
+
+- Interoperability: Pandoc consumes CSL JSON natively and can emit many
+  formats.
+- Consistency: Formatting is controlled via CSL styles (e.g., APA),
+  enabling reproducible references across outputs.
+
+## Inputs and behavior
+
+`csljson_convert_pandoc(csljson, output, to, ...)` adapts its behavior
+to the nature of `csljson` and `to`:
+
+### Directory input (chunked CSL JSON)
+
+- If `csljson` is a directory, it must contain `chunk_*.json` files.
+
+- Bibliography outputs (`to = "bibtex" | "biblatex"`):
+  - `output` must be a directory; one `.bib` file is written per chunk
+    (`chunk_1.bib`, `chunk_2.bib`, ...).
+
+- Formatted documents (`to = "markdown" | "latex" | "docx" | "html" | "pdf"`):
+  - `output` must be a directory; a single file is written inside with a
+    canonical name: `references.md|tex|docx|html|pdf`.
+  - All chunks are provided to citeproc via multiple `--bibliography=`
+    flags; a small Markdown scaffold with `nocite: "@*"` ensures every
+    entry is listed in the references section.
+
+### File input (single CSL JSON)
+
+- Bibliography outputs (`to = "bibtex" | "biblatex"`):
+  - `output` is the target `.bib` file; the extension is appended if
+    missing.
+
+- Formatted documents (`to = "markdown" | "latex" | "docx" | "html" | "pdf"`):
+  - `output` is the target file; the extension is appended if missing.
+
+## Arguments
+
+- `csljson`: Path to a CSL JSON file (array) or a directory created by
+  `corpus_to_csljson()`.
+- `output`: Directory (for directory input) or file path (for file
+  input), as outlined above.
+- `to`: One of `"biblatex"`, `"bibtex"`, `"docx"`, `"markdown"`,
+  `"latex"`, `"html"`, `"pdf"`.
+- `from` (default `"csljson"`): Source format hint for Pandoc when
+  converting single files.
+- `overwrite` (default `FALSE`): Overwrite existing outputs.
+- `verbose` (default `TRUE`): Print progress and rendering messages.
+- `references_csl` (optional): Path to a CSL style (e.g., APA `.csl`) to
+  control formatted outputs.
+- PDF options (apply when `to = "pdf"`): `pdf_engine` (default
+  `"xelatex"`), `pdf_mainfont`, `pdf_sansfont`, `pdf_monofont`,
+  `pdf_cjk_mainfont`, `pdf_cjk_options`.
+
+## Implementation highlights
+
+- Dependency checks: Requires the `rmarkdown` package and a working
+  Pandoc installation (`rmarkdown::pandoc_available()`).
+- JSON normalization: When converting a single file, the function tries
+  to read and rewrite the JSON with `jsonlite` to normalize whitespace
+  before passing it to Pandoc.
+- Chunk merging for formatted outputs: For directory inputs, all
+  `chunk_*.json` are passed as individual `--bibliography=` flags so
+  citeproc sees a single combined bibliography.
+- Deterministic naming: Outputs for directory inputs always use the
+  canonical name `references.<ext>` inside `output`.
+- Markdown post‑processing: When `to = "markdown"`, fences created by
+  Pandoc’s Divs are removed to yield a cleaner `.md`.
+
+## Basic usage
+
+```r
+# Assume we already created chunked CSL JSON from a corpus
+library(openalexConvert)
+
+csl_dir <- tempfile("csljson_")
+dir.create(csl_dir)
+corpus_to_csljson(
+  corpus = testthat::test_path("..", "fixtures", "corpus"),
+  output = csl_dir,
+  chunk_size = 10000,
+  overwrite = TRUE,
+  verbose = TRUE
+)
+
+# 1) Convert directory of chunks to BibTeX files
+bib_dir <- tempfile("bib_")
+paths_bib <- csljson_convert_pandoc(
+  csljson = csl_dir,
+  output  = bib_dir,
+  to = "bibtex",
+  overwrite = TRUE
+)
+
+# 2) Render a references document in Markdown (also: latex, docx, html, pdf)
+doc_dir <- tempfile("docs_")
+md_file <- csljson_convert_pandoc(
+  csljson = csl_dir,
+  output  = doc_dir,
+  to = "markdown",
+  overwrite = TRUE,
+  references_csl = NULL # or a path to apa.csl
+)
+```
+
+## Single‑file example
+
+```r
+# Load a single CSL JSON array and convert to BibLaTeX
+blx_file <- tempfile(fileext = ".bib")
+out_blx <- csljson_convert_pandoc(
+  csljson = file.path(csl_dir, "chunk_1.json"),
+  output  = blx_file,
+  to = "biblatex",
+  overwrite = TRUE
+)
+
+# Create a LaTeX references file from a single chunk
+tex_file <- csljson_convert_pandoc(
+  csljson = file.path(csl_dir, "chunk_1.json"),
+  output  = tempfile(fileext = ".tex"),
+  to = "latex",
+  overwrite = TRUE
+)
+```
+
+## BibTeX vs BibLaTeX comparison
+
+While both targets encode bibliographic data, BibLaTeX is richer and
+uses different field names in places. Below is a quick way to generate
+both from the same CSL JSON and compare.
+
+Conceptual differences to expect:
+
+- Entry types: BibLaTeX may prefer `@article` with `date` over
+  BibTeX’s `year`/`month` split; it also supports many more types.
+- Field names: BibLaTeX uses `journaltitle` (vs `journal` in BibTeX),
+  `date` (vs `year` + `month`), and handles `url`/`urldate` more
+  consistently.
+- Unicode: Modern BibLaTeX works well with Unicode (via `biber`), while
+  BibTeX often requires escaping.
+
+```r
+# Produce both formats from the same chunked CSL JSON directory
+out_bibtex  <- tempfile("bibtex_")
+out_biblatex <- tempfile("biblatex_")
+
+paths_btx <- csljson_convert_pandoc(
+  csljson = csl_dir,
+  output  = out_bibtex,
+  to = "bibtex",
+  overwrite = TRUE
+)
+
+paths_blx <- csljson_convert_pandoc(
+  csljson = csl_dir,
+  output  = out_biblatex,
+  to = "biblatex",
+  overwrite = TRUE
+)
+
+# Inspect a corresponding pair (chunk_1)
+btx <- readLines(file.path(out_bibtex,  "chunk_1.bib"),  warn = FALSE)
+blx <- readLines(file.path(out_biblatex, "chunk_1.bib"), warn = FALSE)
+
+utils::head(btx, 20)
+utils::head(blx, 20)
+
+# Optional: a simple diff to spot field name changes
+setdiff(gsub("\\\s+", " ", blx), gsub("\\\s+", " ", btx))
+```
+
+## Styling with CSL
+
+To control the appearance of formatted outputs, pass a CSL file via
+`references_csl`:
+
+```r
+md_file <- csljson_convert_pandoc(
+  csljson = csl_dir,
+  output  = doc_dir,
+  to = "markdown",
+  references_csl = "/path/to/apa.csl",
+  overwrite = TRUE
+)
+```
+
+## PDF tips
+
+- PDF creation depends on a LaTeX engine. The default is `xelatex` for
+  Unicode support; change via `pdf_engine`.
+- Font options (`pdf_mainfont`, `pdf_sansfont`, `pdf_monofont`) and CJK
+  options (`pdf_cjk_mainfont`, `pdf_cjk_options`) can resolve missing
+  glyphs in multilingual bibliographies.
+
+## PDF arguments reference
+
+
+These parameters are forwarded to Pandoc when `to = "pdf"`:
+
+- `pdf_engine`: LaTeX engine; mapped to `--pdf-engine=<engine>`. Common
+  values: `xelatex` (default), `lualatex`, `pdflatex`.
+- `pdf_mainfont`: Sets Pandoc variable `mainfont` (`-V mainfont=...`).
+- `pdf_sansfont`: Sets Pandoc variable `sansfont` (`-V sansfont=...`).
+- `pdf_monofont`: Sets Pandoc variable `monofont` (`-V monofont=...`).
+- `pdf_cjk_mainfont`: Sets Pandoc variable `CJKmainfont`
+  (`-V CJKmainfont=...`).
+- `pdf_cjk_options`: Sets Pandoc variable `CJKoptions`
+  (`-V CJKoptions=...`).
+
+Example with custom fonts and engine:
+
+```r
+pdf_file <- csljson_convert_pandoc(
+  csljson = csl_dir,
+  output  = doc_dir,
+  to = "pdf",
+  overwrite = TRUE,
+  pdf_engine = "xelatex",
+  pdf_mainfont = "Source Serif Pro",
+  pdf_sansfont = "Source Sans Pro",
+  pdf_monofont = "Source Code Pro",
+  pdf_cjk_mainfont = NULL,         # e.g., "Noto Sans CJK SC"
+  pdf_cjk_options = NULL           # e.g., "BoldFont=Noto Sans CJK SC Bold"
+)
+```
+
+## Determinism notes
+
+
+- DOCX and PDF containers may include non‑deterministic metadata. For
+  testing, compare content (e.g., convert both sides to plain text via
+  Pandoc) rather than raw bytes.
+- Markdown, LaTeX, BibTeX, and BibLaTeX are generally stable for
+  byte‑wise comparison, provided your Pandoc version is fixed.
+
+## Troubleshooting
+
+
+- Ensure `rmarkdown` is installed and `rmarkdown::pandoc_available()` is
+  TRUE.
+- If conversion fails on specific records, try normalizing the input JSON
+  with `jsonlite` (the function does this for single‑file inputs).
+- For directory inputs, verify `chunk_*.json` exist in the CSL folder.

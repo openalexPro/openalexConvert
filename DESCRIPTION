@@ -1,0 +1,29 @@
+Type: Package
+Package: openalexConvert
+Title: Convert OpenAlex Parquet (from openalexPro) to other Formats
+Version: 0.0.1
+Author: Rainer M Krug
+Maintainer: Rainer M Krug <Rainer@krugs.de>
+Description: Utilities to convert an OpenAlex parquet/Arrow corpus into
+    other formats. Implemented are at the moment CSL JSON, BibTeX, BibLaTeX,
+    Markdown, LaTeX, HTML, or PDF via Pandoc. Uses DuckDB over Arrow for
+    efficient chunked CSL JSON conversion. 
+URL: https://github.com/rkrug/openalexConvert, https://rkrug.github.io/openalexConvert/
+BugReports: https://github.com/rkrug/openalexConvert/issues
+License: GPL (>= 2)
+Depends:
+    R (>= 4.1.0)
+Imports:
+    arrow,
+    DBI,
+    duckdb,
+    jsonlite
+Suggests: 
+    knitr,
+    rmarkdown,
+    quarto,
+    testthat (>= 3.0.0)
+Encoding: UTF-8
+RoxygenNote: 7.3.2
+VignetteBuilder: quarto
+Config/testthat/edition: 3
