@@ -39,7 +39,7 @@ jobs:
       - name: Build pkgnet report (site asset)
         run: |
           Rscript -e 'if (!requireNamespace("pkgnet", quietly = TRUE)) install.packages("pkgnet", repos = "https://cloud.r-project.org")'
-          Rscript -e 'dir.create("pkgdown/assets", recursive = TRUE, showWarnings = FALSE); pkgnet::CreatePackageReport(pkg_name = "openalexConvert", report_path = "pkgdown/assets/pkgnet.html", overwrite = TRUE)'
+          Rscript -e 'dir.create("pkgdown/assets", recursive = TRUE, showWarnings = FALSE); pkgnet::CreatePackageReport(pkg_name = "openalexConvert", report_path = "pkgdown/assets/pkgnet.html")'
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
