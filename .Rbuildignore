@@ -2,3 +2,7 @@
 ^docs$
 ^pkgdown$
 ^openalexConvert\.code-workspace$
+^doc$
+^Meta$
+^.github$
+^\.github$

@@ -107,7 +107,9 @@ flowchart TD
   F --> G[".map_record_to_csl()<br/>+ .infer_csl_type()"]
   G --> H[".sanitize_csl_item()"]
   H --> I["Write chunk_k.json<br/>(jsonlite::write_json)"]
-  E -->|next offset| E
+  I --> J{More chunks?}
+  J -->|yes| E
+  J -->|no| L["Done: chunked CSL JSON in output/"]
 ```
 
 ## Field mapping summary (selected)

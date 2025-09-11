@@ -1,0 +1,52 @@
+---
+title: "Package dependency report (pkgnet)"
+subtitle: "Interactive network report embedded for pkgdown"
+format:
+  html:
+    toc: false
+    embed-resources: true
+    mermaid:
+      theme: neutral
+execute:
+  echo: false
+  warning: false
+  message: false
+  eval: true
+vignette: >
+  %\VignetteIndexEntry{pkgnet dependency report}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+This article embeds the interactive pkgnet dependency report only on the
+GitHub‑built pkgdown site. It does not ship the report in the package
+and does not attempt to generate it locally.
+
+```{r}
+#| results: asis
+report_path <- file.path("pkgdown", "assets", "pkgnet.html")
+report_url <- "https://rkrug.github.io/openalexConvert/assets/pkgnet.html"
+on_github_ci <- identical(Sys.getenv("GITHUB_ACTIONS"), "true") ||
+  identical(Sys.getenv("CI"), "true")
+if (knitr::is_html_output() && on_github_ci && file.exists(report_path)) {
+  # Embed via iframe; path is relative to the rendered article location
+  cat(
+    '<iframe src="../assets/pkgnet.html" style="width:100%; height:900px; border:1px solid #ddd;"></iframe>\n',
+    '<p style="margin-top:0.5rem">Open the report in a new tab: ',
+    '<a href="',
+    report_url,
+    '" target="_blank" rel="noopener">',
+    report_url,
+    '</a></p>'
+  )
+} else {
+  cat(
+    'The interactive pkgnet report is available on the GitHub pkgdown site: ',
+    '<a href="',
+    report_url,
+    '" target="_blank" rel="noopener">',
+    report_url,
+    '</a>.'
+  )
+}
+```
