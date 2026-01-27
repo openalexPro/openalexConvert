@@ -17,7 +17,9 @@ Imports:
     arrow,
     DBI,
     duckdb,
-    jsonlite
+    httr2,
+    jsonlite,
+    progressr
 Suggests: 
     knitr,
     rmarkdown,

@@ -13,6 +13,9 @@
 #' aggregated `note` with OA status and citation count. Records are processed in
 #' DuckDB-backed chunks for low memory usage.
 #'
+#' @param project_dir Optional path to project directory. If provided, used to
+#'   set default values for `corpus` and `output` parameters. Can be omitted if
+#'   `corpus` and `output` are specified explicitly.
 #' @param corpus Path to parquet dataset, parquet Dataset/Table (e.g., from
 #'   `arrow::open_dataset()`) or a data.frame/tibble (e.g., from
 #'   `dplyr::collect()`).
@@ -31,8 +34,9 @@
 #'
 #' @export
 corpus_to_csljson <- function(
-  corpus,
-  output,
+  project_dir,
+  corpus = file.path(project_dir, "parquet"),
+  output = file.path(project_dir, "csljson"),
   chunk_size = 10000,
   overwrite = FALSE,
   verbose = TRUE
@@ -188,17 +192,33 @@ corpus_to_csljson <- function(
   } else {
     "CAST(NULL AS VARCHAR)"
   }
-  publisher_expr <- if (has("host_venue")) {
+  publisher_expr <- if (has("host_venue") && has("primary_location")) {
+    "COALESCE(host_venue.publisher, primary_location.source.host_organization_name)"
+  } else if (has("host_venue")) {
     "host_venue.publisher"
+  } else if (has("primary_location")) {
+    "primary_location.source.host_organization_name"
   } else {
     "CAST(NULL AS VARCHAR)"
   }
-  issn_l_expr <- if (has("host_venue")) {
+  issn_l_expr <- if (has("host_venue") && has("primary_location")) {
+    "COALESCE(host_venue.issn_l, primary_location.source.issn_l)"
+  } else if (has("host_venue")) {
     "host_venue.issn_l"
+  } else if (has("primary_location")) {
+    "primary_location.source.issn_l"
   } else {
     "CAST(NULL AS VARCHAR)"
   }
-  issns_expr <- if (has("host_venue")) "host_venue.issn" else "[]"
+  issns_expr <- if (has("host_venue") && has("primary_location")) {
+    "COALESCE(host_venue.issn, primary_location.source.issn)"
+  } else if (has("host_venue")) {
+    "host_venue.issn"
+  } else if (has("primary_location")) {
+    "primary_location.source.issn"
+  } else {
+    "[]"
+  }
   volume_expr <- if (has("biblio")) "biblio.volume" else "CAST(NULL AS VARCHAR)"
   issue_expr <- if (has("biblio")) "biblio.issue" else "CAST(NULL AS VARCHAR)"
   fpage_expr <- if (has("biblio")) {
@@ -369,7 +389,7 @@ corpus_to_csljson <- function(
     giv <- trimws(sub("^[^,]*,", "", name))
     return(list(given = giv, family = fam))
   }
-  parts <- strsplit(name, "\\\\s+")[[1]]
+  parts <- strsplit(name, "\\s+")[[1]]
   parts <- parts[nzchar(parts)]
   if (!length(parts)) {
     return(list(given = "", family = ""))
