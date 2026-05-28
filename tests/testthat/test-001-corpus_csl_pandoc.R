@@ -118,7 +118,7 @@ test_that("csljson_convert_pandoc to bibtex (directory) matches fixtures", {
   ))
   expect_equal(length(paths_btx), length(fx_btx))
   # Exact-text comparison is Pandoc-version sensitive; skip in CI environments
-  skip_on_ci("BibTeX fixture comparison requires specific Pandoc version")
+  skip_on_ci() # exact-text comparison is Pandoc-version sensitive
   for (f in fx_btx) {
     bn <- basename(f)
     gen <- file.path(out_btx, bn)
@@ -184,7 +184,7 @@ test_that("csljson_convert_pandoc to biblatex (directory) matches fixtures", {
   ))
   expect_equal(length(paths_blx), length(fx_blx))
   # Exact-text comparison is Pandoc-version sensitive; skip in CI environments
-  skip_on_ci("BibLaTeX fixture comparison requires specific Pandoc version")
+  skip_on_ci() # exact-text comparison is Pandoc-version sensitive
   for (f in fx_blx) {
     bn <- basename(f)
     gen <- file.path(out_blx, bn)
@@ -236,7 +236,7 @@ test_that("csljson_convert_pandoc to markdown matches fixture", {
   fx_md <- file.path(fx_docs_dir, "references.md")
   expect_true(file.exists(fx_md))
   # Exact-text comparison is Pandoc-version sensitive; skip in CI environments
-  skip_on_ci("Markdown fixture comparison requires specific Pandoc version")
+  skip_on_ci() # exact-text comparison is Pandoc-version sensitive
   expect_equal(
     readLines(md_path, warn = FALSE, encoding = "UTF-8"),
     readLines(fx_md, warn = FALSE, encoding = "UTF-8")
@@ -277,7 +277,7 @@ test_that("csljson_convert_pandoc to latex matches fixture", {
   expect_true(file.exists(tex_path))
   expect_true(file.exists(fx_tex))
   # Exact-text comparison is Pandoc-version sensitive; skip in CI environments
-  skip_on_ci("LaTeX fixture comparison requires specific Pandoc version")
+  skip_on_ci() # exact-text comparison is Pandoc-version sensitive
   expect_equal(
     readLines(tex_path, warn = FALSE, encoding = "UTF-8"),
     readLines(fx_tex, warn = FALSE, encoding = "UTF-8")
@@ -377,7 +377,7 @@ test_that("csljson_convert_pandoc single-file bibtex works", {
   fx_bib <- file.path(fx_btx_dir, "chunk_1.bib")
   expect_true(file.exists(fx_bib))
   # Exact-text comparison is Pandoc-version sensitive; skip in CI environments
-  skip_on_ci("BibTeX fixture comparison requires specific Pandoc version")
+  skip_on_ci() # exact-text comparison is Pandoc-version sensitive
   expect_equal(
     readLines(path_out, warn = FALSE, encoding = "UTF-8"),
     readLines(fx_bib, warn = FALSE, encoding = "UTF-8")
