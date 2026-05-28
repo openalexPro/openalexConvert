@@ -19,12 +19,14 @@ Imports:
     duckdb,
     httr2,
     jsonlite,
-    progressr
-Suggests: 
+    openalexPro,
+    progressr,
+    rmarkdown
+Suggests:
     knitr,
-    rmarkdown,
     quarto,
     testthat (>= 3.0.0)
+Additional_repositories: https://rkrug.r-universe.dev
 Encoding: UTF-8
 RoxygenNote: 7.3.3
 VignetteBuilder: quarto
