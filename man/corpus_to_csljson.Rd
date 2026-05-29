@@ -5,14 +5,19 @@
 \title{Convert a corpus to CSL JSON (chunked)}
 \usage{
 corpus_to_csljson(
-  corpus,
-  output,
+  project_dir,
+  corpus = file.path(project_dir, "parquet"),
+  output = file.path(project_dir, "csljson"),
   chunk_size = 10000,
   overwrite = FALSE,
   verbose = TRUE
 )
 }
 \arguments{
+\item{project_dir}{Optional path to project directory. If provided, used to
+set default values for \code{corpus} and \code{output} parameters. Can be omitted if
+\code{corpus} and \code{output} are specified explicitly.}
+
 \item{corpus}{Path to parquet dataset, parquet Dataset/Table (e.g., from
 \code{arrow::open_dataset()}) or a data.frame/tibble (e.g., from
 \code{dplyr::collect()}).}

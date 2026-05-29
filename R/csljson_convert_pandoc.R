@@ -234,8 +234,6 @@ csljson_convert_pandoc <- function(
     add_font("monofont", pdf_monofont)
     add_font("CJKmainfont", pdf_cjk_mainfont)
     add_font("CJKoptions", pdf_cjk_options)
-    # Ensure a Unicode-capable engine, mirroring original behavior
-    extra <- c(extra, "--pdf-engine=xelatex")
   }
   if (!is.null(references_csl)) {
     extra <- c(extra, paste0("--csl=", references_csl))
