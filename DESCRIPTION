@@ -1,7 +1,7 @@
 Type: Package
 Package: openalexConvert
 Title: Convert OpenAlex Parquet (from openalexPro) to other Formats
-Version: 0.0.1
+Version: 0.0.2
 Author: Rainer M Krug
 Maintainer: Rainer M Krug <Rainer@krugs.de>
 Description: Utilities to convert an OpenAlex parquet/Arrow corpus into
