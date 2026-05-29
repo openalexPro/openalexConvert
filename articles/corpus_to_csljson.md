@@ -1,0 +1,406 @@
+# From OpenAlex corpus to chunked CSL JSON
+
+## Introduction
+
+The function
+[`corpus_to_csljson()`](https://rkrug.github.io/openalexConvert/reference/corpus_to_csljson.md)
+converts an OpenAlex “corpus” of works into standards‑compliant CSL JSON
+files, written in manageable chunks (`chunk_1.json`, `chunk_2.json`, …)
+to a target directory. These chunks can be consumed directly by Pandoc’s
+citeproc or other reference tools, or used as input for follow‑up
+helpers like
+[`csljson_convert_pandoc()`](https://rkrug.github.io/openalexConvert/reference/csljson_convert_pandoc.md)
+to produce BibTeX, BibLaTeX, Markdown, LaTeX, Docx, HTML, or PDF
+reference documents.
+
+### Why chunked CSL JSON?
+
+- Scalability: Large corpora don’t fit comfortably in a single JSON
+  array; chunking limits memory usage for both writing and downstream
+  processing.
+- Interoperability: CSL JSON is the lingua franca for reference tools
+  (Pandoc citeproc, Zotero translators, etc.).
+- Determinism: Each chunk is independently writable/consumable, which
+  simplifies partial reruns and parallel processing patterns.
+
+### Inputs and assumptions
+
+- `corpus` accepts one of:
+  - a path to an Arrow/Parquet dataset (e.g., produced from OpenAlex),
+  - an
+    [`arrow::Dataset`](https://arrow.apache.org/docs/r/reference/Dataset.html)/[`arrow::Table`](https://arrow.apache.org/docs/r/reference/Table-class.html),
+    or
+  - an in‑memory `data.frame`/tibble of works.
+- The function uses DuckDB SQL over Arrow to robustly select and map the
+  available fields to a CSL‑like schema. It adapts to missing columns.
+- Output is a directory created by the function (with `overwrite = TRUE`
+  to recreate it) containing `chunk_*.json` files. Each file is a JSON
+  array of CSL items.
+
+### Parameters
+
+- `corpus`: Input dataset/path as described above.
+- `output`: Output directory to create and populate with chunks.
+- `chunk_size` (default 10000): Rows per chunk (DuckDB LIMIT/OFFSET).
+- `overwrite` (default FALSE): Recreate `output` if it exists.
+- `verbose` (default TRUE): Progress messages per chunk.
+
+### High‑level workflow
+
+1.  Open/normalize the corpus to an Arrow object (if a `data.frame` is
+    passed, it is converted to an Arrow Table).
+2.  Register the Arrow object with DuckDB and obtain the row count.
+3.  Build a resilient SQL SELECT that maps OpenAlex fields (if present)
+    to a normalized, CSL‑like record structure (title, year, doi, venue,
+    authors, etc.). Missing columns are substituted with NULLs.
+4.  Iterate over the corpus in `chunk_size` windows via LIMIT/OFFSET.
+5.  For each chunk, map each record to a CSL item and apply
+    sanitization:
+    - Remove NULL/NA scalars, normalize strings to UTF‑8, trim, and drop
+      control characters.
+    - Truncate `abstract` to 700 characters.
+    - Split authors into `given`/`family` and attach `ORCID` if present.
+    - Prefer full `publication_date` for `issued` date‑parts, otherwise
+      use `year`.
+    - Normalize DOI to bare form (no https://doi.org/ prefix).
+    - Avoid duplicating DOI URL in `URL` when `DOI` is set.
+    - Derive pages (`first_page`–`last_page`) and ISSN (prefer
+      `issn_l`).
+    - Aggregate open‑access/citation indicators in `note` when present.
+6.  Write each chunk to `chunk_k.json` using
+    [`jsonlite::write_json()`](https://jeroen.r-universe.dev/jsonlite/reference/read_json.html)
+    with `auto_unbox = TRUE` for compactness.
+
+#### End‑to‑end pipeline
+
+``` mermaid
+flowchart TD
+  A(["Input corpus<br/>(path &#124; Arrow Dataset &#124; data.frame)"]) --> B[Arrow Table/Dataset]
+  B --> C["Register with DuckDB (src)"]
+  C --> D["Build SELECT via .build_select_sql()"]
+  D --> E{Chunk loop<br/>LIMIT/OFFSET}
+  E --> F["Fetch rows (DBI::dbGetQuery)"]
+  F --> G[".map_record_to_csl()<br/>+ .infer_csl_type()"]
+  G --> H[".sanitize_csl_item()"]
+  H --> I["Write chunk_k.json<br/>(jsonlite::write_json)"]
+  I --> J{More chunks?}
+  J -->|yes| E
+  J -->|no| L["Done: chunked CSL JSON in output/"]
+```
+
+### Field mapping summary (selected)
+
+- Title: `display_name` or `title` → `title`.
+- Year: `publication_year` → used when `publication_date` is absent.
+- DOI: `doi` → normalized to `DOI`.
+- Venue: `host_venue.display_name` or
+  `primary_location.source.display_name` → `container-title`.
+- Volume/Issue/Pages: `biblio.volume`, `biblio.issue`,
+  `biblio.first_page`/`biblio.last_page`.
+- Authors: `authorships[*].author.display_name` or
+  `authorships[*].raw_author_name`; plus `authorships[*].author.orcid` →
+  `author` array with `given`, `family`, optional `ORCID`.
+- Keywords: `concepts[*].display_name` → `keyword` (semicolon‑separated
+  string).
+- ISSN: Prefer `host_venue.issn_l`, fallback to joined
+  `host_venue.issn`.
+- ISBN: Intentionally excluded. We do not extract or emit ISBN values in
+  CSL JSON, as OpenAlex ISBN coverage and schema paths vary and are not
+  reliably present across corpora.
+- URL: One of `doi_url`, `open_access.oa_url`,
+  `primary_location.landing_page_url`, or `id`, skipping DOI resolver if
+  `DOI` is present.
+- Misc: `language`, `publisher`, `cited_by_count` (summarized in
+  `note`), `open_access.is_oa` and `open_access.oa_status` (also
+  summarized in `note`).
+
+#### Key field fallbacks
+
+``` mermaid
+flowchart TD
+  subgraph Title
+    T1[Has display_name?] -->|yes| T_ok[title := display_name]
+    T1 -->|no| T2[Has title?]
+    T2 -->|yes| T_ok2[title := title]
+    T2 -->|no| T_null[title := NULL]
+  end
+
+  subgraph VENUE["Venue (container-title)"]
+    V1[Has host_venue + primary_location?] -->|yes| V_ok["COALESCE(host_venue.display_name,<br/>primary_location.source.display_name)"]
+    V1 -->|no| V2[Has host_venue?]
+    V2 -->|yes| V_ok2[host_venue.display_name]
+    V2 -->|no| V3[Has primary_location?]
+    V3 -->|yes| V_ok3[primary_location.source.display_name]
+    V3 -->|no| V_null[NULL]
+  end
+
+  subgraph URL
+    U1["Candidates: doi_url, open_access.oa_url,<br/>primary_location.landing_page_url, id"] --> U2["URL := COALESCE(candidates)"]
+  end
+
+
+  %% subgraph styles
+  style Title fill:#ffffff,stroke:#c7c7c7,color:#111,stroke-width:1px
+  style VENUE fill:#ffffff,stroke:#c7c7c7,color:#111,stroke-width:1px
+  style URL   fill:#ffffff,stroke:#c7c7c7,color:#111,stroke-width:1px
+```
+
+### Helper structure and type inference
+
+Internally the function uses small non‑exported helpers to keep the
+logic focused and testable:
+
+- `.build_select_sql()`: Builds a resilient SELECT string against
+  DuckDB/Arrow, selecting normalized columns and substituting
+  `NULL`/empty defaults when inputs are missing.
+- `.split_name()`: Splits an author display name into `given`/`family`
+  using “Family, Given” or simple tokenization heuristics.
+- `%||%`: Coalesces scalar‑like values, considering `NULL`/empty/`NA` as
+  missing.
+- `.normalize_doi()`: Converts DOI strings to a bare DOI (no resolver
+  prefix).
+- `.infer_csl_type()`: Infers the CSL `type` from OpenAlex hints.
+- `.map_record_to_csl()`: Turns a 1‑row record into a sanitized CSL
+  item.
+
+### CSL type inference
+
+The `.infer_csl_type()` helper determines the most appropriate CSL
+`type` based on OpenAlex metadata using “strongest → weakest” signals:
+
+1.  OpenAlex `type` (authoritative mapping)
+
+- `journal-article` → `article-journal`
+- `book-chapter` → `chapter`
+- `book`/`monograph` → `book`
+- `proceedings-article`/`conference-paper`/`proceedings` →
+  `paper-conference`
+- `posted-content`/`preprint`/`manuscript` → `manuscript`
+- `dissertation`/`thesis` → `thesis`
+- `report`/`working-paper`/`policy-research-working-paper` → `report`
+- `dataset` → `dataset`
+
+2.  Venue/source hints when `type` is empty/unknown
+
+- `venue_type` contains “conference” or “proceedings” →
+  `paper-conference`
+- contains “journal” → `article-journal`
+- contains “book” → `book`
+
+3.  ISSN override (reliable)
+
+- If ISSN exists and the tentative type is `book`, prefer
+  `article-journal`.
+
+Note: ISBN is intentionally not considered because we do not extract it;
+see the “ISBN exclusion” note below.
+
+4.  Bibliographic shape
+
+- If a container title and volume/issue are present, prefer
+  `article-journal`.
+
+5.  Fallback
+
+- Default to `article-journal` when no signal is decisive.
+
+### Mermaid overview of type mapping
+
+``` mermaid
+flowchart TD
+  A[Start record] --> B{OpenAlex type?}
+  B -- posted-content / preprint --> T1[manuscript]
+  B -- book-chapter --> T2[chapter]
+  B -- book/monograph --> T3[book]
+  B -- proceedings/conference --> T4[paper-conference]
+  B -- thesis/dissertation --> T5[thesis]
+  B -- report/working-paper --> T6[report]
+  B -- dataset --> T7[dataset]
+  B -- journal-article/journal --> T8[article-journal]
+  B -- unknown/empty --> C{venue_type hints}
+
+  C -- contains conference/proceedings --> T4
+  C -- contains journal --> T8
+  C -- contains book --> T3
+  C -- none --> D{ISBN/ISSN overrides}
+
+  D -- has ISBN & tentative is article/manuscript --> T3
+  D -- has ISSN & tentative is book --> T8
+  D -- none --> E{shape: container & vol/issue}
+
+  E -- yes --> T8
+  E -- no --> F[Fallback: article-journal]
+
+  classDef t fill:#eef,stroke:#335;
+  class T1,T2,T3,T4,T5,T6,T7,T8 t;
+```
+
+### Sanitization and normalization
+
+- Strings are converted to UTF‑8, invalid bytes dropped, control chars
+  removed, and whitespace squashed.
+- `abstract` is limited to 700 characters to keep downstream formats
+  (e.g., BibTeX) tidy.
+- Author objects drop NA `ORCID` and normalize `given`/`family`.
+- `page`, `ISSN`, `keyword`, and `note` are constructed only when
+  underlying fields are present and non‑empty.
+
+#### Sanitization pipeline
+
+``` mermaid
+flowchart TD
+  S0[CSL item] --> S1{Recurse over fields}
+  S1 -->|NULL or NA scalar| Sskip[drop]
+  S1 -->|character| Schar[UTF-8 normalize<br/>strip control chars<br/>squash whitespace]
+  S1 -->|logical| Slog[NA → FALSE]
+  S1 -->|abstract| Sabstr[truncate to 700 chars]
+  S1 -->|author list| Sauth[clean authors:<br/>NA ORCID → drop,<br/>NA given/family → empty]
+  S1 -->|DOI| Sdoi[normalize to bare DOI]
+  S1 -->|URL| Surl[skip DOI resolver<br/>if DOI present]
+  Schar --> S2[accumulate]
+  Slog --> S2
+  Sabstr --> S2
+  Sauth --> S2
+  Sdoi --> S2
+  Surl --> S2
+  S2 --> Sout[Sanitized CSL item]
+```
+
+### Output format
+
+The output directory contains one or more files named `chunk_1.json`,
+`chunk_2.json`, … Each file is a JSON array of CSL items with compact
+formatting, suitable for direct use by Pandoc (`from = "csljson"`) or
+for inspection with
+[`jsonlite::fromJSON()`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html).
+
+#### Chunking mechanics
+
+``` mermaid
+flowchart LR
+  N["n_total := COUNT(*)"] --> C1{n_total == 0?}
+  C1 -->|yes| Done[write nothing]
+  C1 -->|no| K["n_chunks := ceil(n_total / chunk_size)"]
+  K --> L1[for k in 1..n_chunks]
+  L1 --> Off["offset := (k-1)*chunk_size"]
+  Off --> Q[SELECT ... LIMIT chunk_size OFFSET offset]
+  Q --> Write[write chunk_k.json]
+  Write --> L1
+```
+
+### Basic usage
+
+Code
+
+``` r
+
+# Minimal end-to-end example (set eval: true to run)
+library(openalexConvert)
+
+# Prepare a small example tibble (mimicking OpenAlex fields)
+tiny <- data.frame(
+  id = c("W1", "W2"),
+  display_name = c("Example Paper One", "Example Paper Two"),
+  publication_year = c(2020L, 2021L),
+  doi = c("10.1000/xyz123", NA),
+  type = c("journal-article", "preprint"),
+  stringsAsFactors = FALSE
+)
+
+out <- tempfile("csljson_")
+corpus_to_csljson(
+  corpus = tiny,
+  output = out,
+  chunk_size = 10000,
+  overwrite = TRUE,
+  verbose = TRUE
+)
+
+list.files(out, full.names = TRUE)
+jsonlite::fromJSON(file.path(out, "chunk_1.json"), simplifyVector = FALSE)
+```
+
+### ISBN exclusion
+
+- This package intentionally does not extract or emit ISBN values.
+  OpenAlex works may contain ISBNs in different nested locations with
+  uneven coverage; referencing these paths can introduce brittle SQL and
+  inconsistent results.
+- As a consequence, CSL type inference does not use ISBN as a signal,
+  and the `ISBN` field is not present in outputs.
+
+### Performance notes
+
+- DuckDB + Arrow provide fast, zero‑copy access for large parquet
+  datasets and flexible SQL for field selection.
+- `chunk_size` balances per‑file size and the number of files; adjust to
+  your data volume and downstream expectations.
+- The function avoids loading all data into memory at once.
+
+### Error handling and diagnostics
+
+- The function stops when it cannot determine the row count, when
+  `output` exists without `overwrite = TRUE`, or when the input path is
+  missing.
+- With `verbose = TRUE`, messages indicate per‑chunk progress and final
+  counts.
+
+#### Error handling overview
+
+``` mermaid
+flowchart TD
+  A[Start] --> B{corpus provided?}
+  B -->|no| E1[stop: corpus must be provided]
+  B -->|yes| C{output exists & !overwrite?}
+  C -->|yes| E2[stop: output exists; set overwrite = TRUE]
+  C -->|no| D{Packages installed?<br/>arrow, duckdb, DBI}
+  D -->|no| E3[stop: missing required package]
+  D -->|yes| F{"COUNT(*) resolvable?"}
+  F -->|no| E4[stop: could not determine<br/>number of records]
+  F -->|yes| G[Proceed]
+```
+
+### Troubleshooting
+
+- Ensure the `arrow`, `duckdb`, `DBI`, and `jsonlite` packages are
+  installed.
+- If your input is a path, it should point to an Arrow dataset (e.g., a
+  directory of parquet files) readable by
+  [`arrow::open_dataset()`](https://arrow.apache.org/docs/r/reference/open_dataset.html).
+- If you intend to convert outputs further with Pandoc, ensure
+  [`rmarkdown::pandoc_available()`](https://pkgs.rstudio.com/rmarkdown/reference/pandoc_available.html)
+  returns TRUE.
+
+### Comparing BibTeX and BibLaTeX outputs
+
+This package emits CSL JSON. From there, you can target either BibTeX or
+BibLaTeX. Both formats are widely used, but they differ in capabilities,
+defaults, and tooling.
+
+Key differences at a glance:
+
+| Aspect | BibTeX | BibLaTeX |
+|----|----|----|
+| Toolchain | `bibtex` (classic) | `biber` (modern), with `biblatex` package |
+| Encoding | Limited; often needs TeX escapes | Full Unicode support by default |
+| Entry types | Fewer, legacy set | Many more types (e.g., dataset, online) |
+| Field names | `journal`, `year`, `month` | `journaltitle`, `date` (ISO), rich fields |
+| Date handling | Split `year`/`month` | Single `date` with ranges/partials |
+| URL/DOI | Style-dependent, sometimes awkward | First-class fields and localization |
+| Localization | Minimal | Rich localization and language support |
+| Styles | natbib/IEEEtran/etc. | biblatex styles (APA/Chicago/etc.) |
+| Best for | Legacy pipelines, journal templates requiring BibTeX | New work, Unicode-heavy, complex refs |
+
+Which to choose?
+
+- Prefer BibLaTeX when you control the typesetting pipeline, need robust
+  Unicode, richer entry types, or nuanced citation formatting.
+- Use BibTeX when a journal/class mandates it, or when you must match a
+  legacy LaTeX template without `biblatex`/`biber` support.
+
+Note: Because
+[`corpus_to_csljson()`](https://rkrug.github.io/openalexConvert/reference/corpus_to_csljson.md)
+focuses on producing accurate CSL JSON, you can switch targets later
+with
+[`csljson_convert_pandoc()`](https://rkrug.github.io/openalexConvert/reference/csljson_convert_pandoc.md)
+without touching your corpus mapping.

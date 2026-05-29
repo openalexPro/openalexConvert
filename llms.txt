@@ -1,0 +1,76 @@
+# openalexConvert
+
+Convert an [OpenAlex](https://openalex.org) parquet corpus (produced by
+[openalexPro](https://github.com/rkrug/openalexPro)) into bibliography
+formats via [Pandoc](https://pandoc.org): CSL JSON, BibTeX, BibLaTeX,
+Markdown, LaTeX, HTML, or PDF.
+
+## Installation
+
+``` r
+
+install.packages(
+  "openalexConvert",
+  repos = c("https://rkrug.r-universe.dev", "https://cloud.r-project.org")
+)
+```
+
+Pandoc must be installed and on your `PATH` (or installed via
+`install.packages("rmarkdown")` which bundles Pandoc on most platforms).
+
+## Quick start
+
+``` r
+
+library(openalexConvert)
+
+# 1. Convert an openalexPro parquet corpus to CSL JSON
+corpus_to_csljson(
+  corpus = "path/to/parquet",
+  output = "path/to/csljson"
+)
+
+# 2. Convert CSL JSON directory to BibTeX
+csljson_convert_pandoc(
+  input  = "path/to/csljson",
+  output = "path/to/bibliography.bib",
+  to     = "bibtex"
+)
+```
+
+## Documentation
+
+Full documentation and vignettes:
+<https://rkrug.github.io/openalexConvert/>
+
+## Related packages
+
+- [openalexPro](https://github.com/rkrug/openalexPro) — API access and
+  parquet output
+- [openalexSnowball](https://github.com/rkrug/openalexSnowball) —
+  snowball citation search
+
+# Package index
+
+## All functions
+
+- [`corpus_export_via_pandoc()`](https://rkrug.github.io/openalexConvert/reference/corpus_export_via_pandoc.md)
+  : One-shot export via CSL JSON + Pandoc
+- [`corpus_to_csljson()`](https://rkrug.github.io/openalexConvert/reference/corpus_to_csljson.md)
+  : Convert a corpus to CSL JSON (chunked)
+- [`csljson_convert_pandoc()`](https://rkrug.github.io/openalexConvert/reference/csljson_convert_pandoc.md)
+  : Convert CSL JSON (file or directory) via Pandoc
+- [`csljson_to_zotero_upload()`](https://rkrug.github.io/openalexConvert/reference/csljson_to_zotero_upload.md)
+  : Upload CSL JSON batch files to a Zotero group library (with progress
+  bar)
+
+# Articles
+
+### All vignettes
+
+- [From OpenAlex corpus to chunked CSL
+  JSON](https://rkrug.github.io/openalexConvert/articles/corpus_to_csljson.md):
+- [Converting CSL JSON via
+  Pandoc](https://rkrug.github.io/openalexConvert/articles/csljson_convert_pandoc.md):
+- [Package dependency report
+  (pkgnet)](https://rkrug.github.io/openalexConvert/articles/pkgnet_report.md):

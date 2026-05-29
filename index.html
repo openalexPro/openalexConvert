@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Convert OpenAlex Parquet (from openalexPro) to other Formats • openalexConvert</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Convert OpenAlex Parquet (from openalexPro) to other Formats">
 <meta name="description" content="Utilities to convert an OpenAlex parquet/Arrow corpus into other formats. Implemented are at the moment CSL JSON, BibTeX, BibLaTeX, Markdown, LaTeX, HTML, or PDF via Pandoc. Uses DuckDB over Arrow for efficient chunked CSL JSON conversion.">
@@ -40,6 +40,7 @@
     <li><a class="dropdown-item" href="articles/pkgnet_report.html">Package dependency report (pkgnet)</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -53,8 +54,55 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9">
-Utilities to convert an OpenAlex parquet/Arrow corpus into other formats. Implemented are at the moment CSL JSON, BibTeX, BibLaTeX, Markdown, LaTeX, HTML, or PDF via Pandoc. Uses DuckDB over Arrow for efficient chunked CSL JSON conversion.
+  <main id="main" class="col-md-9"><div class="section level1">
+<div class="page-header"><h1 id="openalexconvert">openalexConvert<a class="anchor" aria-label="anchor" href="#openalexconvert"></a>
+</h1></div>
+<p>Convert an <a href="https://openalex.org" class="external-link">OpenAlex</a> parquet corpus (produced by <a href="https://github.com/rkrug/openalexPro" class="external-link">openalexPro</a>) into bibliography formats via <a href="https://pandoc.org" class="external-link">Pandoc</a>: CSL JSON, BibTeX, BibLaTeX, Markdown, LaTeX, HTML, or PDF.</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span></span>
+<span>  <span class="st">"openalexConvert"</span>,</span>
+<span>  repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://rkrug.r-universe.dev"</span>, <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Pandoc must be installed and on your <code>PATH</code> (or installed via <code>install.packages("rmarkdown")</code> which bundles Pandoc on most platforms).</p>
+</div>
+<div class="section level2">
+<h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
+</h2>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rkrug/openalexConvert" class="external-link">openalexConvert</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 1. Convert an openalexPro parquet corpus to CSL JSON</span></span>
+<span><span class="fu"><a href="reference/corpus_to_csljson.html">corpus_to_csljson</a></span><span class="op">(</span></span>
+<span>  corpus <span class="op">=</span> <span class="st">"path/to/parquet"</span>,</span>
+<span>  output <span class="op">=</span> <span class="st">"path/to/csljson"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 2. Convert CSL JSON directory to BibTeX</span></span>
+<span><span class="fu"><a href="reference/csljson_convert_pandoc.html">csljson_convert_pandoc</a></span><span class="op">(</span></span>
+<span>  input  <span class="op">=</span> <span class="st">"path/to/csljson"</span>,</span>
+<span>  output <span class="op">=</span> <span class="st">"path/to/bibliography.bib"</span>,</span>
+<span>  to     <span class="op">=</span> <span class="st">"bibtex"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
+</h2>
+<p>Full documentation and vignettes: <a href="https://rkrug.github.io/openalexConvert/" class="uri">https://rkrug.github.io/openalexConvert/</a></p>
+</div>
+<div class="section level2">
+<h2 id="related-packages">Related packages<a class="anchor" aria-label="anchor" href="#related-packages"></a>
+</h2>
+<ul>
+<li>
+<a href="https://github.com/rkrug/openalexPro" class="external-link">openalexPro</a> — API access and parquet output</li>
+<li>
+<a href="https://github.com/rkrug/openalexSnowball" class="external-link">openalexSnowball</a> — snowball citation search</li>
+</ul>
+</div>
+</div>
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
@@ -96,7 +144,7 @@ Utilities to convert an OpenAlex parquet/Arrow corpus into other formats. Implem
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
