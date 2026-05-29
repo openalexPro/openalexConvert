@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/rkrug/openalexConvert/blob/v0.0.2/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/rkrug/openalexConvert/blob/main/DESCRIPTION)
 
 Krug RM (2026). *openalexConvert: Convert OpenAlex Parquet (from
 openalexPro) to other Formats*. R package version 0.0.2,
