@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">openalexConvert</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +46,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/rkrug/openalexConvert/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/openalexPro/openalexConvert/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -58,14 +58,14 @@
 <div class="section level1">
 <div class="page-header"><h1 id="openalexconvert">openalexConvert<a class="anchor" aria-label="anchor" href="#openalexconvert"></a>
 </h1></div>
-<p>Convert an <a href="https://openalex.org" class="external-link">OpenAlex</a> parquet corpus (produced by <a href="https://github.com/rkrug/openalexPro" class="external-link">openalexPro</a>) into bibliography formats via <a href="https://pandoc.org" class="external-link">Pandoc</a>: CSL JSON, BibTeX, BibLaTeX, Markdown, LaTeX, HTML, or PDF.</p>
+<p>Convert an <a href="https://openalex.org" class="external-link">OpenAlex</a> parquet corpus (produced by <a href="https://github.com/openalexPro/openalexPro" class="external-link">openalexPro</a>) into bibliography formats via <a href="https://pandoc.org" class="external-link">Pandoc</a>: CSL JSON, BibTeX, BibLaTeX, Markdown, LaTeX, HTML, or PDF.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span></span>
 <span>  <span class="st">"openalexConvert"</span>,</span>
-<span>  repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://rkrug.r-universe.dev"</span>, <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span></span>
+<span>  repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://openalexpro.r-universe.dev"</span>, <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Pandoc must be installed and on your <code>PATH</code> (or installed via <code>install.packages("rmarkdown")</code> which bundles Pandoc on most platforms).</p>
 </div>
@@ -73,7 +73,7 @@
 <h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rkrug/openalexConvert" class="external-link">openalexConvert</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/openalexPro/openalexConvert" class="external-link">openalexConvert</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 1. Convert an openalexPro parquet corpus to CSL JSON</span></span>
 <span><span class="fu"><a href="reference/corpus_to_csljson.html">corpus_to_csljson</a></span><span class="op">(</span></span>
@@ -91,16 +91,16 @@
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h2>
-<p>Full documentation and vignettes: <a href="https://rkrug.github.io/openalexConvert/" class="uri">https://rkrug.github.io/openalexConvert/</a></p>
+<p>Full documentation and vignettes: <a href="https://openalexpro.github.io/openalexConvert/" class="uri">https://openalexpro.github.io/openalexConvert/</a></p>
 </div>
 <div class="section level2">
 <h2 id="related-packages">Related packages<a class="anchor" aria-label="anchor" href="#related-packages"></a>
 </h2>
 <ul>
 <li>
-<a href="https://github.com/rkrug/openalexPro" class="external-link">openalexPro</a> — API access and parquet output</li>
+<a href="https://github.com/openalexPro/openalexPro" class="external-link">openalexPro</a> — API access and parquet output</li>
 <li>
-<a href="https://github.com/rkrug/openalexSnowball" class="external-link">openalexSnowball</a> — snowball citation search</li>
+<a href="https://github.com/openalexPro/openalexSnowball" class="external-link">openalexSnowball</a> — snowball citation search</li>
 </ul>
 </div>
 </div>
@@ -108,8 +108,8 @@
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/rkrug/openalexConvert/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/rkrug/openalexConvert/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/openalexPro/openalexConvert/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/openalexPro/openalexConvert/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -139,6 +139,9 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://doi.org/10.5281/zenodo.20448988" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20448988.svg" alt="DOI"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://www.gnu.org/licenses/gpl-2.0" class="external-link"><img src="https://img.shields.io/badge/License-GPL%20%3E%3D%202-blue.svg" alt="License: GPL-2+"></a></li>
+<li><a href="https://app.codecov.io/gh/openalexPro/openalexConvert" class="external-link"><img src="https://codecov.io/gh/openalexPro/openalexConvert/graph/badge.svg" alt="Codecov"></a></li>
 </ul>
 </div>
 

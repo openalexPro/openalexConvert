@@ -2,11 +2,11 @@
 
 ## Introduction
 
-[`csljson_convert_pandoc()`](https://rkrug.github.io/openalexConvert/reference/csljson_convert_pandoc.md)
+[`csljson_convert_pandoc()`](https://openalexpro.github.io/openalexConvert/reference/csljson_convert_pandoc.md)
 turns CSL JSON into a variety of bibliographic outputs using Pandoc’s
 citeproc. It supports both single CSL JSON files and directories created
 by
-[`corpus_to_csljson()`](https://rkrug.github.io/openalexConvert/reference/corpus_to_csljson.md)
+[`corpus_to_csljson()`](https://openalexpro.github.io/openalexConvert/reference/corpus_to_csljson.md)
 containing `chunk_*.json` files.
 
 ### Supported targets (`to`)
@@ -99,7 +99,7 @@ flowchart TD
 ### Arguments
 
 - `csljson`: Path to a CSL JSON file (array) or a directory created by
-  [`corpus_to_csljson()`](https://rkrug.github.io/openalexConvert/reference/corpus_to_csljson.md).
+  [`corpus_to_csljson()`](https://openalexpro.github.io/openalexConvert/reference/corpus_to_csljson.md).
 - `output`: Directory (for directory input) or file path (for file
   input), as outlined above.
 - `to`: One of `"biblatex"`, `"bibtex"`, `"docx"`, `"markdown"`,

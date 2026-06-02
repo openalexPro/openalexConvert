@@ -1,9 +1,9 @@
 # openalexConvert
 
 Convert an [OpenAlex](https://openalex.org) parquet corpus (produced by
-[openalexPro](https://github.com/rkrug/openalexPro)) into bibliography
-formats via [Pandoc](https://pandoc.org): CSL JSON, BibTeX, BibLaTeX,
-Markdown, LaTeX, HTML, or PDF.
+[openalexPro](https://github.com/openalexPro/openalexPro)) into
+bibliography formats via [Pandoc](https://pandoc.org): CSL JSON, BibTeX,
+BibLaTeX, Markdown, LaTeX, HTML, or PDF.
 
 ## Installation
 
@@ -11,7 +11,7 @@ Markdown, LaTeX, HTML, or PDF.
 
 install.packages(
   "openalexConvert",
-  repos = c("https://rkrug.r-universe.dev", "https://cloud.r-project.org")
+  repos = c("https://openalexpro.r-universe.dev", "https://cloud.r-project.org")
 )
 ```
 
@@ -41,11 +41,11 @@ csljson_convert_pandoc(
 ## Documentation
 
 Full documentation and vignettes:
-<https://rkrug.github.io/openalexConvert/>
+<https://openalexpro.github.io/openalexConvert/>
 
 ## Related packages
 
-- [openalexPro](https://github.com/rkrug/openalexPro) — API access and
-  parquet output
-- [openalexSnowball](https://github.com/rkrug/openalexSnowball) —
+- [openalexPro](https://github.com/openalexPro/openalexPro) — API access
+  and parquet output
+- [openalexSnowball](https://github.com/openalexPro/openalexSnowball) —
   snowball citation search

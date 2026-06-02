@@ -41,4 +41,4 @@ corpus_export_via_pandoc(
 
 ## Value
 
-Invisibly returns \`normalizePath(output)\`.
+Invisibly returns the normalized path to the created file.

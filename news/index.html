@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openalexConvert</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,7 +25,7 @@
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/rkrug/openalexConvert/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/openalexPro/openalexConvert/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -35,19 +35,21 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/rkrug/openalexConvert/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/openalexPro/openalexConvert/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="openalexconvert-development-version">openalexConvert (development version)<a class="anchor" aria-label="anchor" href="#openalexconvert-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.0.3" id="openalexconvert-003">openalexConvert 0.0.3<a class="anchor" aria-label="anchor" href="#openalexconvert-003"></a></h2>
 <div class="section level3">
-<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<h3 id="bug-fixes-0-0-3">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-3"></a></h3>
 <ul><li>
+<code><a href="../reference/corpus_export_via_pandoc.html">corpus_export_via_pandoc()</a></code>: now produces a single output file (e.g. <code>corpus.bib</code>) as documented. Previously it passed the chunked CSL JSON directory to <code><a href="../reference/csljson_convert_pandoc.html">csljson_convert_pandoc()</a></code>, which created a <em>directory</em> of per-chunk files at the <code>output</code> path, and it returned the wrong path when an extension had to be appended.</li>
+<li>
 <code><a href="../reference/csljson_convert_pandoc.html">csljson_convert_pandoc()</a></code>: the <code>pdf_engine</code> parameter is now respected. Previously <code>--pdf-engine=xelatex</code> was unconditionally appended, overriding any user-specified engine (e.g. <code>"lualatex"</code> or <code>"pdflatex"</code>).</li>
 <li>DOI extraction now delegates to <code><a href="https://openalexpro.github.io/openalexPro/reference/extract_doi.html" class="external-link">openalexPro::extract_doi()</a></code>, which fixes a regex that missed lowercase characters in DOI suffixes (e.g. <code>10.1234/abc-def</code>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
+<h3 id="improvements-0-0-3">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-0-3"></a></h3>
 <ul><li>
 <code>openalexPro</code> declared as a formal dependency in <code>DESCRIPTION</code> (<code>Imports</code>).</li>
 <li>
@@ -55,6 +57,7 @@
 <li>
 <code>Additional_repositories</code> added to <code>DESCRIPTION</code> so CI and users can resolve <code>openalexPro</code> from r-universe automatically.</li>
 <li>CI aligned with the rest of the openalexPro ecosystem: standard <code>R-CMD-check.yaml</code> (macOS, Windows, Ubuntu × devel/release/oldrel-1) and <code>test-coverage.yaml</code> added.</li>
+<li>Test coverage raised to ~86%, with new tests for <code><a href="../reference/corpus_export_via_pandoc.html">corpus_export_via_pandoc()</a></code>, Pandoc rendering paths, and <code><a href="../reference/csljson_to_zotero_upload.html">csljson_to_zotero_upload()</a></code>.</li>
 <li>Leftover <code>_problems/</code> test artefacts from a previous failed run removed.</li>
 </ul></div>
 </div>

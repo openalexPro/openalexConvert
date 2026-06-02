@@ -27,7 +27,7 @@ missing).
 
     <a class="navbar-brand me-2" href="../index.html">openalexConvert</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,7 @@ missing).
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/rkrug/openalexConvert/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/openalexPro/openalexConvert/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -55,7 +55,7 @@ missing).
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Convert CSL JSON (file or directory) via Pandoc</h1>
-      <small class="dont-index">Source: <a href="https://github.com/rkrug/openalexConvert/blob/main/R/csljson_convert_pandoc.R" class="external-link"><code>R/csljson_convert_pandoc.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openalexPro/openalexConvert/blob/main/R/csljson_convert_pandoc.R" class="external-link"><code>R/csljson_convert_pandoc.R</code></a></small>
       <div class="d-none name"><code>csljson_convert_pandoc.Rd</code></div>
     </div>
 
@@ -116,7 +116,8 @@ output directory (dir input; file will be <code>references.&lt;ext&gt;</code> wi
 
 
 <dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
-<dd><p>Logical; overwrite existing output file(s). Defaults to FALSE.</p></dd>
+<dd><p>Logical; overwrite existing output file(s). Defaults to
+FALSE.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -135,8 +136,9 @@ NULL, Pandoc's default style is used.</p></dd>
 
 
 <dt id="arg-pdf-mainfont">pdf_mainfont<a class="anchor" aria-label="anchor" href="#arg-pdf-mainfont"></a></dt>
-<dd><p>Main text font name for PDF output (used with XeLaTeX/LuaLaTeX).
-Sets Pandoc variable <code>mainfont</code> (e.g., <code>-V mainfont=Source Serif Pro</code>).</p></dd>
+<dd><p>Main text font name for PDF output (used with
+XeLaTeX/LuaLaTeX). Sets Pandoc variable <code>mainfont</code> (e.g.,
+<code>-V mainfont=Source Serif Pro</code>).</p></dd>
 
 
 <dt id="arg-pdf-sansfont">pdf_sansfont<a class="anchor" aria-label="anchor" href="#arg-pdf-sansfont"></a></dt>
@@ -173,8 +175,8 @@ Pandoc command line flags and variables as follows:</p><ul><li><p><code>pdf_engi
 <code>-V sansfont=...</code>, <code>-V monofont=...</code></p></li>
 <li><p><code>pdf_cjk_mainfont</code>, <code>pdf_cjk_options</code> → <code>-V CJKmainfont=...</code>,
 <code>-V CJKoptions=...</code></p></li>
-</ul><p>Use these to ensure Unicode coverage and consistent typography, especially for
-multilingual bibliographies.</p>
+</ul><p>Use these to ensure Unicode coverage and consistent typography, especially
+for multilingual bibliographies.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

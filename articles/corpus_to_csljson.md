@@ -3,13 +3,13 @@
 ## Introduction
 
 The function
-[`corpus_to_csljson()`](https://rkrug.github.io/openalexConvert/reference/corpus_to_csljson.md)
+[`corpus_to_csljson()`](https://openalexpro.github.io/openalexConvert/reference/corpus_to_csljson.md)
 converts an OpenAlex “corpus” of works into standards‑compliant CSL JSON
 files, written in manageable chunks (`chunk_1.json`, `chunk_2.json`, …)
 to a target directory. These chunks can be consumed directly by Pandoc’s
 citeproc or other reference tools, or used as input for follow‑up
 helpers like
-[`csljson_convert_pandoc()`](https://rkrug.github.io/openalexConvert/reference/csljson_convert_pandoc.md)
+[`csljson_convert_pandoc()`](https://openalexpro.github.io/openalexConvert/reference/csljson_convert_pandoc.md)
 to produce BibTeX, BibLaTeX, Markdown, LaTeX, Docx, HTML, or PDF
 reference documents.
 
@@ -399,8 +399,8 @@ Which to choose?
   legacy LaTeX template without `biblatex`/`biber` support.
 
 Note: Because
-[`corpus_to_csljson()`](https://rkrug.github.io/openalexConvert/reference/corpus_to_csljson.md)
+[`corpus_to_csljson()`](https://openalexpro.github.io/openalexConvert/reference/corpus_to_csljson.md)
 focuses on producing accurate CSL JSON, you can switch targets later
 with
-[`csljson_convert_pandoc()`](https://rkrug.github.io/openalexConvert/reference/csljson_convert_pandoc.md)
+[`csljson_convert_pandoc()`](https://openalexpro.github.io/openalexConvert/reference/csljson_convert_pandoc.md)
 without touching your corpus mapping.

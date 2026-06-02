@@ -38,7 +38,7 @@ csljson_convert_pandoc(
 - csljson:
 
   Path to a CSL JSON file (array) or a directory created by
-  [`corpus_to_csljson()`](https://rkrug.github.io/openalexConvert/reference/corpus_to_csljson.md)
+  [`corpus_to_csljson()`](https://openalexpro.github.io/openalexConvert/reference/corpus_to_csljson.md)
   containing `chunk_*.json` files.
 
 - output:
