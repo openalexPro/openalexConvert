@@ -16,6 +16,8 @@ test_that("corpus_export_via_pandoc one-shot wrapper produces a .bib", {
     to = "bibtex",
     chunk_size = 100
   )
+  # Must be a single file, not a directory of per-chunk .bib files.
+  expect_false(dir.exists(res))
   expect_true(file.exists(res))
   expect_true(file.info(res)$size > 0)
 })
@@ -39,7 +41,11 @@ test_that("corpus_export_via_pandoc honours an explicit csl_tmp dir", {
     csl_tmp = csl_tmp,
     chunk_size = 100
   )
+  # Output extension is added when missing; result is a single file.
+  expect_false(dir.exists(res))
   expect_true(file.exists(res))
+  expect_identical(tools::file_ext(res), "bib")
+  expect_true(file.info(res)$size > 0)
   # When csl_tmp is supplied it is not removed afterwards.
   expect_true(dir.exists(csl_tmp))
   expect_true(length(list.files(csl_tmp, pattern = "chunk_\\d+\\.json$")) >= 1)

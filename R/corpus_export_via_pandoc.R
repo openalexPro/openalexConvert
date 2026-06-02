@@ -11,7 +11,9 @@
 #' @param ... Additional arguments passed to `corpus_to_csljson()`
 #'   (e.g., `chunk_size`).
 #'
-#' @return Invisibly returns `normalizePath(output)`.
+#' @return Invisibly returns the normalized path to the created file.
+#'
+#' @importFrom jsonlite read_json write_json
 #'
 #' @export
 corpus_export_via_pandoc <- function(
@@ -36,6 +38,27 @@ corpus_export_via_pandoc <- function(
     },
     add = TRUE
   )
-  csljson_convert_pandoc(csl_tmp, output, to = to)
-  invisible(normalizePath(output))
+
+  # Merge the chunked CSL JSON into a single array before conversion so that
+  # `output` is a single file (e.g. `corpus.bib`) rather than a directory of
+  # per-chunk files (which is what passing the directory to
+  # `csljson_convert_pandoc()` would produce).
+  chunk_files <- sort(list.files(
+    csl_tmp,
+    pattern = "^chunk_\\d+\\.json$",
+    full.names = TRUE
+  ))
+  if (!length(chunk_files)) {
+    stop("No CSL JSON chunks were produced from `corpus`.")
+  }
+  items <- unlist(
+    lapply(chunk_files, jsonlite::read_json),
+    recursive = FALSE
+  )
+  combined <- tempfile(fileext = ".json")
+  on.exit(try(unlink(combined, force = TRUE), silent = TRUE), add = TRUE)
+  jsonlite::write_json(items, combined, auto_unbox = TRUE, pretty = FALSE)
+
+  out_path <- csljson_convert_pandoc(combined, output, to = to)
+  invisible(out_path)
 }
