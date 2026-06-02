@@ -1,4 +1,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20448988.svg)](https://doi.org/10.5281/zenodo.20448988)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+[![License: GPL-2+](https://img.shields.io/badge/License-GPL%20%3E%3D%202-blue.svg)](https://www.gnu.org/licenses/gpl-2.0)
+[![Codecov](https://codecov.io/gh/openalexPro/openalexConvert/graph/badge.svg)](https://app.codecov.io/gh/openalexPro/openalexConvert)
 
 # openalexConvert
 
