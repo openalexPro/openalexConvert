@@ -20,15 +20,17 @@
 #' @param to One of `"biblatex"`, `"bibtex"`, `"docx"`, `"markdown"`,
 #'   `"latex"`, `"html"`, or `"pdf"`.
 #' @param from Source format; defaults to "csljson".
-#' @param overwrite Logical; overwrite existing output file(s). Defaults to FALSE.
+#' @param overwrite Logical; overwrite existing output file(s). Defaults to
+#'   FALSE.
 #' @param verbose Print progress messages.
 #' @param references_csl Optional path to a CSL style file (e.g., apa.csl). If
 #'   NULL, Pandoc's default style is used.
 #' @param pdf_engine LaTeX engine used when `to = "pdf"`. Common values are
 #'   `"xelatex"` (default, good Unicode support), `"lualatex"`, or
 #'   `"pdflatex"`. Passed to Pandoc as `--pdf-engine`.
-#' @param pdf_mainfont Main text font name for PDF output (used with XeLaTeX/LuaLaTeX).
-#'   Sets Pandoc variable `mainfont` (e.g., `-V mainfont=Source Serif Pro`).
+#' @param pdf_mainfont Main text font name for PDF output (used with
+#'   XeLaTeX/LuaLaTeX). Sets Pandoc variable `mainfont` (e.g.,
+#'   `-V mainfont=Source Serif Pro`).
 #' @param pdf_sansfont Sans‑serif font name for PDF output. Sets Pandoc
 #'   variable `sansfont`.
 #' @param pdf_monofont Monospace font name for PDF output. Sets Pandoc
@@ -51,8 +53,8 @@
 #' - `pdf_cjk_mainfont`, `pdf_cjk_options` → `-V CJKmainfont=...`,
 #'   `-V CJKoptions=...`
 #'
-#' Use these to ensure Unicode coverage and consistent typography, especially for
-#' multilingual bibliographies.
+#' Use these to ensure Unicode coverage and consistent typography, especially
+#' for multilingual bibliographies.
 #'
 #' @md
 #'
@@ -155,7 +157,10 @@ csljson_convert_pandoc <- function(
 .check_pandoc_ready <- function() {
   if (!requireNamespace("rmarkdown", quietly = TRUE)) {
     stop(
-      "Package 'rmarkdown' is required for Pandoc conversion. Please install it."
+      paste(
+        "Package 'rmarkdown' is required for Pandoc conversion.",
+        "Please install it."
+      )
     )
   }
   if (!rmarkdown::pandoc_available()) {
@@ -170,7 +175,11 @@ csljson_convert_pandoc <- function(
 #' - Optionally removes very long abstracts (> cap) to avoid pandoc/LaTeX stalls
 #' Returns a list(path, sanitized_flag). Path may be a temp file.
 #' @noRd
-.normalize_json_for_pandoc <- function(path, drop_long_abstracts = TRUE, cap = 10000) {
+.normalize_json_for_pandoc <- function(
+  path,
+  drop_long_abstracts = TRUE,
+  cap = 10000
+) {
   in_use <- normalizePath(path, mustWork = TRUE)
   tmp_in <- tempfile(fileext = ".json")
   sanitized <- FALSE
@@ -180,7 +189,11 @@ csljson_convert_pandoc <- function(
       if (!is.null(j) && length(j) > 0 && is.null(names(j))) {
         for (kk in seq_along(j)) {
           it <- j[[kk]]
-          if (is.list(it) && !is.null(it$abstract) && is.character(it$abstract)) {
+          if (
+            is.list(it) &&
+              !is.null(it$abstract) &&
+              is.character(it$abstract)
+          ) {
             ab <- it$abstract
             if (length(ab) == 1L && nchar(ab, allowNA = FALSE) > cap) {
               it$abstract <- NULL
@@ -278,7 +291,11 @@ csljson_convert_pandoc <- function(
 #' @noRd
 .convert_dir_bib <- function(csljson_dir, output_dir, to, overwrite, verbose) {
   in_dir <- normalizePath(csljson_dir, mustWork = TRUE)
-  chunk_files <- list.files(in_dir, pattern = "^chunk_\\d+\\.json$", full.names = TRUE)
+  chunk_files <- list.files(
+    in_dir,
+    pattern = "^chunk_\\d+\\.json$",
+    full.names = TRUE
+  )
   if (!length(chunk_files)) {
     stop("No chunk_*.json files found in ", csljson_dir)
   }
@@ -290,10 +307,20 @@ csljson_convert_pandoc <- function(
     base <- sub("\\.json$", "", basename(in_f))
     out_f <- file.path(out_dir, paste0(base, ext))
     if (file.exists(out_f)) {
-      if (!overwrite) stop("Output file exists: ", out_f, ". Set overwrite = TRUE to replace.")
+      if (!overwrite) {
+        stop(
+          "Output file exists: ",
+          out_f,
+          ". Set overwrite = TRUE to replace."
+        )
+      }
       unlink(out_f)
     }
-    norm <- .normalize_json_for_pandoc(in_f, drop_long_abstracts = TRUE, cap = 10000)
+    norm <- .normalize_json_for_pandoc(
+      in_f,
+      drop_long_abstracts = TRUE,
+      cap = 10000
+    )
     if (isTRUE(verbose)) {
       message(
         "Converting with pandoc: ", basename(in_f), " -> ", basename(out_f),
@@ -328,7 +355,11 @@ csljson_convert_pandoc <- function(
   pdf_cjk_options
 ) {
   in_dir <- normalizePath(csljson_dir, mustWork = TRUE)
-  chunk_files <- list.files(in_dir, pattern = "^chunk_\\d+\\.json$", full.names = TRUE)
+  chunk_files <- list.files(
+    in_dir,
+    pattern = "^chunk_\\d+\\.json$",
+    full.names = TRUE
+  )
   if (!length(chunk_files)) {
     stop("No chunk_*.json files found in ", csljson_dir)
   }
@@ -345,14 +376,33 @@ csljson_convert_pandoc <- function(
   )
   md <- .write_refs_md()
   out_dir <- .ensure_dir(output_dir)
-  ext <- switch(to, docx = ".docx", markdown = ".md", latex = ".tex", html = ".html", pdf = ".pdf")
+  ext <- switch(
+    to,
+    docx = ".docx",
+    markdown = ".md",
+    latex = ".tex",
+    html = ".html",
+    pdf = ".pdf"
+  )
   refs_out <- file.path(out_dir, paste0("references", ext))
   if (file.exists(refs_out)) {
-    if (!overwrite) stop("Output file exists: ", refs_out, ". Set overwrite = TRUE to replace.")
+    if (!overwrite) {
+      stop(
+        "Output file exists: ",
+        refs_out,
+        ". Set overwrite = TRUE to replace."
+      )
+    }
     unlink(refs_out)
   }
   if (isTRUE(verbose)) {
-    message("Rendering formatted references: ", basename(refs_out), " (", to, ")")
+    message(
+      "Rendering formatted references: ",
+      basename(refs_out),
+      " (",
+      to,
+      ")"
+    )
   }
   rmarkdown::pandoc_convert(
     input = md,
@@ -388,7 +438,10 @@ csljson_convert_pandoc <- function(
   }
   if (isTRUE(verbose)) {
     message(
-      "Converting with pandoc: ", basename(input_file), " -> ", basename(out_file),
+      "Converting with pandoc: ",
+      basename(input_file),
+      " -> ",
+      basename(out_file),
       " (", to, ")"
     )
   }
@@ -432,7 +485,14 @@ csljson_convert_pandoc <- function(
   md <- .write_refs_md()
   refs_out <- output
   if (identical(tools::file_ext(refs_out), "")) {
-    ext <- switch(to, docx = ".docx", markdown = ".md", latex = ".tex", html = ".html", pdf = ".pdf")
+    ext <- switch(
+    to,
+    docx = ".docx",
+    markdown = ".md",
+    latex = ".tex",
+    html = ".html",
+    pdf = ".pdf"
+  )
     refs_out <- paste0(refs_out, ext)
   }
   rd <- dirname(refs_out)
@@ -445,7 +505,13 @@ csljson_convert_pandoc <- function(
     unlink(refs_out)
   }
   if (isTRUE(verbose)) {
-    message("Rendering formatted references: ", basename(refs_out), " (", to, ")")
+    message(
+      "Rendering formatted references: ",
+      basename(refs_out),
+      " (",
+      to,
+      ")"
+    )
   }
   rmarkdown::pandoc_convert(
     input = md,

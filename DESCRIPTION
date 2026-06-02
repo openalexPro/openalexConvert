@@ -1,14 +1,14 @@
 Type: Package
 Package: openalexConvert
 Title: Convert OpenAlex Parquet (from openalexPro) to other Formats
-Version: 0.0.1
+Version: 0.0.2
 Author: Rainer M Krug
 Maintainer: Rainer M Krug <Rainer@krugs.de>
 Description: Utilities to convert an OpenAlex parquet/Arrow corpus into
     other formats. Implemented are at the moment CSL JSON, BibTeX, BibLaTeX,
     Markdown, LaTeX, HTML, or PDF via Pandoc. Uses DuckDB over Arrow for
     efficient chunked CSL JSON conversion. 
-URL: https://github.com/openalexPro/openalexConvert, https://openalexpro.github.io/openalexConvert/
+URL: https://github.com/openalexPro/openalexConvert, https://openalexpro.github.io/openalexConvert/, https://doi.org/10.5281/zenodo.20448988
 BugReports: https://github.com/openalexPro/openalexConvert/issues
 License: GPL (>= 2)
 Depends:

@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20448988.svg)](https://doi.org/10.5281/zenodo.20448988)
+
 # openalexConvert
 
 Convert an [OpenAlex](https://openalex.org) parquet corpus (produced by

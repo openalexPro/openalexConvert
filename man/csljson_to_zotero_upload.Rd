@@ -30,7 +30,8 @@ A data.frame with one row per file and columns:
 \item{file}{Path to the CSL-JSON file.}
 \item{status_code}{HTTP status code returned by the Zotero API.}
 \item{ok}{Logical; \code{TRUE} if \code{status_code} is in 200–299.}
-\item{message}{Character; short message or error text (possibly truncated).}
+\item{message}{Character; short message or error text (possibly
+truncated).}
 }
 Invisibly returns this data.frame.
 }

@@ -35,7 +35,8 @@ output directory (dir input; file will be \verb{references.<ext>} within).}
 
 \item{from}{Source format; defaults to "csljson".}
 
-\item{overwrite}{Logical; overwrite existing output file(s). Defaults to FALSE.}
+\item{overwrite}{Logical; overwrite existing output file(s). Defaults to
+FALSE.}
 
 \item{verbose}{Print progress messages.}
 
@@ -46,8 +47,9 @@ NULL, Pandoc's default style is used.}
 \code{"xelatex"} (default, good Unicode support), \code{"lualatex"}, or
 \code{"pdflatex"}. Passed to Pandoc as \code{--pdf-engine}.}
 
-\item{pdf_mainfont}{Main text font name for PDF output (used with XeLaTeX/LuaLaTeX).
-Sets Pandoc variable \code{mainfont} (e.g., \verb{-V mainfont=Source Serif Pro}).}
+\item{pdf_mainfont}{Main text font name for PDF output (used with
+XeLaTeX/LuaLaTeX). Sets Pandoc variable \code{mainfont} (e.g.,
+\verb{-V mainfont=Source Serif Pro}).}
 
 \item{pdf_sansfont}{Sans‑serif font name for PDF output. Sets Pandoc
 variable \code{sansfont}.}
@@ -91,6 +93,6 @@ Pandoc command line flags and variables as follows:
 \verb{-V CJKoptions=...}
 }
 
-Use these to ensure Unicode coverage and consistent typography, especially for
-multilingual bibliographies.
+Use these to ensure Unicode coverage and consistent typography, especially
+for multilingual bibliographies.
 }

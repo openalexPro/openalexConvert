@@ -22,10 +22,11 @@ corpus_export_via_pandoc(
 \item{csl_tmp}{Optional path for a temporary CSL JSON directory. If `NULL`, a
 temporary directory is used and removed afterwards.}
 
-\item{...}{Additional arguments passed to `corpus_to_csljson()` (e.g., `chunk_size`).}
+\item{...}{Additional arguments passed to `corpus_to_csljson()`
+(e.g., `chunk_size`).}
 }
 \value{
-Invisibly returns `normalizePath(output)`.
+Invisibly returns the normalized path to the created file.
 }
 \description{
 Convenience wrapper that maps a corpus to CSL JSON, then converts it to the
