@@ -427,7 +427,12 @@ corpus_to_csljson <- function(
   }
   doi_raw <- as.character(doi_raw)
   tryCatch(
-    openalexPro::extract_doi(doi_raw, non_doi_value = "", normalize = TRUE, what = "doi"),
+    openalexPro::extract_doi(
+      doi_raw,
+      non_doi_value = "",
+      normalize = TRUE,
+      what = "doi"
+    ),
     error = function(e) sub("^(?i)https?://(dx\\.)?doi\\.org/", "", doi_raw)
   )
 }

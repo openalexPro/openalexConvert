@@ -8,7 +8,8 @@
 #' @param to Target format passed to Pandoc (e.g., `"bibtex"`, `"biblatex"`).
 #' @param csl_tmp Optional path for a temporary CSL JSON directory. If `NULL`, a
 #'   temporary directory is used and removed afterwards.
-#' @param ... Additional arguments passed to `corpus_to_csljson()` (e.g., `chunk_size`).
+#' @param ... Additional arguments passed to `corpus_to_csljson()`
+#'   (e.g., `chunk_size`).
 #'
 #' @return Invisibly returns `normalizePath(output)`.
 #'
@@ -23,11 +24,12 @@ corpus_export_via_pandoc <- function(
   to <- match.arg(to)
   remove_tmp <- FALSE
   if (is.null(csl_tmp)) {
+    # `corpus_to_csljson()` creates the directory itself and errors if it
+    # already exists, so only reserve the path here.
     csl_tmp <- tempfile(pattern = "csljson_")
-    dir.create(csl_tmp, recursive = TRUE, showWarnings = FALSE)
     remove_tmp <- TRUE
   }
-  corpus_to_csljson(corpus, csl_tmp, ...)
+  corpus_to_csljson(corpus = corpus, output = csl_tmp, ...)
   on.exit(
     if (remove_tmp) {
       try(unlink(csl_tmp, recursive = TRUE, force = TRUE), silent = TRUE)
