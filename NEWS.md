@@ -1,3 +1,17 @@
+# openalexConvert 0.0.4
+
+## Require openalexPro (>= 0.11.0)
+
+`.normalize_doi()` delegates to `openalexPro::extract_doi(normalize = TRUE)`
+(`R/corpus_to_csljson.R:430`), and before openalexPro 0.11.0 that function
+silently truncated DOIs containing `<`, `>`, `[` or `]` -- returning a
+shorter string that still looked like a valid DOI, with no warning and no
+`NA`. Roughly 0.38% of real DOIs are affected (SICI-style ones, common in
+older journal content).
+
+The dependency carried no version floor, so installing against an older
+openalexPro produced quietly corrupted DOIs in the CSL-JSON output.
+
 # openalexConvert 0.0.3
 
 ## Bug fixes
