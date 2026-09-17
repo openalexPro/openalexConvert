@@ -33,7 +33,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, github::openalexPro/openalexPro, local::.
+          extra-packages: any::pkgdown, github::openalexPro/openalexPro@dev, local::.
           needs: website
 
       - name: Build pkgnet report (site asset)
