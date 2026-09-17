@@ -12,6 +12,33 @@ older journal content).
 The dependency carried no version floor, so installing against an older
 openalexPro produced quietly corrupted DOIs in the CSL-JSON output.
 
+## Fixtures regenerated: they encoded the truncation bug
+
+Once the floor was in place the suite failed, because every comparison
+fixture had been recorded while `extract_doi()` was still truncating. The
+fixtures expected the *wrong* answer:
+
+```
+generated: "10.1659/0276-4741(2005)025[0206:pfbcs]2.0.co;2"   <- correct
+fixture:   "10.1659/0276-4741(2005)025"                       <- truncated
+```
+
+The BibTeX and BibLaTeX fixtures were stale in a second way: entries whose
+DOI had been lost now carry a `doi = {...}` field they previously lacked.
+
+Every difference was verified to be DOI-related before regenerating -- 6
+differing CSL fields and 187 differing `.bib` lines, all of them a DOI value
+or a `doi =` line (plus the trailing comma that appears on the line above a
+newly added field). Nothing else moved.
+
+`data-raw/regenerate_fixtures.R` now does this reproducibly, and refuses to
+run outside a UTF-8 locale: in a C locale R renders non-ASCII author names as
+literal `<U+00F3>` escapes and pandoc writes
+`Bay\textless U+00F3\textgreater n` into the `.bib` files, which is exactly
+how a broken fixture gets committed and then becomes the expectation.
+
+The suite now passes: 119 pass / 0 fail, from 105 pass / 14 fail.
+
 # openalexConvert 0.0.3
 
 ## Bug fixes
