@@ -160,7 +160,8 @@ Plant Breeding*. <https://orgprints.org/22156/7/22156.pdf>.
 Boucher, Doug, Tracy Johns, Dana L. Roth, David Schwartzman, and
 Elizabeth N. Shapiro. n.d. "Symposium 22. Tropical Deforestation and
 Climate Change." *Bulletin of the Ecological Society of America* 89 (4):
-475--80. <https://doi.org/10.1890/0012-9623(2008)89>.
+475--80.
+[https://doi.org/10.1890/0012-9623(2008)89\[475:stdacc\]2.0.co;2](https://doi.org/10.1890/0012-9623(2008)89[475:stdacc]2.0.co;2).
 
 Boy, Laurence. n.d. "The Evolution of International Regulation: Toward a
 Questioning of Agricultural Seeds or of Farmers' Privileges?" *Revue
@@ -327,7 +328,7 @@ Farmer Adoption of Agroforestry*.
 
 Czech, Brian. n.d. "Taking on the Economic Triangle!" *Frontiers in
 Ecology and the Environment* 2 (5): 227--27.
-<https://doi.org/10.1890/1540-9295(2004)002>.
+[https://doi.org/10.1890/1540-9295(2004)002\[0227:totet\]2.0.co;2](https://doi.org/10.1890/1540-9295(2004)002[0227:totet]2.0.co;2).
 
 Danev, G., J. Gulič, Darij Krajčič, R. Šulek, P. Herbst, and Franz Josef
 Schmithüsen. n.d. *Financing Biodiversity Measures in Slovenian
@@ -672,7 +673,7 @@ Inouye, David W. n.d.-a. "18--19 November 2008 Washington, D.C."
 
 Inouye, David W. n.d.-b. "Minutes of the ESA Governing Board." *Bulletin
 of the Ecological Society of America* 88 (1): 22--30.
-<https://doi.org/10.1890/0012-9623(2007)88>.
+[https://doi.org/10.1890/0012-9623(2007)88\[22:motegb\]2.0.co;2](https://doi.org/10.1890/0012-9623(2007)88[22:motegb]2.0.co;2).
 
 Ishwaran, Natarajan, and Walter R. Erdelen. n.d.-a. "Biodiversity
 Futures." *Frontiers in Ecology and the Environment* 3 (4): 179--79.
@@ -680,7 +681,7 @@ Futures." *Frontiers in Ecology and the Environment* 3 (4): 179--79.
 
 Ishwaran, Natarajan, and Walter R. Erdelen. n.d.-b. "Biodiversity
 Futures." *Frontiers in Ecology and the Environment* 3 (4): 179--79.
-<https://doi.org/10.1890/1540-9295(2005)003>.
+[https://doi.org/10.1890/1540-9295(2005)003\[0179:bf\]2.0.co;2](https://doi.org/10.1890/1540-9295(2005)003[0179:bf]2.0.co;2).
 
 Ivanic, Maros, and W. J. Martin. n.d. "Implications Of Higher Global
 Food Prices For Poverty In Low-Income Countries." *World Bank Policy
@@ -957,7 +958,7 @@ Unconverted." *Frontiers in Ecology and the Environment* 1 (9): 455--55.
 
 Mooney, Harold A., and Walter V. Reid. n.d.-a. "Preaching to the
 Unconverted." *Frontiers in Ecology and the Environment* 1 (9): 455--55.
-<https://doi.org/10.1890/1540-9295(2003)001>.
+[https://doi.org/10.1890/1540-9295(2003)001\[0455:pttu\]2.0.co;2](https://doi.org/10.1890/1540-9295(2003)001[0455:pttu]2.0.co;2).
 
 Morocco. n.d. *Morocco - Rural Access Roads Project : Environmental
 Assessment*.
@@ -1063,7 +1064,8 @@ eBooks*. <https://portals.iucn.org/library/node/8934>.
 
 Pagiola, Stefano, Paola Agostini, José Gobbi, et al. n.d.-a. "Paying for
 Biodiversity Conservation Services." *Mountain Research and Development*
-25 (3): 206--11. <https://doi.org/10.1659/0276-4741(2005)025>.
+25 (3): 206--11.
+[https://doi.org/10.1659/0276-4741(2005)025\[0206:pfbcs\]2.0.co;2](https://doi.org/10.1659/0276-4741(2005)025[0206:pfbcs]2.0.co;2).
 
 Pagiola, Stefano, Paola Agostini, José Gobbi, et al. n.d.-b. "Paying for
 Biodiversity Conservation Services in Agricultural Landscapes." *World
