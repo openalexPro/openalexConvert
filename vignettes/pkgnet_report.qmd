@@ -25,7 +25,7 @@ and does not attempt to generate it locally.
 ```{r}
 #| results: asis
 report_path <- file.path("pkgdown", "assets", "pkgnet.html")
-report_url <- "https://rkrug.github.io/openalexConvert/assets/pkgnet.html"
+report_url <- "https://openalexpro.github.io/openalexConvert/assets/pkgnet.html"
 on_github_ci <- identical(Sys.getenv("GITHUB_ACTIONS"), "true") ||
   identical(Sys.getenv("CI"), "true")
 if (knitr::is_html_output() && on_github_ci && file.exists(report_path)) {
