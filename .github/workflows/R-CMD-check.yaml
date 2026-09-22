@@ -43,7 +43,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck, github::openalexPro/openalexPro@dev
+          extra-packages: any::rcmdcheck, github::openalexPro/openalexPro
           needs: check
           cache-version: v1
 
