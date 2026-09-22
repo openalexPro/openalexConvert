@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">openalexConvert</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,7 +43,7 @@
 <p>This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.</p>
 <div class="section level2">
 <h2 id="what-this-package-is">What this package is<a class="anchor" aria-label="anchor" href="#what-this-package-is"></a></h2>
-<p><code>openalexConvert</code> is an R package that converts an OpenAlex parquet/Arrow corpus (as produced by the sibling package <a href="https://github.com/rkrug/openalexPro" class="external-link">openalexPro</a>) into bibliography formats. It is part of the <code>openalexPro</code> ecosystem (alongside <code>openalexSnowball</code>) and is distributed via r-universe (<code>https://rkrug.r-universe.dev</code>), not CRAN. Status is alpha (see the startup message in <code>R/zzz.R</code>).</p>
+<p><code>openalexConvert</code> is an R package that converts an OpenAlex parquet/Arrow corpus (as produced by the sibling package <a href="https://github.com/openalexPro/openalexPro" class="external-link">openalexPro</a>) into bibliography formats. It is part of the <code>openalexPro</code> ecosystem (alongside <code>openalexSnowball</code>) and is distributed via r-universe (<code>https://openalexpro.r-universe.dev</code>), not CRAN. Status is alpha (see the startup message in <code>R/zzz.R</code>).</p>
 </div>
 <div class="section level2">
 <h2 id="commands">Commands<a class="anchor" aria-label="anchor" href="#commands"></a></h2>
@@ -71,7 +71,7 @@
 <p>The package is a thin pipeline with two stages. Each exported function is one self-contained file in <code>R/</code>.</p>
 <ol style="list-style-type: decimal"><li><p><strong>Corpus → CSL JSON</strong> (<a href="R/corpus_to_csljson.R">R/corpus_to_csljson.R</a>): <code><a href="reference/corpus_to_csljson.html">corpus_to_csljson()</a></code> reads an Arrow Dataset/Table/data.frame, registers it with DuckDB (<code>duckdb_register_arrow</code>), and processes it in chunks of <code>chunk_size</code> rows via <code>LIMIT/OFFSET</code>. Output is one <code>chunk_N.json</code> file per chunk, each a CSL JSON array. This is the memory-efficient core — large corpora never load fully into R.</p></li>
 <li><p><strong>CSL JSON → everything else</strong> (<a href="R/csljson_convert_pandoc.R">R/csljson_convert_pandoc.R</a>): <code><a href="reference/csljson_convert_pandoc.html">csljson_convert_pandoc()</a></code> shells out to Pandoc (via <code><a href="https://pkgs.rstudio.com/rmarkdown/reference/pandoc_convert.html" class="external-link">rmarkdown::pandoc_convert</a></code>) to produce bibtex, biblatex, docx, markdown, latex, html, or pdf. It dispatches on whether the input is a directory of chunks or a single file, crossed with whether <code>to</code> is a bibliography format (<code>bibtex</code>/<code>biblatex</code>, direct conversion) or a formatted-document format (renders via citeproc with a generated <code>nocite: "@*"</code> markdown stub).</p></li>
-</ol><p><code><a href="reference/corpus_export_via_pandoc.html">corpus_export_via_pandoc()</a></code> (<a href="R/corpus_export_via_pandoc.R">R/corpus_export_via_pandoc.R</a>) is a convenience wrapper chaining stage 1 → stage 2 through a temp dir.</p>
+</ol><p><code><a href="reference/corpus_export_via_pandoc.html">corpus_export_via_pandoc()</a></code> (<a href="R/corpus_export_via_pandoc.R">R/corpus_export_via_pandoc.R</a>) is a convenience wrapper chaining stage 1 → stage 2 through a temp dir. It writes the CSL chunks, <strong>merges them into a single CSL JSON array</strong>, then runs single-file conversion — so <code>output</code> is one file (e.g. <code>corpus.bib</code>), not a directory of per-chunk files. (Passing the chunk directory straight to <code><a href="reference/csljson_convert_pandoc.html">csljson_convert_pandoc()</a></code> would instead produce a directory of <code>chunk_*.bib</code>.)</p>
 <p><code><a href="reference/csljson_to_zotero_upload.html">csljson_to_zotero_upload()</a></code> (<a href="R/csljson_to_zotero_upload.R">R/csljson_to_zotero_upload.R</a>) is independent of the above: it POSTs CSL JSON files to the Zotero Web API (<code>/groups/{id}/items</code>) using <code>httr2</code>, with <code>progressr</code> progress. API key comes from <code>ZOTERO_API_KEY</code>.</p>
 <div class="section level3">
 <h3 id="key-design-points-in-the-corpuscsl-mapping">Key design points in the corpus→CSL mapping<a class="anchor" aria-label="anchor" href="#key-design-points-in-the-corpuscsl-mapping"></a></h3>
@@ -110,7 +110,14 @@
 <div class="section level4">
 <h4 id="doi-normalization-normalize_doi">DOI normalization (<code>.normalize_doi</code>)<a class="anchor" aria-label="anchor" href="#doi-normalization-normalize_doi"></a></h4>
 <p>Delegates to <code>openalexPro::extract_doi(..., normalize = TRUE, what = "doi")</code> to get a bare DOI, with a regex strip of the resolver prefix as fallback if that call errors. Do <strong>not</strong> reimplement DOI parsing here — a past bug (see <code>NEWS.md</code>) came from a local regex that missed lowercase suffixes; the fix was to delegate.</p>
+<p>Delegating only gives the right answer from <strong>openalexPro &gt;= 0.11.0</strong>, which is why that floor is in <code>DESCRIPTION</code>. Before it, <code>extract_doi()</code> silently truncated DOIs containing <code>&lt;</code>, <code>&gt;</code>, <code>[</code> or <code>]</code> — returning a shorter string that still looked like a valid DOI, with no warning and no <code>NA</code>. Roughly 0.38% of real DOIs are affected (SICI-style, common in older journal content), so without the floor this package produced quietly corrupted CSL-JSON.</p>
 </div>
+</div>
+<div class="section level3">
+<h3 id="regenerating-the-test-fixtures">Regenerating the test fixtures<a class="anchor" aria-label="anchor" href="#regenerating-the-test-fixtures"></a></h3>
+<p><code>data-raw/regenerate_fixtures.R</code> rebuilds <code>tests/fixtures/corpus_csl</code>, <code>corpus_bibtex</code>, <code>corpus_biblatex</code> and the <code>corpus_docs</code> text files.</p>
+<p><strong>It refuses to run outside a UTF-8 locale, and that guard matters.</strong> In a C locale R renders non-ASCII author names as literal <code>&lt;U+00F3&gt;</code> escapes and pandoc writes <code>Bay\textless U+00F3\textgreater n</code> into the <code>.bib</code> fixtures. Commit that once and the mangled text silently becomes the expectation. (This is also why running the suite in a C locale shows failures CI never sees; the <code>.bib</code> comparisons are <code>skip_on_ci()</code> because they are pandoc-version sensitive.)</p>
+<p>The fixtures were last regenerated when the openalexPro floor went in: they had encoded the DOI truncation bug, i.e. they expected the wrong answer.</p>
 <div class="section level4">
 <h4 id="pandoc-abstract-guard-normalize_json_for_pandoc">Pandoc abstract guard (<code>.normalize_json_for_pandoc</code>)<a class="anchor" aria-label="anchor" href="#pandoc-abstract-guard-normalize_json_for_pandoc"></a></h4>
 <p>Before bibtex/biblatex/formatted conversion, this re-serializes the JSON (for consistent encoding) and, for directory/chunk conversion, drops any abstract longer than <strong>10000 chars</strong> — long abstracts can stall pandoc/LaTeX. Single-file bibtex conversion calls it with <code>drop_long_abstracts = FALSE</code>. The returned <code>$sanitized</code> flag is surfaced in the verbose <code>[sanitized]</code> log marker.</p>
@@ -137,7 +144,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

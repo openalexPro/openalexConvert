@@ -5,5 +5,5 @@ GitHub‑built pkgdown site. It does not ship the report in the package
 and does not attempt to generate it locally.
 
 The interactive pkgnet report is available on the GitHub pkgdown site:
-[https://rkrug.github.io/openalexConvert/assets/pkgnet.html](https://rkrug.github.io/openalexConvert/assets/pkgnet.html%20)
+[https://openalexpro.github.io/openalexConvert/assets/pkgnet.html](https://openalexpro.github.io/openalexConvert/assets/pkgnet.html%20)
 .

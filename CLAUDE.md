@@ -7,11 +7,11 @@ with code in this repository.
 
 `openalexConvert` is an R package that converts an OpenAlex
 parquet/Arrow corpus (as produced by the sibling package
-[openalexPro](https://github.com/rkrug/openalexPro)) into bibliography
-formats. It is part of the `openalexPro` ecosystem (alongside
-`openalexSnowball`) and is distributed via r-universe
-(`https://rkrug.r-universe.dev`), not CRAN. Status is alpha (see the
-startup message in `R/zzz.R`).
+[openalexPro](https://github.com/openalexPro/openalexPro)) into
+bibliography formats. It is part of the `openalexPro` ecosystem
+(alongside `openalexSnowball`) and is distributed via r-universe
+(`https://openalexpro.r-universe.dev`), not CRAN. Status is alpha (see
+the startup message in `R/zzz.R`).
 
 ## Commands
 
@@ -70,6 +70,12 @@ is one self-contained file in `R/`.
 [`corpus_export_via_pandoc()`](https://openalexpro.github.io/openalexConvert/reference/corpus_export_via_pandoc.md)
 ([R/corpus_export_via_pandoc.R](https://openalexpro.github.io/openalexConvert/R/corpus_export_via_pandoc.R))
 is a convenience wrapper chaining stage 1 → stage 2 through a temp dir.
+It writes the CSL chunks, **merges them into a single CSL JSON array**,
+then runs single-file conversion — so `output` is one file
+(e.g. `corpus.bib`), not a directory of per-chunk files. (Passing the
+chunk directory straight to
+[`csljson_convert_pandoc()`](https://openalexpro.github.io/openalexConvert/reference/csljson_convert_pandoc.md)
+would instead produce a directory of `chunk_*.bib`.)
 
 [`csljson_to_zotero_upload()`](https://openalexpro.github.io/openalexConvert/reference/csljson_to_zotero_upload.md)
 ([R/csljson_to_zotero_upload.R](https://openalexpro.github.io/openalexConvert/R/csljson_to_zotero_upload.R))
@@ -163,6 +169,31 @@ bare DOI, with a regex strip of the resolver prefix as fallback if that
 call errors. Do **not** reimplement DOI parsing here — a past bug (see
 `NEWS.md`) came from a local regex that missed lowercase suffixes; the
 fix was to delegate.
+
+Delegating only gives the right answer from **openalexPro \>= 0.11.0**,
+which is why that floor is in `DESCRIPTION`. Before it, `extract_doi()`
+silently truncated DOIs containing `<`, `>`, `[` or `]` — returning a
+shorter string that still looked like a valid DOI, with no warning and
+no `NA`. Roughly 0.38% of real DOIs are affected (SICI-style, common in
+older journal content), so without the floor this package produced
+quietly corrupted CSL-JSON.
+
+### Regenerating the test fixtures
+
+`data-raw/regenerate_fixtures.R` rebuilds `tests/fixtures/corpus_csl`,
+`corpus_bibtex`, `corpus_biblatex` and the `corpus_docs` text files.
+
+**It refuses to run outside a UTF-8 locale, and that guard matters.** In
+a C locale R renders non-ASCII author names as literal `<U+00F3>`
+escapes and pandoc writes `Bay\textless U+00F3\textgreater n` into the
+`.bib` fixtures. Commit that once and the mangled text silently becomes
+the expectation. (This is also why running the suite in a C locale shows
+failures CI never sees; the `.bib` comparisons are `skip_on_ci()`
+because they are pandoc-version sensitive.)
+
+The fixtures were last regenerated when the openalexPro floor went in:
+they had encoded the DOI truncation bug, i.e. they expected the wrong
+answer.
 
 #### Pandoc abstract guard (`.normalize_json_for_pandoc`)
 

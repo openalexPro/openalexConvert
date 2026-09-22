@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openalexConvert</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,6 +38,24 @@
       <small>Source: <a href="https://github.com/openalexPro/openalexConvert/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.4" id="openalexconvert-004">openalexConvert 0.0.4<a class="anchor" aria-label="anchor" href="#openalexconvert-004"></a></h2>
+<div class="section level3">
+<h3 id="require-openalexpro--0-0-4">Require openalexPro (&gt;= 0.11.0)<a class="anchor" aria-label="anchor" href="#require-openalexpro--0-0-4"></a></h3>
+<p><code>.normalize_doi()</code> delegates to <code>openalexPro::extract_doi(normalize = TRUE)</code> (<code>R/corpus_to_csljson.R:430</code>), and before openalexPro 0.11.0 that function silently truncated DOIs containing <code>&lt;</code>, <code>&gt;</code>, <code>[</code> or <code>]</code> – returning a shorter string that still looked like a valid DOI, with no warning and no <code>NA</code>. Roughly 0.38% of real DOIs are affected (SICI-style ones, common in older journal content).</p>
+<p>The dependency carried no version floor, so installing against an older openalexPro produced quietly corrupted DOIs in the CSL-JSON output.</p>
+</div>
+<div class="section level3">
+<h3 id="fixtures-regenerated-they-encoded-the-truncation-bug-0-0-4">Fixtures regenerated: they encoded the truncation bug<a class="anchor" aria-label="anchor" href="#fixtures-regenerated-they-encoded-the-truncation-bug-0-0-4"></a></h3>
+<p>Once the floor was in place the suite failed, because every comparison fixture had been recorded while <code>extract_doi()</code> was still truncating. The fixtures expected the <em>wrong</em> answer:</p>
+<pre><code><span><span class="va">generated</span><span class="op">:</span> <span class="st">"10.1659/0276-4741(2005)025[0206:pfbcs]2.0.co;2"</span>   <span class="op">&lt;-</span> <span class="va">correct</span></span>
+<span><span class="va">fixture</span><span class="op">:</span>   <span class="st">"10.1659/0276-4741(2005)025"</span>                       <span class="op">&lt;-</span> <span class="va">truncated</span></span></code></pre>
+<p>The BibTeX and BibLaTeX fixtures were stale in a second way: entries whose DOI had been lost now carry a <code>doi = {...}</code> field they previously lacked.</p>
+<p>Every difference was verified to be DOI-related before regenerating – 6 differing CSL fields and 187 differing <code>.bib</code> lines, all of them a DOI value or a <code>doi =</code> line (plus the trailing comma that appears on the line above a newly added field). Nothing else moved.</p>
+<p><code>data-raw/regenerate_fixtures.R</code> now does this reproducibly, and refuses to run outside a UTF-8 locale: in a C locale R renders non-ASCII author names as literal <code>&lt;U+00F3&gt;</code> escapes and pandoc writes <code>Bay\textless U+00F3\textgreater n</code> into the <code>.bib</code> files, which is exactly how a broken fixture gets committed and then becomes the expectation.</p>
+<p>The suite now passes: 119 pass / 0 fail, from 105 pass / 14 fail.</p>
+</div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.3" id="openalexconvert-003">openalexConvert 0.0.3<a class="anchor" aria-label="anchor" href="#openalexconvert-003"></a></h2>
 <div class="section level3">
@@ -70,7 +88,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>
