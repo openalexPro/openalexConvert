@@ -1,3 +1,22 @@
+# Pandoc's exact output formatting varies by version: r-universe builds with
+# pandoc 3.9, which omits `doi = {...}` where 3.12 writes it. Byte-comparing
+# generated output against a committed fixture therefore tests pandoc, not
+# this package, and fails wherever the two disagree. These comparisons used to
+# be hidden behind skip_on_ci(), which works on GitHub Actions but not on
+# r-universe, which does not set CI.
+#
+# Compare what csljson_convert_pandoc() is actually responsible for instead:
+# that every record in, comes out.
+bib_keys <- function(path) {
+  lines <- readLines(path, warn = FALSE, encoding = "UTF-8")
+  sort(sub("^@[^{]+\\{([^,]+),.*$", "\\1", grep("^@", lines, value = TRUE)))
+}
+
+work_ids <- function(path) {
+  txt <- readLines(path, warn = FALSE, encoding = "UTF-8")
+  sort(unique(unlist(regmatches(txt, gregexpr("W[0-9]{6,}", txt)))))
+}
+
 test_that("corpus_to_csljson creates valid chunked CSL JSON", {
   skip_if_not_installed("arrow")
   skip_if_not_installed("duckdb")
@@ -117,17 +136,12 @@ test_that("csljson_convert_pandoc to bibtex (directory) matches fixtures", {
     full.names = TRUE
   ))
   expect_equal(length(paths_btx), length(fx_btx))
-  # Exact-text comparison is Pandoc-version sensitive; skip in CI environments
-  skip_on_ci() # exact-text comparison is Pandoc-version sensitive
   for (f in fx_btx) {
     bn <- basename(f)
     gen <- file.path(out_btx, bn)
     expect_true(file.exists(gen), info = paste("missing generated:", bn))
-    expect_equal(
-      readLines(gen, warn = FALSE, encoding = "UTF-8"),
-      readLines(f, warn = FALSE, encoding = "UTF-8"),
-      info = paste("BibTeX differs for:", bn)
-    )
+    expect_equal(bib_keys(gen), bib_keys(f),
+                 info = paste("BibTeX entries differ for:", bn))
   }
 })
 
@@ -183,17 +197,12 @@ test_that("csljson_convert_pandoc to biblatex (directory) matches fixtures", {
     full.names = TRUE
   ))
   expect_equal(length(paths_blx), length(fx_blx))
-  # Exact-text comparison is Pandoc-version sensitive; skip in CI environments
-  skip_on_ci() # exact-text comparison is Pandoc-version sensitive
   for (f in fx_blx) {
     bn <- basename(f)
     gen <- file.path(out_blx, bn)
     expect_true(file.exists(gen), info = paste("missing generated:", bn))
-    expect_equal(
-      readLines(gen, warn = FALSE, encoding = "UTF-8"),
-      readLines(f, warn = FALSE, encoding = "UTF-8"),
-      info = paste("BibLaTeX differs for:", bn)
-    )
+    expect_equal(bib_keys(gen), bib_keys(f),
+                 info = paste("BibLaTeX entries differ for:", bn))
   }
 })
 
@@ -231,16 +240,11 @@ test_that("csljson_convert_pandoc to markdown matches fixture", {
   expect_true(any(grepl("^# +References$", md_txt)))
   expect_false(any(grepl("^:{3,}", md_txt)))
 
-  fx_docs_dir <- testthat::test_path("..", "fixtures", "corpus_docs")
-  skip_if_not(dir.exists(fx_docs_dir), "fixtures corpus_docs not available")
-  fx_md <- file.path(fx_docs_dir, "references.md")
-  expect_true(file.exists(fx_md))
-  # Exact-text comparison is Pandoc-version sensitive; skip in CI environments
-  skip_on_ci() # exact-text comparison is Pandoc-version sensitive
-  expect_equal(
-    readLines(md_path, warn = FALSE, encoding = "UTF-8"),
-    readLines(fx_md, warn = FALSE, encoding = "UTF-8")
-  )
+  # No fixture comparison here: markdown renders citations as author-year
+  # text, so the OpenAlex ids do not survive and there is nothing
+  # version-independent left to match on. The assertions above (References
+  # heading present, no stray ::: fences) are the contract.
+  expect_gt(length(md_txt), 100L)
 })
 
 test_that("csljson_convert_pandoc to latex matches fixture", {
@@ -276,12 +280,9 @@ test_that("csljson_convert_pandoc to latex matches fixture", {
   fx_tex <- file.path(fx_docs_dir, "references.tex")
   expect_true(file.exists(tex_path))
   expect_true(file.exists(fx_tex))
-  # Exact-text comparison is Pandoc-version sensitive; skip in CI environments
-  skip_on_ci() # exact-text comparison is Pandoc-version sensitive
-  expect_equal(
-    readLines(tex_path, warn = FALSE, encoding = "UTF-8"),
-    readLines(fx_tex, warn = FALSE, encoding = "UTF-8")
-  )
+  # \bibitem keys keep the OpenAlex ids, so the record set is comparable
+  # even though the surrounding LaTeX is not.
+  expect_equal(work_ids(tex_path), work_ids(fx_tex))
 })
 
 # test_that("csljson_convert_pandoc to docx content matches markdown output", {
@@ -376,10 +377,5 @@ test_that("csljson_convert_pandoc single-file bibtex works", {
   skip_if_not(dir.exists(fx_btx_dir), "fixtures corpus_bibtex not available")
   fx_bib <- file.path(fx_btx_dir, "chunk_1.bib")
   expect_true(file.exists(fx_bib))
-  # Exact-text comparison is Pandoc-version sensitive; skip in CI environments
-  skip_on_ci() # exact-text comparison is Pandoc-version sensitive
-  expect_equal(
-    readLines(path_out, warn = FALSE, encoding = "UTF-8"),
-    readLines(fx_bib, warn = FALSE, encoding = "UTF-8")
-  )
+  expect_equal(bib_keys(path_out), bib_keys(fx_bib))
 })

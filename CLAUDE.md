@@ -165,6 +165,15 @@ sensitive.)
 The fixtures were last regenerated when the openalexPro floor went in: they
 had encoded the DOI truncation bug, i.e. they expected the wrong answer.
 
+**Do not regenerate fixtures to fix a formatting difference.** The tests no
+longer byte-compare pandoc output: they compare citation keys (`bib_keys()`)
+and OpenAlex ids (`work_ids()`), which are pandoc-version independent. Exact
+text was compared until 0.0.5 and broke on r-universe, which builds with
+pandoc 3.9 and omits `doi = {...}` where 3.12 writes it. That comparison had
+been hidden behind `skip_on_ci()`, which GitHub Actions honours and
+r-universe does not. If a key or id comparison fails, records are genuinely
+being lost -- regenerating would hide a real bug.
+
 #### Pandoc abstract guard (`.normalize_json_for_pandoc`)
 
 Before bibtex/biblatex/formatted conversion, this re-serializes the JSON (for
