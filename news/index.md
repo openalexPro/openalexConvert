@@ -1,5 +1,37 @@
 # Changelog
 
+## openalexConvert 0.0.5
+
+### Tests no longer compare pandoc’s exact output
+
+Every r-universe check failed — Linux, macOS and Windows, all R versions
+— in `test-001-corpus_csl_pandoc.R`:
+
+    actual (r-universe):  year = {0000}
+    expected (fixture):   year = {0000},
+                          doi = {10.1163/9789004190351_002}
+
+r-universe builds with **pandoc 3.9**, which omits `doi = {...}` for
+these entry types; the fixtures had been regenerated in 0.0.4 on a
+machine with **pandoc 3.12**, which writes it. Same input, same code,
+different pandoc.
+
+Those five comparisons were guarded by `skip_on_ci()`, which GitHub
+Actions honours — so CI stayed green — but r-universe does not set `CI`,
+so they ran there.
+
+Byte-comparing pandoc’s output tests pandoc, not this package. The tests
+now compare what
+[`csljson_convert_pandoc()`](https://openalexpro.github.io/openalexConvert/reference/csljson_convert_pandoc.md)
+is actually responsible for: that every record in comes out. BibTeX and
+BibLaTeX compare citation keys, LaTeX compares the OpenAlex ids carried
+in `\bibitem`, and the markdown test keeps its structural assertions
+(markdown renders citations as author-year text, so no ids survive to
+match on).
+
+The `skip_on_ci()` guards are gone with them, so these five now run on
+every platform instead of being skipped on CI.
+
 ## openalexConvert 0.0.4
 
 ### Require openalexPro (\>= 0.11.0)

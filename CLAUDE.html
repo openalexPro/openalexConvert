@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">openalexConvert</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -118,6 +118,7 @@
 <p><code>data-raw/regenerate_fixtures.R</code> rebuilds <code>tests/fixtures/corpus_csl</code>, <code>corpus_bibtex</code>, <code>corpus_biblatex</code> and the <code>corpus_docs</code> text files.</p>
 <p><strong>It refuses to run outside a UTF-8 locale, and that guard matters.</strong> In a C locale R renders non-ASCII author names as literal <code>&lt;U+00F3&gt;</code> escapes and pandoc writes <code>Bay\textless U+00F3\textgreater n</code> into the <code>.bib</code> fixtures. Commit that once and the mangled text silently becomes the expectation. (This is also why running the suite in a C locale shows failures CI never sees; the <code>.bib</code> comparisons are <code>skip_on_ci()</code> because they are pandoc-version sensitive.)</p>
 <p>The fixtures were last regenerated when the openalexPro floor went in: they had encoded the DOI truncation bug, i.e. they expected the wrong answer.</p>
+<p><strong>Do not regenerate fixtures to fix a formatting difference.</strong> The tests no longer byte-compare pandoc output: they compare citation keys (<code>bib_keys()</code>) and OpenAlex ids (<code>work_ids()</code>), which are pandoc-version independent. Exact text was compared until 0.0.5 and broke on r-universe, which builds with pandoc 3.9 and omits <code>doi = {...}</code> where 3.12 writes it. That comparison had been hidden behind <code>skip_on_ci()</code>, which GitHub Actions honours and r-universe does not. If a key or id comparison fails, records are genuinely being lost – regenerating would hide a real bug.</p>
 <div class="section level4">
 <h4 id="pandoc-abstract-guard-normalize_json_for_pandoc">Pandoc abstract guard (<code>.normalize_json_for_pandoc</code>)<a class="anchor" aria-label="anchor" href="#pandoc-abstract-guard-normalize_json_for_pandoc"></a></h4>
 <p>Before bibtex/biblatex/formatted conversion, this re-serializes the JSON (for consistent encoding) and, for directory/chunk conversion, drops any abstract longer than <strong>10000 chars</strong> — long abstracts can stall pandoc/LaTeX. Single-file bibtex conversion calls it with <code>drop_long_abstracts = FALSE</code>. The returned <code>$sanitized</code> flag is surfaced in the verbose <code>[sanitized]</code> log marker.</p>
