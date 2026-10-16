@@ -242,9 +242,11 @@ test_that("csljson_convert_pandoc to markdown matches fixture", {
 
   # No fixture comparison here: markdown renders citations as author-year
   # text, so the OpenAlex ids do not survive and there is nothing
-  # version-independent left to match on. The assertions above (References
-  # heading present, no stray ::: fences) are the contract.
-  expect_gt(length(md_txt), 100L)
+  # version-independent left to match on. The assertions above -- non-empty,
+  # References heading present, no stray ::: fences -- are the contract.
+  #
+  # Nor a line-count floor: line count is pandoc-version sensitive too
+  # (wrapping differs), which is the same trap this commit exists to remove.
 })
 
 test_that("csljson_convert_pandoc to latex matches fixture", {
