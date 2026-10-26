@@ -10,7 +10,8 @@
 #' includes: title, year, DOI, container-title (venue), volume/issue/pages,
 #' authors (with basic given/family split and ORCID when present), URL/abstract,
 #' publisher and ISSN, language, keywords (collapsed to a single string), and an
-#' aggregated `note` with OA status and citation count. Records are processed in
+#' `note` whose first line is `OpenAlex: W...` (imported by Zotero into Extra),
+#' followed by OA status and citation count. Records are processed in
 #' DuckDB-backed chunks for low memory usage.
 #'
 #' @param project_dir Optional path to project directory. If provided, used to
@@ -520,6 +521,7 @@ corpus_to_csljson <- function(
 #' - Drops NULL and NA scalars
 #' - Normalizes character encoding to UTF-8 and strips control characters
 #' - Truncates abstract to 700 chars
+#' - Keeps line breaks in `note` (sanitizes each line)
 #' - Cleans author sublists (removes empty fields / NA ORCID)
 #'
 #' @noRd
@@ -559,6 +561,14 @@ corpus_to_csljson <- function(
           auths[[length(auths) + 1L]] <- a
         }
         out$author <- auths
+        next
+      }
+      if (identical(nm, "note") && is.character(val)) {
+        # keep the line breaks: each note line is one "Key: value" in Zotero
+        out$note <- paste(
+          .sanitize_csl_item(strsplit(val, "\n", fixed = TRUE)[[1]]),
+          collapse = "\n"
+        )
         next
       }
       out[[nm]] <- .sanitize_csl_item(val)
@@ -681,6 +691,11 @@ corpus_to_csljson <- function(
       parts_note <- c(parts_note, paste0("Citations:", rec$cited_by_count))
     }
     if (length(parts_note)) note_val <- paste(parts_note, collapse = "; ")
+  }
+  # First note line "OpenAlex: W..." -- Zotero imports the note into Extra
+  oa_id <- sub("^https?://openalex\\.org/", "", rec$id %||% "", ignore.case = TRUE)
+  if (nzchar(oa_id)) {
+    note_val <- paste(c(paste0("OpenAlex: ", oa_id), note_val), collapse = "\n")
   }
 
   it <- list(type = csl_type, id = rec$id %||% "", title = rec$title %||% "")

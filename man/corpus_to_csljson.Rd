@@ -46,6 +46,7 @@ to missing columns by falling back to \code{NULL}/empty values in SQL. Mapping
 includes: title, year, DOI, container-title (venue), volume/issue/pages,
 authors (with basic given/family split and ORCID when present), URL/abstract,
 publisher and ISSN, language, keywords (collapsed to a single string), and an
-aggregated \code{note} with OA status and citation count. Records are processed in
+\code{note} whose first line is \code{OpenAlex: W...} (imported by Zotero into Extra),
+followed by OA status and citation count. Records are processed in
 DuckDB-backed chunks for low memory usage.
 }

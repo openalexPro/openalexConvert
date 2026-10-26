@@ -64,10 +64,17 @@ single-file conversion — so `output` is one file (e.g. `corpus.bib`), not a
 directory of per-chunk files. (Passing the chunk directory straight to
 `csljson_convert_pandoc()` would instead produce a directory of `chunk_*.bib`.)
 
-`csljson_to_zotero_upload()` ([R/csljson_to_zotero_upload.R](R/csljson_to_zotero_upload.R))
-is independent of the above: it POSTs CSL JSON files to the Zotero Web API
-(`/groups/{id}/items`) using `httr2`, with `progressr` progress. API key comes
-from `ZOTERO_API_KEY`.
+`csljson_to_zotero()` ([R/csljson_to_zotero.R](R/csljson_to_zotero.R))
+imports CSL JSON files into Zotero. `method = "local"` POSTs each file to the
+running Zotero desktop app's connector endpoint
+(`http://127.0.0.1:23119/connector/import`); Zotero's own CSL JSON translator
+does the mapping, and items land in whatever library/collection is selected in
+Zotero (checked first via `/connector/getSelectedCollection`). Zotero imports CSL `note` into Extra, so
+the `OpenAlex: W...` line from `corpus_to_csljson()` ends up there. The body **must**
+be sent as `text/plain`: with `application/json` Zotero parses it itself, no
+translator matches, and every import returns 400. `method = "web"` (Zotero Web
+API) is a stub that errors "not implemented yet"; when built it needs Zotero
+item JSON (not CSL JSON) and at most 50 items per request.
 
 ### Key design points in the corpus→CSL mapping
 
@@ -112,8 +119,10 @@ Converts one SQL result row to a CSL item list. Notable behaviors:
   array, matched by index.
 - `issued` date-parts: prefers `publication_date` (split on `-` into year/month/day),
   falling back to `year` alone.
-- An aggregated `note` field encodes OA status and citation count
-  (`OA:true; OA_status:gold; Citations:42`) since CSL has no native fields for these.
+- `note` is newline-separated "Key: value" lines (Zotero imports it into
+  Extra): first `OpenAlex: W...` from `id`, then OA status and citation count
+  (`OA:true; OA_status:gold; Citations:42`) since CSL has no native fields for
+  these. `.sanitize_csl_item` sanitizes `note` per line so the newline survives.
 - Keywords (from `concepts`) are collapsed to a single `"; "`-joined string.
 - ISBN is only emitted for `book`/`chapter`/`report` types — but since the SQL
   always nulls ISBN, this branch is currently dead unless the SQL is changed too.
