@@ -22,6 +22,10 @@ New `csljson_to_zotero(files, method = c("local", "web"))`:
   lacks. Both keep the Zotero item key, notes, attachments, tags and
   collections. They need Zotero 10's local API and a one-time "Always Allow"
   in Zotero.
+- Existing items are recognised whichever form their Extra uses for the ID:
+  `OpenAlex: W...` (written by this package), `OpenAlex: https://openalex.org/W...`
+  (Zotero's OpenAlex translators), `openalex.work_id: W...` (zotero-openalex
+  plugin) or `OpenAlex Work ID: W...` (open-alex-work-id plugin).
 - `method = "web"` (headless upload via the Zotero Web API) is not implemented
   yet and raises an error.
 

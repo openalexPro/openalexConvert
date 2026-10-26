@@ -80,8 +80,13 @@ Re-exports (`existing = "skip"/"update"/"overwrite"`) use Zotero 10's **local
 API** (`/api/users/0/...` or `/api/groups/<id>/...`), which accepts writes in
 Web API format. The selected library is matched to a group by *name* (the
 connector only reports the local libraryID). The index of existing items comes
-from a `q=OpenAlex&qmode=everything` search, filtered by the `OpenAlex: W...`
-line in Extra. "update"/"overwrite" never write Zotero JSON themselves: they
+from a `q=OpenAlex&qmode=everything` search, filtered by `.extra_openalex_id()`.
+Convention across the ecosystem: **write** `OpenAlex: W...`, **read** all four
+forms in use -- `OpenAlex: W...` (ours, IPBES pipeline),
+`OpenAlex: https://openalex.org/W...` (Zotero's OpenAlex translators, which
+replace all of Extra), `openalex.work_id: W...` (zotero-openalex plugin) and
+`OpenAlex Work ID: W...` (open-alex-work-id plugin). A new form found in the
+wild belongs in `.extra_openalex_id()` and its test. "update"/"overwrite" never write Zotero JSON themselves: they
 import the items via the connector (so Zotero maps CSL -> Zotero), POST the
 resulting fields onto the old item (key/version of the old item; tags,
 collections, relations untouched), then DELETE the imported copies. Writes

@@ -18,7 +18,10 @@
 #'
 #' @section Items already in Zotero:
 #' Before importing, the selected **library** (all of it, not only the selected
-#' collection) is searched for items whose Extra contains `OpenAlex: W...`.
+#' collection) is searched for items whose Extra holds an OpenAlex ID, in any
+#' of the forms in use: `OpenAlex: W...` (written by this package),
+#' `OpenAlex: https://openalex.org/W...` (Zotero's OpenAlex translators),
+#' `openalex.work_id: W...` and `OpenAlex Work ID: W...` (two Zotero plugins).
 #' Items whose OpenAlex ID is not found there (or that have none) are imported.
 #' Items already there are handled by `existing`:
 #'
@@ -235,13 +238,23 @@ csljson_to_zotero <- function(
   sub("^https?://openalex\\.org/", "", id %||% "", ignore.case = TRUE)
 }
 
-#' OpenAlex ID from a Zotero Extra field ("OpenAlex: W123" line), or NA
+#' OpenAlex ID ("W123") from a Zotero Extra field, or NA
+#'
+#' Reads every form in use (key case-insensitive):
+#' - `OpenAlex: W123` -- written by this package and the IPBES pipeline
+#' - `OpenAlex: https://openalex.org/W123` -- Zotero's OpenAlex translators
+#' - `openalex.work_id: W123` -- the zotero-openalex plugin
+#' - `OpenAlex Work ID: W123` -- the open-alex-work-id plugin
 #'
 #' @noRd
 .extra_openalex_id <- function(extra) {
   extra <- extra %||% ""
-  m <- regmatches(extra, regexec("(?m)^OpenAlex: *(W\\d+)", extra, perl = TRUE))[[1]]
-  if (length(m)) m[[2]] else NA_character_
+  m <- regmatches(extra, regexec(
+    "(?im)^\\s*(?:openalex(?: work id)?|openalex\\.work_id)\\s*:\\s*(?:https?://(?:www\\.)?openalex\\.org/)?(w\\d+)\\s*$",
+    extra,
+    perl = TRUE
+  ))[[1]]
+  if (length(m)) toupper(m[[2]]) else NA_character_
 }
 
 #' Send CSL items to Zotero's connector import

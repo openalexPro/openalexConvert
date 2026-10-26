@@ -67,7 +67,10 @@ Zotero imports the CSL \code{note} into \strong{Extra}; for files written by
 \section{Items already in Zotero}{
 
 Before importing, the selected \strong{library} (all of it, not only the selected
-collection) is searched for items whose Extra contains \code{OpenAlex: W...}.
+collection) is searched for items whose Extra holds an OpenAlex ID, in any
+of the forms in use: \code{OpenAlex: W...} (written by this package),
+\verb{OpenAlex: https://openalex.org/W...} (Zotero's OpenAlex translators),
+\code{openalex.work_id: W...} and \verb{OpenAlex Work ID: W...} (two Zotero plugins).
 Items whose OpenAlex ID is not found there (or that have none) are imported.
 Items already there are handled by \code{existing}:
 \itemize{

@@ -197,6 +197,37 @@ test_that("OpenAlex ID is read from Zotero's Extra", {
   expect_true(is.na(.extra_openalex_id("no id here")))
 })
 
+test_that("all known Extra forms of the OpenAlex ID are read", {
+  forms <- c(
+    "OpenAlex: W2112574986", # this package, IPBES pipeline
+    "OpenAlex: https://openalex.org/W2112574986", # Zotero's OpenAlex translators
+    "openalex.work_id: W2112574986", # zotero-openalex plugin
+    "OpenAlex Work ID: W2112574986", # open-alex-work-id plugin
+    "openalex: https://OpenAlex.org/w2112574986 ", # case, trailing space
+    "Citation Key: x\nopenalex.cit_count: 5\nopenalex.work_id: W2112574986"
+  )
+  for (f in forms) expect_equal(.extra_openalex_id(f), "W2112574986", label = f)
+
+  # not an ID line, or an ID of another entity
+  for (f in c("see OpenAlex: W1 in the text", "OpenAlex: A5023888391", "OpenAlex: W12x")) {
+    expect_true(is.na(.extra_openalex_id(f)), label = f)
+  }
+})
+
+test_that("skip recognises items whose Extra uses another form", {
+  log <- mock_zotero(list(
+    "GET /api/users/0/items" = list(body = jsonlite::toJSON(list(
+      list(data = list(key = "K1", version = 1L, extra = "OpenAlex: https://openalex.org/W1")),
+      list(data = list(key = "K2", version = 1L, extra = "openalex.work_id: W2")),
+      list(data = list(key = "K3", version = 1L, extra = "OpenAlex Work ID: W3"))
+    ), auto_unbox = TRUE)),
+    "POST /connector/import" = list(status = 201L, body = '[{"key":"N"}]')
+  ))
+  res <- suppressMessages(csljson_to_zotero(csl_files(1L, ids = c("W1", "W2", "W3", "W4"))))
+  expect_equal(res$n_skipped, 3L)
+  expect_equal(res$n_items, 1L)
+})
+
 test_that("CSL note starts with the OpenAlex id line (Zotero Extra)", {
   out <- tempfile("csl_")
   corpus_to_csljson(
