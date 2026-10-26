@@ -1,3 +1,43 @@
+# openalexConvert (development version)
+
+## Zotero import rewritten
+
+`csljson_to_zotero_upload()` is removed. It POSTed CSL JSON to the Zotero Web
+API, which only accepts Zotero item JSON and at most 50 items per request, so
+real uploads could not succeed; its tests only exercised mocked responses.
+
+New `csljson_to_zotero(files, method = c("local", "web"))`:
+
+- `method = "local"` imports CSL JSON files (e.g. the chunks from
+  `corpus_to_csljson()`) into the running Zotero desktop app via its local
+  connector endpoint. Zotero's own CSL JSON importer does the mapping, and
+  items go into the library or collection selected in Zotero; select a group
+  library to import into the group. Verified against Zotero 10.0.6.
+- Each item's OpenAlex ID ends up in Zotero's Extra field as `OpenAlex: W...`
+  (see below).
+- Re-exports: `existing = c("skip", "update", "overwrite")` decides what
+  happens to items whose OpenAlex ID is already in the selected Zotero library.
+  `"skip"` (default) leaves them alone; `"update"` writes the new metadata but
+  keeps fields it lacks; `"overwrite"` replaces all fields and empties those it
+  lacks. Both keep the Zotero item key, notes, attachments, tags and
+  collections. They need Zotero 10's local API and a one-time "Always Allow"
+  in Zotero.
+- Existing items are recognised whichever form their Extra uses for the ID:
+  `OpenAlex: W...` (written by this package), `OpenAlex: https://openalex.org/W...`
+  (Zotero's OpenAlex translators), `openalex.work_id: W...` (zotero-openalex
+  plugin) or `OpenAlex Work ID: W...` (open-alex-work-id plugin).
+- `method = "web"` (headless upload via the Zotero Web API) is not implemented
+  yet and raises an error.
+
+## OpenAlex ID in the CSL `note`
+
+`corpus_to_csljson()` now writes `note` as lines, the first being
+`OpenAlex: W...` (followed by the existing `OA:...; OA_status:...; Citations:...`
+line). Zotero imports `note` into Extra, so the ID is kept however the CSL JSON
+reaches Zotero, including File → Import. The CSL test fixtures were regenerated;
+only `note` changed. BibTeX/BibLaTeX output is unchanged (pandoc does not write
+`note`).
+
 # openalexConvert 0.0.5
 
 ## Tests no longer compare pandoc's exact output
