@@ -15,6 +15,13 @@ New `csljson_to_zotero(files, method = c("local", "web"))`:
   library to import into the group. Verified against Zotero 10.0.6.
 - Each item's OpenAlex ID ends up in Zotero's Extra field as `OpenAlex: W...`
   (see below).
+- Re-exports: `existing = c("skip", "update", "overwrite")` decides what
+  happens to items whose OpenAlex ID is already in the selected Zotero library.
+  `"skip"` (default) leaves them alone; `"update"` writes the new metadata but
+  keeps fields it lacks; `"overwrite"` replaces all fields and empties those it
+  lacks. Both keep the Zotero item key, notes, attachments, tags and
+  collections. They need Zotero 10's local API and a one-time "Always Allow"
+  in Zotero.
 - `method = "web"` (headless upload via the Zotero Web API) is not implemented
   yet and raises an error.
 

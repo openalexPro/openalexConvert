@@ -76,6 +76,19 @@ translator matches, and every import returns 400. `method = "web"` (Zotero Web
 API) is a stub that errors "not implemented yet"; when built it needs Zotero
 item JSON (not CSL JSON) and at most 50 items per request.
 
+Re-exports (`existing = "skip"/"update"/"overwrite"`) use Zotero 10's **local
+API** (`/api/users/0/...` or `/api/groups/<id>/...`), which accepts writes in
+Web API format. The selected library is matched to a group by *name* (the
+connector only reports the local libraryID). The index of existing items comes
+from a `q=OpenAlex&qmode=everything` search, filtered by the `OpenAlex: W...`
+line in Extra. "update"/"overwrite" never write Zotero JSON themselves: they
+import the items via the connector (so Zotero maps CSL -> Zotero), POST the
+resulting fields onto the old item (key/version of the old item; tags,
+collections, relations untouched), then DELETE the imported copies. Writes
+need the `Zotero-Server-ID` header (from any response) and a key from
+`POST /api/local/authorize` (user dialog; only "Always Allow" gives a reusable
+key, cached in `.zotero_env` for the session).
+
 ### Key design points in the corpus→CSL mapping
 
 #### Schema resilience (`.build_select_sql`)

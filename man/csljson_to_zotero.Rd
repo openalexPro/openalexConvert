@@ -7,7 +7,9 @@
 csljson_to_zotero(
   files,
   method = c("local", "web"),
+  existing = c("skip", "update", "overwrite"),
   url = "http://127.0.0.1:23119",
+  api_key = Sys.getenv("ZOTERO_LOCAL_API_KEY"),
   timeout = 3600
 )
 }
@@ -18,8 +20,16 @@ points to an existing directory, all \verb{*.json} files in that directory
 
 \item{method}{\code{"local"} (default) or \code{"web"}. See Description.}
 
-\item{url}{Base URL of the local Zotero connector server. Default
+\item{existing}{\code{"skip"} (default), \code{"update"} or \code{"overwrite"}: what to do
+with items whose OpenAlex ID is already in the selected Zotero library.
+See "Items already in Zotero".}
+
+\item{url}{Base URL of the local Zotero server. Default
 \code{"http://127.0.0.1:23119"}.}
+
+\item{api_key}{Key for Zotero's local API, only needed for
+\code{existing = "update"} or \code{"overwrite"}. Defaults to
+\code{Sys.getenv("ZOTERO_LOCAL_API_KEY")}; if empty, Zotero is asked for one.}
 
 \item{timeout}{Seconds to wait for Zotero to import one file. Default
 \code{3600}; a 10000-item chunk takes several minutes.}
@@ -28,38 +38,68 @@ points to an existing directory, all \verb{*.json} files in that directory
 Invisibly, a data.frame with one row per file and columns:
 \describe{
 \item{file}{Path to the CSL JSON file.}
-\item{status_code}{HTTP status code returned by Zotero (\code{201} on success).}
-\item{ok}{Logical; \code{TRUE} if the file was imported.}
-\item{n_items}{Number of items Zotero reports as imported.}
-\item{message}{Character; error text if the import failed.}
+\item{status_code}{HTTP status code of the last import request (\code{201} on
+success, \code{NA} if nothing had to be imported).}
+\item{ok}{Logical; \code{TRUE} if every step for the file succeeded.}
+\item{n_items}{Number of new items imported.}
+\item{n_skipped}{Number of items skipped because they already exist.}
+\item{n_updated}{Number of existing Zotero items updated or overwritten.}
+\item{message}{Character; error text if something failed.}
 }
 }
 \description{
 Import one or more CSL JSON files (e.g. the chunks written by
 \code{\link[=corpus_to_csljson]{corpus_to_csljson()}}) into Zotero.
 \itemize{
-\item \code{method = "local"} sends each file to a running Zotero desktop app via its
-local connector endpoint (\verb{/connector/import}, the endpoint the browser
-connector uses). Zotero's own CSL JSON importer does the mapping. Items
-go into the library or collection \strong{currently selected in Zotero}; select
-a group library there to import into the group, and Zotero sync uploads
-them.
+\item \code{method = "local"} sends the items to a running Zotero desktop app via
+its local connector endpoint
+(\verb{/connector/import}, the endpoint the browser connector uses). Zotero's
+own CSL JSON importer does the mapping. Items go into the library or
+collection \strong{currently selected in Zotero}; select a group library there
+to import into the group, and Zotero sync uploads them.
 \item \code{method = "web"} (headless upload via the Zotero Web API) is not
 implemented yet and raises an error.
 }
 
 Zotero imports the CSL \code{note} into \strong{Extra}; for files written by
 \code{\link[=corpus_to_csljson]{corpus_to_csljson()}} its first line is the item's \code{OpenAlex: W...}.
+}
+\section{Items already in Zotero}{
 
-Importing the same files twice creates duplicate items.
+Before importing, the selected \strong{library} (all of it, not only the selected
+collection) is searched for items whose Extra contains \code{OpenAlex: W...}.
+Items whose OpenAlex ID is not found there (or that have none) are imported.
+Items already there are handled by \code{existing}:
+\itemize{
+\item \code{"skip"} (default): left untouched and not imported.
+\item \code{"update"}: the existing Zotero item gets the new metadata; fields the
+new metadata does not have keep their old values.
+\item \code{"overwrite"}: all fields of the existing Zotero item are replaced by the
+new metadata; fields it does not have are emptied.
+}
+
+With \code{"update"} and \code{"overwrite"} the existing item keeps its item key,
+child notes and attachments, tags, collections and related items.
+Technically, the items are imported with Zotero's CSL JSON importer, their
+fields are copied onto the existing items, and the imported copies are
+deleted again.
+
+\code{"update"} and \code{"overwrite"} write through Zotero's local API, which needs
+Zotero 10 or later and a key. If \code{api_key} is empty, Zotero shows a dialog asking to allow access for
+"openalexConvert": choose \strong{Always Allow} (a key allowed once is only good
+for a single write). The key is kept for the rest of the R session.
 
 Progress is reported via the \pkg{progressr} package.
 }
+
 \examples{
 \dontrun{
 # In Zotero, select the target library or collection first.
 res <- csljson_to_zotero("csljson")  # directory with chunk_1.json, ...
 subset(res, !ok)
+
+# Re-export after the corpus was updated: refresh what is already there
+csljson_to_zotero("csljson", existing = "update")
 }
 
 }
