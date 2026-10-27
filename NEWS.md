@@ -1,4 +1,4 @@
-# openalexConvert (development version)
+# openalexConvert 0.1.0
 
 ## Zotero import rewritten
 
@@ -28,6 +28,9 @@ New `csljson_to_zotero(files, method = c("local", "web"))`:
   plugin) or `OpenAlex Work ID: W...` (open-alex-work-id plugin).
 - `method = "web"` (headless upload via the Zotero Web API) is not implemented
   yet and raises an error.
+- The help page's "Speed" section gives measured import times: Zotero slows
+  as the library grows (17.5 works/s at 440 items, 6.1 works/s at 4440), so
+  100000 works take hours.
 
 ## OpenAlex ID in the CSL `note`
 
