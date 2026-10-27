@@ -599,7 +599,6 @@ test_that("collection: a refused creation is an error", {
 })
 
 test_that("collection: a non-JSON error response gives the Zotero message", {
-  skip("Known bug: the response body is parsed as JSON before the status check, so a plain-text error is a jsonlite parse error")
   api <- list(url = "http://127.0.0.1:23119", prefix = "/api/users/0", server_id = "SID", key = "KEY")
   mock_zotero(list(
     "GET /api/users/0/collections" = list(body = "[]"),
@@ -630,6 +629,9 @@ test_that("local API key: refused or one-off access is an error", {
   .zotero_env$key <- NULL
   api <- list(url = "http://127.0.0.1:23119", prefix = "/api/users/0", server_id = "SID")
   mock_zotero(list("POST /api/local/authorize" = list(status = 403L, body = "{}")))
+  expect_error(suppressMessages(.zotero_local_key(api)), "did not grant write access")
+  # a plain-text (non-JSON) error body gives the same message
+  mock_zotero(list("POST /api/local/authorize" = list(status = 403L, body = "Forbidden")))
   expect_error(suppressMessages(.zotero_local_key(api)), "did not grant write access")
 
   mock_zotero(list(

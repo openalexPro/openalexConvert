@@ -469,8 +469,9 @@ csljson_to_zotero <- function(
     httr2::req_timeout(600) |>
     httr2::req_error(is_error = function(resp) FALSE) |>
     httr2::req_perform()
-  body <- jsonlite::fromJSON(httr2::resp_body_string(resp), simplifyVector = FALSE)
-  if (httr2::resp_status(resp) != 200L || is.null(body$key)) {
+  # status first: an error body may be plain text, not JSON
+  body <- if (httr2::resp_status(resp) == 200L) jsonlite::fromJSON(httr2::resp_body_string(resp), simplifyVector = FALSE) else list()
+  if (is.null(body$key)) {
     stop("Zotero did not grant write access (needed for existing = \"update\" or \"overwrite\", and for tags).", call. = FALSE)
   }
   if (!isTRUE(body$remember)) {
@@ -692,8 +693,9 @@ csljson_to_zotero <- function(
       ) |>
       httr2::req_error(is_error = function(resp) FALSE) |>
       httr2::req_perform()
-    body <- jsonlite::fromJSON(httr2::resp_body_string(resp), simplifyVector = FALSE)
-    if (httr2::resp_status(resp) != 200L || !length(body$success)) {
+    # status first: an error body may be plain text, not JSON
+    body <- if (httr2::resp_status(resp) == 200L) jsonlite::fromJSON(httr2::resp_body_string(resp), simplifyVector = FALSE) else list()
+    if (!length(body$success)) {
       stop("Could not create Zotero collection '", name, "': ", substr(httr2::resp_body_string(resp), 1L, 500L), call. = FALSE)
     }
     parent <- body$success[[1]]

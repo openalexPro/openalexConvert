@@ -1,6 +1,11 @@
 # openalexConvert (development version)
 
 - License changed from GPL (>= 2) to MIT.
+- `csljson_to_zotero()`: when Zotero refused to create a collection or to
+  grant write access with a plain-text error (e.g. `Forbidden`), the response
+  was parsed as JSON before its status was checked, so the user saw an
+  unhelpful jsonlite "lexical error" instead of the intended message. The
+  status is now checked first.
 
 # openalexConvert 0.1.0
 
