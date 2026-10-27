@@ -11,6 +11,9 @@
   written as `article-journal`, and the ISSN never fell back to the work's list
   of ISSNs when the ISSN-L was missing. Books now stay `book`, preprints become
   `manuscript`, and the ISSN fallback works.
+- `corpus_to_csljson()` wrote `OA_status:NA` into the note (and so into
+  Zotero's Extra field) for works without an open-access status. A missing
+  status is now left out.
 - `csljson_to_zotero()`: when Zotero refused to create a collection or to
   grant write access with a plain-text error (e.g. `Forbidden`), the response
   was parsed as JSON before its status was checked, so the user saw an

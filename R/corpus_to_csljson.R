@@ -689,7 +689,7 @@ corpus_to_csljson <- function(
     if (!is.null(rec$is_oa) && !is.na(rec$is_oa)) {
       parts_note <- c(parts_note, paste0("OA:", as.character(rec$is_oa)))
     }
-    if (!is.null(rec$oa_status) && nzchar(rec$oa_status)) {
+    if (!is.null(rec$oa_status) && !is.na(rec$oa_status) && nzchar(rec$oa_status)) {
       parts_note <- c(parts_note, paste0("OA_status:", rec$oa_status))
     }
     if (!is.null(rec$cited_by_count) && !is.na(rec$cited_by_count)) {

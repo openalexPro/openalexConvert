@@ -294,7 +294,6 @@ test_that("issued date-parts survive into the written CSL JSON", {
 })
 
 test_that("a missing OA status is left out of the note", {
-  skip("Known bug: a NULL oa_status is written as 'OA_status:NA' (nzchar(NA) is TRUE)")
   it <- .map_record_to_csl(csl_rec(id = "W1", is_oa = TRUE, oa_status = NA_character_))
   expect_equal(it$note, "OpenAlex: W1\nOA:TRUE")
 })
