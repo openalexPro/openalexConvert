@@ -245,3 +245,57 @@ test_that("CSL note starts with the OpenAlex id line (Zotero Extra)", {
   # the newline survives sanitizing; the OA/citation line follows
   expect_match(notes[[1]], "^OpenAlex: W\\d+\nOA:")
 })
+
+# local API answer: items with Extra and tags
+tagged_items <- function(...) {
+  jsonlite::toJSON(list(...), auto_unbox = TRUE)
+}
+
+test_that("zotero_tags writes one row per item and tag", {
+  mock_zotero(list("GET /api/users/0/items" = list(body = tagged_items(
+    list(data = list(key = "K1", extra = "OpenAlex: W1", tags = list(
+      list(tag = "include"), list(tag = "Ecology", type = 1L)
+    ))),
+    list(data = list(key = "K2", extra = "openalex.work_id: W2", tags = list())),
+    list(data = list(key = "K3", extra = "no id", tags = list(list(tag = "lost"))))
+  ))))
+  out <- tempfile(fileext = ".parquet")
+  expect_message(tags <- zotero_tags(output = out), "2 tag\\(s\\) on 1 work")
+  expect_equal(tags$openalex_id, c("W1", "W1"))
+  expect_equal(tags$tag, c("include", "Ecology"))
+  expect_equal(tags$type, c(0L, 1L))
+  expect_equal(tags$zotero_library, c(0L, 0L))
+  expect_equal(tags$zotero_key, c("K1", "K1"))
+  expect_equal(as.data.frame(arrow::read_parquet(out)), tags)
+})
+
+test_that("zotero_tags replaces this library's rows, keeps other libraries", {
+  out <- tempfile(fileext = ".parquet")
+  item <- function(tag) {
+    tagged_items(list(data = list(key = "K", extra = "OpenAlex: W1", tags = list(list(tag = tag)))))
+  }
+  mock_zotero(list("GET /api/users/0/items" = list(body = item("old"))))
+  suppressMessages(zotero_tags(output = out))
+  mock_zotero(list(
+    "POST /connector/getSelectedCollection" = list(
+      body = '{"libraryName":"Team","name":"Team","id":null,"editable":false}'
+    ),
+    "GET /api/users/0/groups" = list(body = '[{"id":42,"data":{"name":"Team"}}]'),
+    "GET /api/groups/42/items" = list(body = item("group"))
+  ))
+  suppressMessages(zotero_tags(output = out))
+  mock_zotero(list("GET /api/users/0/items" = list(body = item("new"))))
+  suppressMessages(zotero_tags(output = out))
+
+  res <- as.data.frame(arrow::read_parquet(out))
+  expect_equal(res$tag[order(res$zotero_library)], c("new", "group"))
+  expect_setequal(res$zotero_library, c(0L, 42L))
+})
+
+test_that("zotero_tags writes an empty table when nothing is tagged", {
+  mock_zotero()
+  out <- tempfile(fileext = ".parquet")
+  tags <- suppressMessages(zotero_tags(output = out))
+  expect_equal(nrow(arrow::read_parquet(out)), 0L)
+  expect_named(tags, c("openalex_id", "tag", "type", "zotero_library", "zotero_key"))
+})

@@ -94,6 +94,13 @@ need the `Zotero-Server-ID` header (from any response) and a key from
 `POST /api/local/authorize` (user dialog; only "Always Allow" gives a reusable
 key, cached in `.zotero_env` for the session).
 
+`zotero_tags()` ([R/zotero_tags.R](R/zotero_tags.R)) goes the other way for
+tags only: it reuses `.zotero_openalex_index()` (whose item data carries the
+tags), flattens them to one row per OpenAlex ID x tag x Zotero item, and writes
+`<project_dir>/zotero_tags.parquet` -- a sidecar next to `parquet/`, never a
+column in the corpus, because openalexPro rewrites the corpus on re-fetch.
+Rows of the current library are replaced, other libraries' rows kept.
+
 ### Key design points in the corpus→CSL mapping
 
 #### Schema resilience (`.build_select_sql`)
@@ -114,7 +121,8 @@ mapping never assumes a column exists. The function:
   applies to venue name, venue type, publisher, `issn_l`, and `issn`. If you touch
   venue handling, keep all five expressions consistent.
 - Uses DuckDB struct/list navigation directly in SQL: dotted paths like
-  `primary_location.source.display_name`, and `list_transform(authorships, x -> ...)`
+  `primary_location.source.display_name`, and `list_transform(authorships, lambda x: ...)`
+  (not `x -> ...`: current DuckDB rejects the arrow form)
   to pluck author display names and ORCIDs into parallel arrays.
 - `url` is a `COALESCE` priority chain: `doi_url` → `open_access.oa_url` →
   `primary_location.landing_page_url` → `id`.

@@ -113,20 +113,7 @@ csljson_to_zotero <- function(
   stopifnot(length(files) > 0L)
 
   # Zotero must be running, and the selected target must accept new items
-  target <- tryCatch(
-    httr2::request(url) |>
-      httr2::req_url_path("/connector/getSelectedCollection") |>
-      httr2::req_body_json(list()) |>
-      httr2::req_perform() |>
-      httr2::resp_body_string() |>
-      jsonlite::fromJSON(simplifyVector = FALSE),
-    error = function(e) {
-      stop(
-        "Cannot reach Zotero at ", url, ". Is the Zotero desktop app running?",
-        call. = FALSE
-      )
-    }
-  )
+  target <- .zotero_selected(url)
   if (!isTRUE(target$editable)) {
     stop(
       "The library/collection selected in Zotero ('", target$name,
@@ -255,6 +242,26 @@ csljson_to_zotero <- function(
     perl = TRUE
   ))[[1]]
   if (length(m)) toupper(m[[2]]) else NA_character_
+}
+
+#' Library/collection selected in Zotero; errors if Zotero is not running
+#'
+#' @noRd
+.zotero_selected <- function(url) {
+  tryCatch(
+    httr2::request(url) |>
+      httr2::req_url_path("/connector/getSelectedCollection") |>
+      httr2::req_body_json(list()) |>
+      httr2::req_perform() |>
+      httr2::resp_body_string() |>
+      jsonlite::fromJSON(simplifyVector = FALSE),
+    error = function(e) {
+      stop(
+        "Cannot reach Zotero at ", url, ". Is the Zotero desktop app running?",
+        call. = FALSE
+      )
+    }
+  )
 }
 
 #' Send CSL items to Zotero's connector import
