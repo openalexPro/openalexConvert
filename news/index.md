@@ -1,5 +1,32 @@
 # Changelog
 
+## openalexConvert 0.1.1
+
+- License changed from GPL (\>= 2) to MIT.
+- [`corpus_to_csljson()`](https://openalexpro.github.io/openalexConvert/reference/corpus_to_csljson.md)
+  wrote every item’s publication date as an empty
+  `"issued": {"date-parts": []}`: the internal sanitizer only kept named
+  list elements, so the unnamed date-parts list was emptied. All dates
+  were lost in the CSL JSON and in everything converted from it
+  (BibTeX/BibLaTeX had no usable year, citations showed “n.d.”). Dates
+  are now written.
+- [`corpus_to_csljson()`](https://openalexpro.github.io/openalexConvert/reference/corpus_to_csljson.md)
+  treated a missing (NA) ISBN or ISSN-L as present, because `nzchar(NA)`
+  is `TRUE`. As a result every book and preprint was written as
+  `article-journal`, and the ISSN never fell back to the work’s list of
+  ISSNs when the ISSN-L was missing. Books now stay `book`, preprints
+  become `manuscript`, and the ISSN fallback works.
+- [`corpus_to_csljson()`](https://openalexpro.github.io/openalexConvert/reference/corpus_to_csljson.md)
+  wrote `OA_status:NA` into the note (and so into Zotero’s Extra field)
+  for works without an open-access status. A missing status is now left
+  out.
+- [`csljson_to_zotero()`](https://openalexpro.github.io/openalexConvert/reference/csljson_to_zotero.md):
+  when Zotero refused to create a collection or to grant write access
+  with a plain-text error (e.g. `Forbidden`), the response was parsed as
+  JSON before its status was checked, so the user saw an unhelpful
+  jsonlite “lexical error” instead of the intended message. The status
+  is now checked first.
+
 ## openalexConvert 0.1.0
 
 ### Zotero import rewritten
