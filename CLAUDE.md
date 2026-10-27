@@ -94,6 +94,9 @@ need the `Zotero-Server-ID` header (from any response) and a key from
 `POST /api/local/authorize` (user dialog; only "Always Allow" gives a reusable
 key, cached in `.zotero_env` for the session).
 
+`corpus_to_zotero()` ([R/corpus_to_zotero.R](R/corpus_to_zotero.R)) is the
+one-shot wrapper (corpus -> temp CSL JSON, 1000 works per chunk -> `csljson_to_zotero()`).
+
 `zotero_tags()` ([R/zotero_tags.R](R/zotero_tags.R)) goes the other way for
 tags only: it reuses `.zotero_openalex_index()` (whose item data carries the
 tags), flattens them to one row per OpenAlex ID x tag x Zotero item, and writes
