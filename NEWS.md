@@ -6,6 +6,11 @@
   elements, so the unnamed date-parts list was emptied. All dates were lost in
   the CSL JSON and in everything converted from it (BibTeX/BibLaTeX had no
   usable year, citations showed "n.d."). Dates are now written.
+- `corpus_to_csljson()` treated a missing (NA) ISBN or ISSN-L as present,
+  because `nzchar(NA)` is `TRUE`. As a result every book and preprint was
+  written as `article-journal`, and the ISSN never fell back to the work's list
+  of ISSNs when the ISSN-L was missing. Books now stay `book`, preprints become
+  `manuscript`, and the ISSN fallback works.
 - `csljson_to_zotero()`: when Zotero refused to create a collection or to
   grant write access with a plain-text error (e.g. `Forbidden`), the response
   was parsed as JSON before its status was checked, so the user saw an

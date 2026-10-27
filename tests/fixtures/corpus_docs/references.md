@@ -10,9 +10,9 @@ Royal Society Journal of the History of Science* 62 (2): 211--21.
 <https://doi.org/10.1098/rsnr.2007.0050>.
 
 Ahlheim, Michael, and Oliver Frör. 2010. "Drinking and Protecting: A
-Market Approach to the Preservation of Cork Oak Landscapes." *RePEc:
-Research Papers in Economics*, January 1.
-<https://econpapers.repec.org/RePEc:zbw:fziddp:122010>.
+Market Approach to the Preservation of Cork Oak Landscapes." In *RePEc:
+Research Papers in Economics*. Federal Reserve Bank of St. Louis,
+January 1. <https://econpapers.repec.org/RePEc:zbw:fziddp:122010>.
 
 Alänge, Sverker, Ulf Petrusson, Sari Scheinberg, and Rolando Jiménez.
 2006. *Intellectual Properties: Alternative Strategies to Value Creation
@@ -46,7 +46,8 @@ of America August 2009." *Bulletin of the Ecological Society of America*
 
 Arriaza, Manuel, José Ramón Sánchez Guzmán, Olexandr Nekhay, and José A.
 Gómez‐Limón. 2005. "Marginality and Restoration of Olive Plantations in
-Andalusia." *RePEc: Research Papers in Economics*, January 1.
+Andalusia." In *RePEc: Research Papers in Economics*. Federal Reserve
+Bank of St. Louis, January 1.
 <https://ageconsearch.umn.edu/bitstream/24603/1/pp05ar02.pdf>.
 
 "Attacking Extreme Poverty." 2001. *World Bank Technical Paper*, ahead
@@ -64,12 +65,12 @@ Portfolio*. March 31.
 <http://documentos.bancomundial.org/curated/es/840791468767059548/A-review-of-participation-in-the-World-Banks-GEF-portfolio>.
 
 Aylward, Bruce, and E. Lutz. 2003a. *Nature Tourism, Conservation, and
-Development in KwaZulu Natal, South Africa*. July 15.
+Development in KwaZulu Natal, South Africa*.
 <https://doi.org/10.1596/0-8213-5350-0>.
 
 Aylward, Bruce, and E. Lutz. 2003b. "Nature Tourism, Conservation, and
-Development in KwaZulu-Natal, South Africa." *RePEc: Research Papers in
-Economics*, January 1.
+Development in KwaZulu-Natal, South Africa." In *RePEc: Research Papers
+in Economics*. Federal Reserve Bank of St. Louis, January 1.
 <https://econpapers.repec.org/RePEc:wbk:wbpubs:15180>.
 
 Azerbaijan. 2006. *Azerbaijan - Second Agricultural Development and
@@ -89,13 +90,11 @@ Balvanera, Patricia, Gretchen C. Daily, Paul R. Ehrlich, et al. 2001.
 "Conserving Biodiversity and Ecosystem Services." *Science* 291 (5511):
 2047--47. <https://doi.org/10.1126/science.291.5511.2047>.
 
-Bank, World. 1988. "World Development Report 1988." *World Bank
-Publications eBooks*, ahead of print, June 30.
-<https://doi.org/10.1596/978-0-1952-0650-0>.
+Bank, World. 1988. *World Development Report 1988*. In *World Bank
+Publications eBooks*. <https://doi.org/10.1596/978-0-1952-0650-0>.
 
-Bank, World. 1992. "World Development Report 1992." *World Bank
-Publications eBooks*, ahead of print, May 31.
-<https://doi.org/10.1596/978-0-1952-0876-4>.
+Bank, World. 1992. *World Development Report 1992*. In *World Bank
+Publications eBooks*. <https://doi.org/10.1596/978-0-1952-0876-4>.
 
 Barano, Thomas, Nirmal Bhagabati, Marc Conte, et al. 2010. *Integrating
 Ecosystem Services into Spatial Planning in Sumatra, Indonesia*.
@@ -134,16 +133,16 @@ Environment and Development Organization*. January 1.
 <https://epic.awi.de/321/>.
 
 Biermann, Frank, and Udo E. Simonis. 1998. "Needed Now: A World
-Environment and Development Organization." *RePEc: Research Papers in
-Economics*, January 1.
+Environment and Development Organization." In *RePEc: Research Papers in
+Economics*. Federal Reserve Bank of St. Louis, January 1.
 <https://econpapers.repec.org/RePEc:zbw:wzbpep:fsii98408>.
 
 Bishop, Joshua, Frank Hicks, Sachin Kapila, Paul Mitchell, and Frank
-Vorhies. 2008. "Building Biodiversity Business (Japanese Version)."
-*IUCN eBooks*, January 1. <https://portals.iucn.org/library/node/9520>.
+Vorhies. 2008. *Building Biodiversity Business (Japanese Version)*. In
+*IUCN eBooks*. <https://portals.iucn.org/library/node/9520>.
 
 Bishop, Joshua, Frank Hicks, Sachin Kapila, Paul Mitchell, and Frank
-Vorhies. 2009. *Building Biodiversity Business*. March 1.
+Vorhies. 2009. *Building Biodiversity Business*.
 <https://portals.iucn.org/library/node/9144>.
 
 Bishop, Joshua, Sachin Kapila, Frank Hicks, Paul Mitchell, and Francis
@@ -181,7 +180,7 @@ Internationale de Droit Économique*, no. 3 (January): 293--313.
 <https://www.cairn-int.info/article-E_RIDE_223_0293--the-evolution-of-international.htm>.
 
 Boyce, James K., and Keith Griffin. 2009. *Human Development in the Era
-of Globalization: Essays in Honor of Keith B. Griffin*. November 30.
+of Globalization: Essays in Honor of Keith B. Griffin*.
 <http://ci.nii.ac.jp/ncid/BB0048605X>.
 
 Boyer, Marcel, Peter Christoffersen, Pierre Lasserre, and Andrey Pavlov.
@@ -189,18 +188,18 @@ Boyer, Marcel, Peter Christoffersen, Pierre Lasserre, and Andrey Pavlov.
 January 1. <https://ideas.repec.org/p/cir/cirbur/2003rb-01.html>.
 
 Boyer, Marcel, Peter Christoffersen, Pierre Lasserre, and Andrey Pavlov.
-2003b. "Création de valeur, gestion de risque et options réelles."
-*RePEc: Research Papers in Economics*, March 1.
-<http://www.cirano.qc.ca/pdf/publication/2003RB-01.pdf>.
+2003b. "Création de valeur, gestion de risque et options réelles." In
+*RePEc: Research Papers in Economics*. Federal Reserve Bank of St.
+Louis, March 1. <http://www.cirano.qc.ca/pdf/publication/2003RB-01.pdf>.
 
 Boyer, Marcel, Peter Christoffersen, Pierre Lasserre, and Andrey Pavlov.
 2003c. *Value creation, risk management, and real options*. January 1.
 <https://ideas.repec.org/p/cir/cirbur/2003rb-02.html>.
 
 Boyer, Marcel, Peter Christoffersen, Pierre Lasserre, and Andrey Pavlov.
-2003d. "Value creation, risk management, and real options." *RePEc:
-Research Papers in Economics*, March 1.
-<https://EconPapers.repec.org/RePEc:cir:cirbur:2003rb-02>.
+2003d. "Value creation, risk management, and real options." In *RePEc:
+Research Papers in Economics*. Federal Reserve Bank of St. Louis,
+March 1. <https://EconPapers.repec.org/RePEc:cir:cirbur:2003rb-02>.
 
 Brahy, Nicolas. 2006. *The Property Regime of Biodiversity and
 Traditional Knowledge : Institutions for Conservation and Innovation*.
@@ -238,9 +237,8 @@ Scenarios: Are Costs and Benefits Altered by Spatial Scale?"
 <https://doi.org/10.1088/1748-9326/4/3/031003>.
 
 Carraro, Carlo, Carmen Marchiori, and Alessandra Sgobbi. 2005.
-"Applications Of Negotiation Theory To Water Issues." *World Bank,
-Washington, DC eBooks*, ahead of print, June 15.
-<https://doi.org/10.1596/1813-9450-3641>.
+*Applications Of Negotiation Theory To Water Issues*. In *World Bank,
+Washington, DC eBooks*. <https://doi.org/10.1596/1813-9450-3641>.
 
 Carvajal, Carlos Borge, and Ruth Tiffer Sotomayor. 2005a. *Analisis de
 Los Beneficios Ambientales y Sociales Derivados de La Proteccion de
@@ -270,10 +268,10 @@ Cervigni, Raffaello. 2001a. "Biodiversity Conservation and Loss: The
 Background." In *Edward Elgar Publishing eBooks*. Edward Elgar
 Publishing. <https://doi.org/10.4337/9781035335510.00009>.
 
-Cervigni, Raffaello. 2001b. *Biodiversity in the Balance*. January 1.
+Cervigni, Raffaello. 2001b. *Biodiversity in the Balance*.
 <https://econpapers.repec.org/bookchap/elgeebook/2060.htm>.
 
-Cervigni, Raffaello. 2001c. *Biodiversity in the Balance*. November 28.
+Cervigni, Raffaello. 2001c. *Biodiversity in the Balance*.
 <https://doi.org/10.4337/9781035335510>.
 
 Cervigni, Raffaello. 2001d. "Biodiversity in the Balance." *Books*,
@@ -287,8 +285,8 @@ Cervigni, Raffaello. 2001f. "Financing Conservation: Theoretical
 Aspects." In *Edward Elgar Publishing eBooks*. Edward Elgar Publishing.
 <https://doi.org/10.4337/9781035335510.00012>.
 
-Cervigni, Raffaello. 2001g. "Index." *Edward Elgar Publishing eBooks*,
-ahead of print, November 28.
+Cervigni, Raffaello. 2001g. *Index*. In *Edward Elgar Publishing
+eBooks*. Edward Elgar Publishing.
 <https://doi.org/10.4337/9781035335510.00018>.
 
 Cervigni, Raffaello. 2001h. "Land Use Change, Biodiversity Loss, and
@@ -311,10 +309,10 @@ Cervigni, Raffaello. 2001l. "The Process of Land Use Change: Modelling
 Farm Behaviour." In *Edward Elgar Publishing eBooks*. Edward Elgar
 Publishing. <https://doi.org/10.4337/9781035335510.00015>.
 
-Chen, Shaohua, and Martin Ravallion. 2008. "The Developing World Is
+Chen, Shaohua, and Martin Ravallion. 2008. *The Developing World Is
 Poorer Than We Thought, But No Less Successful In The Fight Against
-Poverty." *Washington, DC: World Bank eBooks*, ahead of print, September
-25. <https://doi.org/10.1596/1813-9450-4703>.
+Poverty*. In *Washington, DC: World Bank eBooks*.
+<https://doi.org/10.1596/1813-9450-4703>.
 
 Chichilnisky, Graciela. 2000a. "Equity and Efficiency in Global
 Emissions Markets." In *Cambridge University Press eBooks*. Cambridge
@@ -338,7 +336,7 @@ Coomans, A. 2000. "Nematode systematics: past, present and future."
 *Nematology* 2 (1): 3--7. <https://doi.org/10.1163/156854100508845>.
 
 Current, Dean, Ernst Lutz, and Sara Scherr. 1995. *Costs, Benefits, and
-Farmer Adoption of Agroforestry*. December 31.
+Farmer Adoption of Agroforestry*.
 <https://doi.org/10.1596/0-8213-3428-x>.
 
 Czech, Brian. 2004. "Taking on the Economic Triangle!" *Frontiers in
@@ -386,7 +384,7 @@ World Bank*. September 13, 1--72.
 
 Dodds, Felix, Andrew Higham, and Richard L. Sherman. 2009. *Climate
 Change and Energy Insecurity: The Challenge for Peace, Security and
-Development*. December 1. <https://openalex.org/W617102288>.
+Development*. <https://openalex.org/W617102288>.
 
 Drechsler, Martin, Karin Johst, Cornelia Ohl, and Frank Wätzold. 2007.
 "Designing Cost‐Effective Payments for Conservation Measures to Generate
@@ -394,8 +392,9 @@ Spatiotemporal Habitat Heterogeneity." *Conservation Biology* 21 (6):
 1475--86. <https://doi.org/10.1111/j.1523-1739.2007.00829.x>.
 
 Drechsler, Martin, and Frank Wätzold. 2003. "Species Conservation in the
-Face of Political Uncertainty." *RePEc: Research Papers in Economics*,
-January 1. <https://econstor.eu/bitstream/10419/45230/1/372050441.pdf>.
+Face of Political Uncertainty." In *RePEc: Research Papers in
+Economics*. Federal Reserve Bank of St. Louis, January 1.
+<https://econstor.eu/bitstream/10419/45230/1/372050441.pdf>.
 
 Drechsler, Martin, and Frank Wätzold. 2004. "A Decision Model for the
 Efficient Management of a Conservation Fund over Time." *Animal
@@ -450,8 +449,9 @@ Regional Level*. January 1.
 <https://ideas.repec.org/p/ags/eaa109/44792.html>.
 
 Elsholz, Rüdiger. 2008b. "ASSESSMENT OF SECOND PILLAR PROGRAMS AT THE
-REGIONAL LEVEL." *RePEc: Research Papers in Economics*, ahead of print,
-November 12. <https://doi.org/10.22004/ag.econ.44792>.
+REGIONAL LEVEL." In *RePEc: Research Papers in Economics*. Federal
+Reserve Bank of St. Louis, November 12.
+<https://doi.org/10.22004/ag.econ.44792>.
 
 Esquivel, Alejandro, and Hans Arias. 2004. "Nematode Survey in Costa
 Rican Conservation Areas." In *BRILL eBooks*. Brill.
@@ -479,14 +479,13 @@ Conservation: A Review of What Works to Preserve Biodiversity*.
 January 1.
 <https://www.rff.org/files/sharepoint/WorkImages/Download/RFF-Resources-143-costeffect.pdf>.
 
-Foster, Vivien, and Caridad Araujo. 2004. "Does Infrastructure Reform
-Work for the Poor? A Case Study from Guatemala." *World Bank,
-Washington, DC eBooks*, ahead of print, January 7.
-<https://doi.org/10.1596/1813-9450-3185>.
+Foster, Vivien, and Caridad Araujo. 2004. *Does Infrastructure Reform
+Work for the Poor? A Case Study from Guatemala*. In *World Bank,
+Washington, DC eBooks*. <https://doi.org/10.1596/1813-9450-3185>.
 
-Foster, Vivien, and Tito Yepes. 2006. "Is Cost Recovery A Feasible
-Objective For Water And Electricity ? The Latin American Experience."
-*World Bank, Washington, DC eBooks*, ahead of print, June 22.
+Foster, Vivien, and Tito Yepes. 2006. *Is Cost Recovery A Feasible
+Objective For Water And Electricity ? The Latin American Experience*. In
+*World Bank, Washington, DC eBooks*.
 <https://doi.org/10.1596/1813-9450-3943>.
 
 Fox, Jessica. 2005. "Convert Natural Resource Liabilities into Business
@@ -511,9 +510,9 @@ India." *Outlook on Agriculture* 31 (1): 43--49.
 
 Gallai, Nicola, Jean‐Michel Salles, and Bernard Vaissière. 2009.
 "Évaluation de la contribution économique du service de pollinisation à
-l'agriculture européenne." *HAL (Le Centre pour la Communication
-Scientifique Directe)*, January 1.
-<https://hal.archives-ouvertes.fr/hal-01946828>.
+l'agriculture européenne." In *HAL (Le Centre pour la Communication
+Scientifique Directe)*. Centre National de la Recherche Scientifique,
+January 1. <https://hal.archives-ouvertes.fr/hal-01946828>.
 
 Gazzani, Flavio. 2009. "Economic Valuation of Biodiversity Conservation:
 Citizens' Non-Use Value for Ningaloo Reef."
@@ -532,7 +531,7 @@ the Pacific*. January 1, 1--146.
 
 Gilligan, Brian, Nigel Dudley, Antonio Fernandez de Tejada, and Heikki
 Toivonen. 2005. *Management Effectiveness Evaluation of Finland's
-Protected Areas*. January 1.
+Protected Areas*.
 <https://www.researchgate.net/profile/Nigel_Dudley2/publication/265397855_Management_Effectiveness_Evaluation_of_Finland's_Protected_Areas/links/5504090f0cf231de07703e0c.pdf>.
 
 Gippoliti, Spartaco. 2004. "Captive-Breeding and Conservation of the
@@ -574,9 +573,9 @@ CURINANCO, CHILE*. <https://doi.org/10.2172/843087>.
 
 Gosselin, Frédéric, Christophe Bouget, Marion Gosselin, Christian
 Chauvin, and Guy Landmann. 2009. "L'état et les enjeux de biodiversité
-forestière en France : chap 6." *HAL (Le Centre pour la Communication
-Scientifique Directe)*, January 1.
-<https://hal.science/hal-00493190/document>.
+forestière en France : chap 6." In *HAL (Le Centre pour la Communication
+Scientifique Directe)*. Centre National de la Recherche Scientifique,
+January 1. <https://hal.science/hal-00493190/document>.
 
 Gössling, Stefan. 2002. "Funds for Biodiversity." *Environmental
 Conservation* 29 (4): 411--13.
@@ -594,9 +593,9 @@ Exploration at the Camp Caiman Gold Project in French Guiana." In
 
 Grieg‐Gran, Maryanne, Derek de la Harpe, John McGinley, James MacGregor,
 and Ivan Bond. 2008. "Sustainable Financing of Protected Areas in
-Cambodia: Phnom Aural and Phnom Samkos Wildlife Sanctuaries." *RePEc:
-Research Papers in Economics*, ahead of print, January 1.
-<https://doi.org/10.22004/ag.econ.37920>.
+Cambodia: Phnom Aural and Phnom Samkos Wildlife Sanctuaries." In *RePEc:
+Research Papers in Economics*. Federal Reserve Bank of St. Louis,
+January 1. <https://doi.org/10.22004/ag.econ.37920>.
 
 Gros, Daniel, and Bucur Vukasin. 2010. "RESEARCH CONCERNING MAIZE
 CULTIVATION TECHNOLOGY SPECIFIC TO THE PERMANENT VEGETAL COVER SYSTEM IN
@@ -609,15 +608,15 @@ Then What?" *Conservation Biology* 23 (3): 513--15.
 <https://doi.org/10.1111/j.1523-1739.2009.01239.x>.
 
 Guerrero, Eduardo, Ana María Vidal Ruiz de Velasco, and Gabriela Inés
-Maldonado. 2003. "Voces para un diálogo de futuro : el debate sobre
-desarrollo sostenible en América Latina." *IUCN eBooks*, January 1.
+Maldonado. 2003. *Voces para un diálogo de futuro : el debate sobre
+desarrollo sostenible en América Latina*. In *IUCN eBooks*.
 <https://portals.iucn.org/library/node/8224>.
 
 Gupta, Mahabir P. 2004. "Investigaciones Farmacognósticas Sobre La Flora
 Panameña." *Anales de La Real Academia Nacional de Farmacia* 70 (4):
 839--83. <https://dialnet.unirioja.es/servlet/articulo?codigo=1126315>.
 
-Harris, Paul G. 2009. *Environmental Change and Foreign Policy*. June 3.
+Harris, Paul G. 2009. *Environmental Change and Foreign Policy*.
 <https://doi.org/10.4324/9780203881439>.
 
 Harstad, Jarle. 1999a. *El Fondo Mexicano Para La Conservacionde La
@@ -666,7 +665,8 @@ Jeffrey D. Sachs." *Journal of International Affairs* 58 (2).
 <https://www.questia.com/library/journal/1G1-132459671/an-interview-with-jeffrey-d-sachs>.
 
 Helm, Dieter. 2000. "Environmental Policy : Objectives, Instruments, and
-Implementation." *RePEc: Research Papers in Economics*, January 1.
+Implementation." In *RePEc: Research Papers in Economics*. Federal
+Reserve Bank of St. Louis, January 1.
 <https://econpapers.repec.org/bookchap/oxpobooks/9780199241361.htm>.
 
 Hewage, Thosapala. 2000. "OPERATION BETWEEN GOVERNMENT AND THE PRIVET
@@ -692,8 +692,8 @@ Butnariu. 2010. *STUDIES CONCERNING MEDICINAL AND AROMATIC PLANTS IN THE
 MINIŞULUI VALLEY*. January 1.
 <https://www.rjas.ro/download/paper_version.paper_file.b36701c2a899d0ca.33382e706466.pdf>.
 
-"Index." 2009. *Edward Elgar Publishing eBooks*, ahead of print,
-February 27. <https://doi.org/10.4337/9781848446083.00039>.
+*Index*. 2009. In *Edward Elgar Publishing eBooks*. Edward Elgar
+Publishing. <https://doi.org/10.4337/9781848446083.00039>.
 
 Inouye, David W. 2007. "Minutes of the ESA Governing Board." *Bulletin
 of the Ecological Society of America* 88 (1): 22--30.
@@ -821,9 +821,9 @@ eBooks*. Oxford University Press.
 <https://doi.org/10.1093/oso/9780195095548.003.0012>.
 
 Kriström, Bengt, Partha Dasgupta, and Karl‐Gustaf Lófgren. 2002.
-"Economic Theory for the Environment : Essays in Honour of Karl-Göran
-Mäler." *Edward Elgar Publishing Ltd eBooks*, January 1.
-<http://ci.nii.ac.jp/ncid/BA5914367X>.
+*Economic Theory for the Environment : Essays in Honour of Karl-Göran
+Mäler*. In *Edward Elgar Publishing Ltd eBooks*. Edward Elgar
+Publishing. <http://ci.nii.ac.jp/ncid/BA5914367X>.
 
 Krug, W. 2000. *Nature Tourism and Protected Area Pricing: Lessons
 Learned from Africa*. January 1. <http://discovery.ucl.ac.uk/17593/>.
@@ -900,7 +900,7 @@ Environmental Services in the Congo Basin Forests : The Case of
 Biodiversity Conservation." <http://agritrop.cirad.fr/550052/>.
 
 Lr, Brown, C. Flavin, Hal Kane, et al. 1996. *Vital Signs 1996: The
-Trends That Are Shaping Our Future*. May 1.
+Trends That Are Shaping Our Future*.
 <https://openlibrary.org/books/OL7453290M/Vital_Signs_1996>.
 
 Magdoń, Antoni. 2009. "The European Union Funds' New Financial Rules for
@@ -912,7 +912,8 @@ Enterprise* 4 (2): 65--71. <https://doi.org/10.2478/v10061-009-0021-6>.
 <https://doi.org/10.1111/j.1523-1739.2005.1877_2.x>.
 
 Manolescu, Gheorghe. 2009. "Finantarea Sustenabila a Protectiei
-Mediului." *RePEc: Research Papers in Economics*, December 12.
+Mediului." In *RePEc: Research Papers in Economics*. Federal Reserve
+Bank of St. Louis, December 12.
 <https://EconPapers.repec.org/RePEc:ris:sphedp:2009_105>.
 
 Marchi, Massimo De, Martino Cassandro, C. Targhetta, Maristella
@@ -927,8 +928,7 @@ Recovery Project*. March 16. <https://doi.org/10.1061/40761(175)60>.
 
 Maunder, Mike, Julian Caldecott, Mark R. Collins, et al. 1994.
 *Priorities for Conserving Global Species Richness and Endemism. WCMC
-Biodiversity Series 3*. January 1.
-<https://doi.org/10.5962/bhl.title.44952>.
+Biodiversity Series 3*. <https://doi.org/10.5962/bhl.title.44952>.
 
 McCulloch, Alistair J. A. 1995. "GREEN GLOBE YEARBOOK 1993 : AN
 INDEPENDENT PUBLICATION \..." *Electronic Green Journal* 1 (4).
@@ -1004,8 +1004,8 @@ Assessment*. April 1.
 <https://documents.worldbank.org/curated/en/547021468756950011/Morocco-Rural-Access-Roads-Project-environmental-assessment>.
 
 Mountford, Helen, and Jan Horst Keppler. 1999a. "Financing Incentives
-for the Protection of Biodiversity." *RePEc: Research Papers in
-Economics*, January 1.
+for the Protection of Biodiversity." In *RePEc: Research Papers in
+Economics*. Federal Reserve Bank of St. Louis, January 1.
 <http://econpapers.repec.org/RePEc:dau:papers:123456789/10980>.
 
 Mountford, Helen, and Jan Horst Keppler. 1999b. "Financing Incentives
@@ -1022,14 +1022,14 @@ Nader, Werner, and Nicolas Mateo. 2001. "Biodiversity --- Resource for
 New Products, Development and Self-Reliance." In *Biodiversity*. Taylor
 & Francis. <https://doi.org/10.1007/978-3-662-06071-1_13>.
 
-Nanda, Ved P., and George Pring. 2003. "International Environmental Law
-for the 21st Century." *Transnational Publishers eBooks*, January 1.
+Nanda, Ved P., and George Pring. 2003. *International Environmental Law
+for the 21st Century*. In *Transnational Publishers eBooks*.
 <https://ci.nii.ac.jp/ncid/BA62467680>.
 
 Nantha, Hemanath Swarna, and Clem Tisdell. 2008. "The Orangutan-Oil Palm
-Conflict: Economic Constraints and Opportunities for Conservation."
-*RePEc: Research Papers in Economics*, October 1.
-<https://econpapers.repec.org/RePEc:ags:uqseee:55318>.
+Conflict: Economic Constraints and Opportunities for Conservation." In
+*RePEc: Research Papers in Economics*. Federal Reserve Bank of St.
+Louis, October 1. <https://econpapers.repec.org/RePEc:ags:uqseee:55318>.
 
 Nanuncio, Valquiria Martins. 2009. "Análise Da Fragmentação Da Vegetação
 Florestal de Piraí Da Serra, Campos Gerais Do Paraná."
@@ -1089,23 +1089,22 @@ Ong, Aihwa. 2003. *Oikos/Anthropos: Rationality, Technology,
 Infrastructure - eScholarship*. 44 (3): 421--26.
 <https://escholarship.org/content/qt7zj3815z/qt7zj3815z.pdf>.
 
-Ooi, Giok Ling, and Belinda Yuen. 2009. "World Cities." *Co-Published
+Ooi, Giok Ling, and Belinda Yuen. 2009. *World Cities*. In *Co-Published
 with Civil Service College Singapore and Institute of Policy Studies,
-National University of Singapore eBooks*, ahead of print, August 1.
+National University of Singapore eBooks*.
 <https://doi.org/10.1142/7398>.
 
 Oreszczyn, Sue. 2004. *Precautionary Expertise for GM Crops: National
 Report -- United Kingdom: Precaution as Process*. March 1.
 <http://oro.open.ac.uk/48292/>.
 
-Ornat, Arturo López, and Sira Jiménez-Caballero. 2006. "Sustainable
-Financing Sources for Protected Areas in the Mediterranean." *IUCN
-eBooks*, January 1. <https://portals.iucn.org/library/node/8934>.
+Ornat, Arturo López, and Sira Jiménez-Caballero. 2006. *Sustainable
+Financing Sources for Protected Areas in the Mediterranean*. In *IUCN
+eBooks*. <https://portals.iucn.org/library/node/8934>.
 
-Pagiola, Stefano, Paola Agostini, José Gobbi, et al. 2004. "Paying for
-Biodiversity Conservation Services in Agricultural Landscapes." *World
-Bank, Washington, DC eBooks*, ahead of print, May 1.
-<https://doi.org/10.1596/18393>.
+Pagiola, Stefano, Paola Agostini, José Gobbi, et al. 2004. *Paying for
+Biodiversity Conservation Services in Agricultural Landscapes*. In
+*World Bank, Washington, DC eBooks*. <https://doi.org/10.1596/18393>.
 
 Pagiola, Stefano, Paola Agostini, José Gobbi, et al. 2005. "Paying for
 Biodiversity Conservation Services." *Mountain Research and Development*
@@ -1114,13 +1113,14 @@ Biodiversity Conservation Services." *Mountain Research and Development*
 
 Pagiola, Stefano, Wei Zhang, and Ale Colom. 2009a. "Can Payments for
 Watershed Services Help Save Biodiversity? A Spatial Analysis of
-Highland Guatemala." *MPRA Paper*, January 28.
-<https://ideas.repec.org/p/pra/mprapa/13728.html>.
+Highland Guatemala." In *RePEc: Research Papers in Economics*. Federal
+Reserve Bank of St. Louis, January 28.
+<https://econpapers.repec.org/paper/pramprapa/13728.htm>.
 
 Pagiola, Stefano, Wei Zhang, and Ale Colom. 2009b. "Can Payments for
 Watershed Services Help Save Biodiversity? A Spatial Analysis of
-Highland Guatemala." *RePEc: Research Papers in Economics*, January 28.
-<https://econpapers.repec.org/paper/pramprapa/13728.htm>.
+Highland Guatemala." *MPRA Paper*, January 28.
+<https://ideas.repec.org/p/pra/mprapa/13728.html>.
 
 Pagiola, Stefano, Wei Zhang, and Ale Colom. 2010. "Can Payments for
 Watershed Services Help Finance Biodiversity Conservation? A Spatial
@@ -1139,11 +1139,11 @@ mejora del entorno rural en el noroeste de la Región de Murcia."
 de estudios agrosociales y pesqueros*, no. 226 (January): 71--93.
 <https://ageconsearch.umn.edu/record/186494/>.
 
-Peters, G. H., and Joachim von Braun. 1999. "Food Security,
+Peters, G. H., and Joachim von Braun. 1999. *Food Security,
 Diversification and Resource Management : Refocusing the Role of
 Agriculture? : Proceedings of the Twenty-Third International Conference
 of Agricultural Economists, Held at Sacramento, California, 10-16
-August, 1997." *Ashgate eBooks*, January 1.
+August, 1997*. In *Ashgate eBooks*.
 <http://ci.nii.ac.jp/ncid/BA43823813>.
 
 Petrosen. 2001a. *Environmental Impact Assessment for the Acquisition of
@@ -1161,9 +1161,9 @@ Acquisition of 2000 KM of 2D Land Seismic in Northern Senegal*. February
 <http://documents.vsemirnyjbank.org/curated/ru/371081468103461364/Environmental-management-and-monitoring-plan-for-the-acquisition-of-2000-KM-of-2D-land-seismic-in-northern-Senegal>.
 
 Pirard, Romain, and Alain Karsenty. 2009. "Climate Change Mitigation:
-Should 'Avoided Deforestation' (REDD) Be Rewarded?" *HAL (Le Centre Pour
-La Communication Scientifique Directe)*, January 1.
-<https://hal.science/hal-00413586>.
+Should 'Avoided Deforestation' (REDD) Be Rewarded?" In *HAL (Le Centre
+Pour La Communication Scientifique Directe)*. Centre National de la
+Recherche Scientifique, January 1. <https://hal.science/hal-00413586>.
 
 Pistonesi, Héctor, Gustavo Nadal, Víctor Bravo, and Daniel Bouille.
 2008a. "The Contribution of Biofuels to the Sustainability of
@@ -1173,8 +1173,8 @@ Proyectos*, December 1.
 
 Pistonesi, Héctor, Gustavo Nadal, Víctor Bravo, and Daniel Bouille.
 2008b. "The Contribution of Biofuels to the Sustainability of
-Development in Latin America and the Caribbean." *RePEc: Research Papers
-in Economics*, December 1.
+Development in Latin America and the Caribbean." In *RePEc: Research
+Papers in Economics*. Federal Reserve Bank of St. Louis, December 1.
 <https://econpapers.repec.org/RePEc:ecr:col022:3691>.
 
 Pollini, Jacques. 2009. "Carbon Sequestration for Linking Conservation
@@ -1201,7 +1201,7 @@ World Bank, NGOs and the Cunning State in India." *Current Sociology* 51
 (3-4): 305--28. <https://doi.org/10.1177/0011392103051003009>.
 
 Rao, Pinninti Krishna. 2000. *Sustainable Development : Economics and
-Policy*. April 7. <http://ci.nii.ac.jp/ncid/BA44818364>.
+Policy*. <http://ci.nii.ac.jp/ncid/BA44818364>.
 
 Ratsirarson, Joelisoa. 2006. "A Warm Welcome to the MCD Journal."
 *Madagascar Conservation & Development* 1 (1).
@@ -1213,17 +1213,18 @@ Economics, UCB*, April 1.
 <https://escholarship.org/content/qt6xf5z188/qt6xf5z188.pdf?t=lnrheo>.
 
 Rausser, Gordon C., and Arthur A. Small. 1999b. "Bioprospecting with
-Prior Ecological Information." *RePEc: Research Papers in Economics*,
-April 1. <https://econpapers.repec.org/paper/cdlagrebk/qt6xf5z188.htm>.
+Prior Ecological Information." In *RePEc: Research Papers in Economics*.
+Federal Reserve Bank of St. Louis, April 1.
+<https://econpapers.repec.org/paper/cdlagrebk/qt6xf5z188.htm>.
 
 Rausser, Gordon C., and Arthur A. Small. 2000a. "Valuing Research Leads:
-Bioprospecting and the Conservation of Genetic Resources." *Journal of
-Political Economy* 108 (1): 173--206. <https://doi.org/10.1086/262115>.
+Bioprospecting and the Conservation of Genetic Resources." In *RePEc:
+Research Papers in Economics*. Federal Reserve Bank of St. Louis,
+September 1. <https://econpapers.repec.org/RePEc:cdl:oplwec:qt4t56m5b8>.
 
 Rausser, Gordon C., and Arthur A. Small. 2000b. "Valuing Research Leads:
-Bioprospecting and the Conservation of Genetic Resources." *RePEc:
-Research Papers in Economics*, September 1.
-<https://econpapers.repec.org/RePEc:cdl:oplwec:qt4t56m5b8>.
+Bioprospecting and the Conservation of Genetic Resources." *Journal of
+Political Economy* 108 (1): 173--206. <https://doi.org/10.1086/262115>.
 
 Rausser, Gordon C., and Arthur A. Small. 2000c. "Valuing Research Leads:
 Bioprospecting and the Conservation of Genetic Resources." *SSRN
@@ -1261,7 +1262,8 @@ EVER." *Diversity and Distributions* 6 (4): 206--7.
 
 Ring, Irene. 2004. "Integrating Local Ecological Services into
 Intergovernmental Fiscal Transfers: The Case of the ICMS-E in Brazil."
-*RePEc: Research Papers in Economics*, January 1.
+In *RePEc: Research Papers in Economics*. Federal Reserve Bank of St.
+Louis, January 1.
 <https://econstor.eu/bitstream/10419/45191/1/477509886.pdf>.
 
 Ring, Irene. 2007. "Fiscal Transfers for Compensating Local Ecological
@@ -1316,9 +1318,9 @@ Sands, Philippe. 2003. "Financial Resources, Technology and Intellectual
 Property." In *Cambridge University Press eBooks*. Cambridge University
 Press. <https://doi.org/10.1017/cbo9780511813511.023>.
 
-Saporiti, Nico. 2006. "Managing National Parks : How Public-Private
-Partnerships Can Aid Conservation." *World Bank, Washington, DC eBooks*,
-ahead of print, June 1. <https://doi.org/10.1596/11185>.
+Saporiti, Nico. 2006. *Managing National Parks : How Public-Private
+Partnerships Can Aid Conservation*. In *World Bank, Washington, DC
+eBooks*. <https://doi.org/10.1596/11185>.
 
 Saporiti, Nicola Ruggero. 2006. "Managing National Parks : How
 Public-Private Partnerships Can Aid Conservation." *World Bank Other
@@ -1346,11 +1348,12 @@ and Equity Issues*. January 1.
 
 Schmitt, Christine B., Till Pistorius, and Georg Winkel. 2009. *Global
 Conservation of Forest Biodiversity : Options for a Forest Protected
-Area Network Under the CBD*. January 1.
+Area Network Under the CBD*.
 <https://portals.iucn.org/library/node/28665>.
 
-Scudder, Thayer. 2005. "The Kariba Case Study." *RePEc: Research Papers
-in Economics*, June 1. <https://ideas.repec.org/p/clt/sswopa/1227.html>.
+Scudder, Thayer. 2005. "The Kariba Case Study." In *RePEc: Research
+Papers in Economics*. Federal Reserve Bank of St. Louis, June 1.
+<https://ideas.repec.org/p/clt/sswopa/1227.html>.
 
 Secchi, Silvia, Manoj K. Jha, Lyubov A. Kurkalova, Hongli Feng, Philip
 W. Gassman, and Catherine L. Kling. 2007. "Privatizing Ecosystem
@@ -1372,8 +1375,8 @@ and the Opportunity to Capture Co-Benefits*. January 1.
 <https://ideas.repec.org/p/ags/cfcp08/124521.html>.
 
 Seymour, Frances. 2008b. "Forests and Climate Change: Cause, Casualty
-and the Opportunity to Capture Co-Benefits." *RePEc: Research Papers in
-Economics*, ahead of print, September 3.
+and the Opportunity to Capture Co-Benefits." In *RePEc: Research Papers
+in Economics*. Federal Reserve Bank of St. Louis, September 3.
 <https://doi.org/10.22004/ag.econ.124521>.
 
 Shaw, Hillary J. 2006. "CSR in the Community: Redefining the Social Role
@@ -1385,7 +1388,7 @@ Shores, John. 2004. *Shores System: Index.html*. January 1.
 
 Shumba, E. M. 2003. *The Status of Biodiversity in Zimbabwe, Part 1 :
 Innovative Financing Mechanisms, Agro-Biodiversity Conservation and
-Management, Biodiversity Information System*. January 1.
+Management, Biodiversity Information System*.
 <https://portals.iucn.org/library/node/8822>.
 
 Shyju, P J, P. V. Rajeev, and Rinzing Lama. 2010. "Tourism
@@ -1417,7 +1420,7 @@ Programme." *Pacific Conservation Biology* 1 (1): 2--2.
 <https://doi.org/10.1071/pc930002>.
 
 Spitz, Karlheinz, and John Trudinger. 2008. *Mining and the Environment:
-From Ore to Metal*. November 26. <https://ci.nii.ac.jp/ncid/BB14243715>.
+From Ore to Metal*. <https://ci.nii.ac.jp/ncid/BB14243715>.
 
 Squires, Victor R. 2002. *Desertification: Its Nature, Extent and Impact
 and the Interaction with Global Climate Change*. January 1.
@@ -1442,8 +1445,8 @@ Civic Conservation in Developing Countries." *Journal of International
 Wildlife Law & Policy* 8 (4): 341--65.
 <https://doi.org/10.1080/13880290500343640>.
 
-Steiner, Frederick, Kent S. Butler, and Emina Sendich. 2007. "Planning
-and Urban Design Standards." *John Wiley eBooks*, January 1.
+Steiner, Frederick, Kent S. Butler, and Emina Sendich. 2007. *Planning
+and Urban Design Standards*. In *John Wiley eBooks*. Wiley.
 <http://ci.nii.ac.jp/ncid/BB18768029>.
 
 Swart, Jac. A. A. 2003. "Will Direct Payments Help Biodiversity?"
@@ -1460,15 +1463,15 @@ Tennant, Tracy, Michael F. Allen, and Fred H. Edwards. 2001.
 Extinction Rates and Causes*. July 12.
 <https://escholarship.org/content/qt7ck5d60j/qt7ck5d60j.pdf?t=krnp03>.
 
-"The Little Green Data Book 2009." 2009. *The World Bank eBooks*, ahead
-of print, May 21. <https://doi.org/10.1596/978-0-8213-7849-6>.
+*The Little Green Data Book 2009*. 2009. In *The World Bank eBooks*.
+<https://doi.org/10.1596/978-0-8213-7849-6>.
 
-*The World Bank Group and the Environment 1996*. 1997. April 30.
+*The World Bank Group and the Environment 1996*. 1997.
 <https://doi.org/10.1596/0-8213-3579-0>.
 
 Thomas, Lee, Peter Valentine, L. Emerton, and Joshua Bishop. 2006.
-"Korunan Alanlarin Sürdürülebilir Finansmani: Güçlükler Ve Seçenekler
-Üzerine Kapsamli Bir Degerlendirme." *IUCN eBooks*, January 1.
+*Korunan Alanlarin Sürdürülebilir Finansmani: Güçlükler Ve Seçenekler
+Üzerine Kapsamli Bir Degerlendirme*. In *IUCN eBooks*.
 <https://portals.iucn.org/library/fr/node/9783>.
 
 Thor, Eric P., and Haiyan Li. 2002a. *U.S. And Western China Are
@@ -1477,8 +1480,8 @@ Analysis*. January 1. <https://ideas.repec.org/p/ags/wccstw/16608.html>.
 
 Thor, Eric P., and Haiyan Li. 2002b. "U.S. AND WESTERN CHINA ARE
 PARTNERS IN WTO, GLOBAL RESOURCE MANAGEMENT, AGRIBUSINESS AND ECOSYSTEM
-ANALYSIS." *RePEc: Research Papers in Economics*, ahead of print,
-January 1. <https://doi.org/10.22004/ag.econ.16608>.
+ANALYSIS." In *RePEc: Research Papers in Economics*. Federal Reserve
+Bank of St. Louis, January 1. <https://doi.org/10.22004/ag.econ.16608>.
 
 Tian, Guang Jin, and Jianguo Wu. 2008. *Simulating Land Use Change with
 Agent-Based Models: Progress and Prospects*. 28 (9): 4451--59.
@@ -1486,8 +1489,8 @@ Agent-Based Models: Progress and Prospects*. 28 (9): 4451--59.
 
 Tisdell, Clem. 1994. "Conservation, Protected Areas and the Global
 Economic System: How Debt, Trade, Exchange Rates, Inflation and
-Macroeconomic Policy Affect Biological Diversity." *RePEc: Research
-Papers in Economics*, March 1.
+Macroeconomic Policy Affect Biological Diversity." In *RePEc: Research
+Papers in Economics*. Federal Reserve Bank of St. Louis, March 1.
 <https://econpapers.repec.org/paper/agsuqsebd/144208.htm>.
 
 Tisdell, Clem. 1999. *Biodiversity, Conservation and Sustainable
@@ -1540,7 +1543,7 @@ Villanueva, Cristóbal, José Gobbi, Muhammad Ibrahim, et al. 2007.
 <http://www-wds.worldbank.org/external/default/WDSContentServer/WDSP/IB/2014/03/27/000456286_20140327124754/Rendered/PDF/862750NWP0SPAN00Box385172B00PUBLIC0.pdf>.
 
 Viotti, Paul R., and Mark V. Kauppi. 1996. *International Relations and
-World Politics: Security, Economy, Identity*. December 24.
+World Politics: Security, Economy, Identity*.
 <http://ci.nii.ac.jp/ncid/BA32838353>.
 
 Vreugdenhil, Daan. 2003. "Protected Areas System Planning and
@@ -1564,7 +1567,7 @@ Wetlands in Agricultural Landscapes*. January 1, 66--69.
 <http://www.diva-portal.org/smash/record.jsf?pid=diva2:751971>.
 
 Wells, Michael P. 1997. *Economic Perspectives on Nature Tourism,
-Conservation and Development*. September 30.
+Conservation and Development*.
 <http://www.elaw.org/system/files/Economic.perspectives.tourism.pdf>.
 
 Wells, Michael, Ramesh Ramankutty, Avani Vaish, et al. 1999a.
@@ -1607,15 +1610,15 @@ Woodall, Dana L., and Jay R. Lund. 2009. "Dutch Flood Policy Innovations
 for California." *Journal of Contemporary Water Research & Education*
 141 (1): 45--59. <https://doi.org/10.1111/j.1936-704x.2009.00036.x>.
 
-"World Development Indicators 2006." 2006. *The World Bank eBooks*,
-ahead of print, April 22. <https://doi.org/10.1596/978-0-8213-6470-3>.
+*World Development Indicators 2006*. 2006. In *The World Bank eBooks*.
+<https://doi.org/10.1596/978-0-8213-6470-3>.
 
-"World Development Report 2003." 2002. *World Bank eBooks*, ahead of
-print, August 31. <https://doi.org/10.1596/0-8213-5150-8>.
+*World Development Report 2003*. 2002. In *World Bank eBooks*.
+<https://doi.org/10.1596/0-8213-5150-8>.
 
 Wrangham, Richard W., Richard W. Wrangham, Ian Redmond, et al. 2008.
-"Science and Conservation in African Forests." *Cambridge University
-Press eBooks*, ahead of print, August 14.
+*Science and Conservation in African Forests*. In *Cambridge University
+Press eBooks*. Cambridge University Press.
 <https://doi.org/10.1017/cbo9780511754920>.
 
 Wu, Yanbin, Kai Zhang, and Fan Cui. 2008. *Land Reclamation in Mining
@@ -1648,9 +1651,9 @@ August 16-22, 2009, Beijing, China*, January 1.
 
 Zhang, Wei, and Stefano Pagiola. 2009b. "Assessing the Potential for
 Synergy in the Implementation of Payment for Environmental Services
-(PES) Programs: An Empirical Analysis in Costa Rica." *RePEc: Research
-Papers in Economics*, ahead of print, January 1.
-<https://doi.org/10.22004/ag.econ.51794>.
+(PES) Programs: An Empirical Analysis in Costa Rica." In *RePEc:
+Research Papers in Economics*. Federal Reserve Bank of St. Louis,
+January 1. <https://doi.org/10.22004/ag.econ.51794>.
 
 Znaor, Darko. 2001. *Overview of Development of Organic Food and Farming
 in the CEE: Elements for a Regional Action Plan*. January 1.

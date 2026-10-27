@@ -267,10 +267,14 @@ test_that(".map_record_to_csl copies the ISBN for books only", {
 })
 
 test_that("books and preprints without ISBN/ISSN keep their CSL type", {
-  skip("Known bug: NA isbn/issn_l count as present (nzchar(NA) is TRUE), so every book and preprint becomes article-journal")
   # DuckDB returns missing values as NA, as in csl_rec()
   expect_equal(.map_record_to_csl(csl_rec(id = "W1", type = "book"))$type, "book")
   expect_equal(.map_record_to_csl(csl_rec(id = "W1", type = "preprint"))$type, "manuscript")
+  # with a missing ISSN-L the ISSN falls back to the list of ISSNs
+  expect_equal(
+    .map_record_to_csl(csl_rec(id = "W1", issns = list(c("1111-1111", "2222-2222"))))$ISSN,
+    "1111-1111,2222-2222"
+  )
 })
 
 test_that(".map_record_to_csl builds issued from the date, else the year", {

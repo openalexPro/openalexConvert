@@ -615,8 +615,9 @@ corpus_to_csljson <- function(
 
   t <- rec$type %||% ""
   vt <- rec$venue_type %||% ""
-  has_isbn <- !is.null(rec$isbn) && nzchar(as.character(rec$isbn))
-  has_issn <- (!is.null(rec$issn_l) && nzchar(rec$issn_l)) ||
+  # nzchar(NA) is TRUE: missing (NA) ISBN/ISSN must not count as present
+  has_isbn <- !is.null(rec$isbn) && !is.na(rec$isbn) && nzchar(as.character(rec$isbn))
+  has_issn <- (!is.null(rec$issn_l) && !is.na(rec$issn_l) && nzchar(rec$issn_l)) ||
     (!is.null(rec$issns[[1]]) && length(rec$issns[[1]]) > 0)
   has_container <- nzchar(rec$venue %||% "")
   has_vol_issue <- nzchar(rec$volume %||% "") || nzchar(rec$number %||% "")
@@ -669,7 +670,7 @@ corpus_to_csljson <- function(
   }
 
   # ISSN
-  issn_val <- if (!is.null(rec$issn_l) && nzchar(rec$issn_l)) {
+  issn_val <- if (!is.null(rec$issn_l) && !is.na(rec$issn_l) && nzchar(rec$issn_l)) {
     rec$issn_l
   } else if (!is.null(rec$issns[[1]]) && length(rec$issns[[1]]) > 0) {
     paste(as.character(rec$issns[[1]]), collapse = ",")
