@@ -261,17 +261,17 @@ corpus_to_csljson <- function(
     "CAST(NULL AS VARCHAR)"
   }
   authors_expr <- if (has("authorships")) {
-    "list_transform(authorships, x -> COALESCE(x.author.display_name, x.raw_author_name))"
+    "list_transform(authorships, lambda x: COALESCE(x.author.display_name, x.raw_author_name))"
   } else {
     "[]"
   }
   orcids_expr <- if (has("authorships")) {
-    "list_transform(authorships, x -> x.author.orcid)"
+    "list_transform(authorships, lambda x: x.author.orcid)"
   } else {
     "[]"
   }
   keywords_expr <- if (has("concepts")) {
-    "list_transform(concepts, x -> x.display_name)"
+    "list_transform(concepts, lambda x: x.display_name)"
   } else {
     "[]"
   }
