@@ -82,7 +82,8 @@ zotero_tags <- function(
 
   out <- tags
   if (file.exists(output)) {
-    old <- as.data.frame(arrow::read_parquet(output))
+    # not memory-mapped: Windows cannot overwrite a mapped file
+    old <- as.data.frame(arrow::read_parquet(output, mmap = FALSE))
     out <- rbind(old[old$zotero_library != library_id, names(tags)], tags)
   }
   dir.create(dirname(output), recursive = TRUE, showWarnings = FALSE)
