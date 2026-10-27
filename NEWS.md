@@ -1,4 +1,4 @@
-# openalexConvert (development version)
+# openalexConvert 0.1.1
 
 - License changed from GPL (>= 2) to MIT.
 - `corpus_to_csljson()` wrote every item's publication date as an empty
