@@ -101,6 +101,12 @@ fetched with `?itemKey=`); existing items get them inside the update object
 replace). Without `tags`, tags are never touched. Note the package's `%||%`
 also treats NA/"" as missing, so it errors on lists longer than 1.
 
+Collections (`collection =`): `.zotero_collection()` finds or creates the
+nested path from the library's top level (match on name + parentCollection,
+trashed ones ignored). New items get it in the same write as their tags
+(`.zotero_finish_new()`), skipped ones via `.zotero_add_to_collection()`,
+updated ones in the update object. Always add to `collections`, never replace.
+
 `corpus_to_zotero()` ([R/corpus_to_zotero.R](R/corpus_to_zotero.R)) is the
 one-shot wrapper (corpus -> temp CSL JSON, 1000 works per chunk -> `csljson_to_zotero()`).
 

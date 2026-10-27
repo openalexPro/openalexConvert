@@ -9,6 +9,7 @@ csljson_to_zotero(
   method = c("local", "web"),
   existing = c("skip", "update", "overwrite"),
   tags = NULL,
+  collection = NULL,
   url = "http://127.0.0.1:23119",
   api_key = Sys.getenv("ZOTERO_LOCAL_API_KEY"),
   timeout = 3600
@@ -30,11 +31,15 @@ parquet file with columns \code{openalex_id}, \code{tag} and optionally \code{ty
 (\code{0} manual, \code{1} automatic), such as the one written by \code{\link[=zotero_tags]{zotero_tags()}}.
 See "Tags".}
 
+\item{collection}{\code{NULL} (default: only the target selected in Zotero), or
+the path of a collection to put the works in, e.g.
+\code{c("my_project", "corpus_a")}. See "Collection".}
+
 \item{url}{Base URL of the local Zotero server. Default
 \code{"http://127.0.0.1:23119"}.}
 
 \item{api_key}{Key for Zotero's local API, only needed for
-\code{existing = "update"} or \code{"overwrite"}, or \code{tags}. Defaults to
+\code{existing = "update"} or \code{"overwrite"}, \code{tags} or \code{collection}. Defaults to
 \code{Sys.getenv("ZOTERO_LOCAL_API_KEY")}; if empty, Zotero is asked for one.}
 
 \item{timeout}{Seconds to wait for Zotero to import one file. Default
@@ -112,9 +117,27 @@ Rows of several libraries are merged; a tag keeps its type (manual or
 automatic).
 }
 
+\section{Collection}{
+
+With \code{collection}, e.g. \code{c("my_project", "corpus_a")}, the works are also
+put into that collection, nested from the top level of the selected
+library (\code{my_project} > \code{corpus_a}). Missing collections are created,
+existing ones of the same name reused, so a re-export goes into the same
+collection. Works already in the library join the collection too, with
+every value of \code{existing}: collections are independent of the item, and
+one work can be in several. Other collections of an item are kept.
+
+New items also land in whatever is selected in Zotero, so select the
+library itself (not a collection) to have them only in \code{collection}.
+Deleting the collection in Zotero with its items removes an accidental
+export again; items that were already in the library before stay in their
+other collections.
+}
+
 \section{Write access}{
 
-\code{"update"}, \code{"overwrite"} and \code{tags} write through Zotero's local API,
+\code{"update"}, \code{"overwrite"}, \code{tags} and \code{collection} write through Zotero's
+local API,
 which needs Zotero 10 or later and a key. If \code{api_key} is empty, Zotero shows a dialog asking to allow access for
 "openalexConvert": choose \strong{Always Allow} (a key allowed once is only good
 for a single write). The key is kept for the rest of the R session.
