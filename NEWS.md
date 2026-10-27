@@ -1,3 +1,5 @@
+# openalexConvert (development version)
+
 # openalexConvert 0.1.1
 
 - License changed from GPL (>= 2) to MIT.
