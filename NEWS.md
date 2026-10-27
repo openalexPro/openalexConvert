@@ -38,6 +38,21 @@ reaches Zotero, including File → Import. The CSL test fixtures were regenerate
 only `note` changed. BibTeX/BibLaTeX output is unchanged (pandoc does not write
 `note`).
 
+## Zotero tags back into the project
+
+New `zotero_tags(project_dir)` reads the tags of every item in the Zotero
+library selected in Zotero that has an OpenAlex ID in Extra (any of the four
+forms) and writes them to `zotero_tags.parquet` in the project directory: one
+row per work and tag, with the tag type (manual/automatic), the library (group
+ID, `0` = personal library) and the Zotero item key. Join it with the corpus on
+`openalex_id`. Re-running replaces that library's rows and keeps those of other
+libraries. Reading needs no API key.
+
+## DuckDB lambda syntax
+
+`corpus_to_csljson()` failed with current DuckDB ("Deprecated lambda arrow
+(->) detected"). It now uses the `lambda x: ...` syntax.
+
 # openalexConvert 0.0.5
 
 ## Tests no longer compare pandoc's exact output
