@@ -8,6 +8,7 @@ csljson_to_zotero(
   files,
   method = c("local", "web"),
   existing = c("skip", "update", "overwrite"),
+  tags = NULL,
   url = "http://127.0.0.1:23119",
   api_key = Sys.getenv("ZOTERO_LOCAL_API_KEY"),
   timeout = 3600
@@ -24,11 +25,16 @@ points to an existing directory, all \verb{*.json} files in that directory
 with items whose OpenAlex ID is already in the selected Zotero library.
 See "Items already in Zotero".}
 
+\item{tags}{\code{NULL} (default: no tags written), or a data.frame or path to a
+parquet file with columns \code{openalex_id}, \code{tag} and optionally \code{type}
+(\code{0} manual, \code{1} automatic), such as the one written by \code{\link[=zotero_tags]{zotero_tags()}}.
+See "Tags".}
+
 \item{url}{Base URL of the local Zotero server. Default
 \code{"http://127.0.0.1:23119"}.}
 
 \item{api_key}{Key for Zotero's local API, only needed for
-\code{existing = "update"} or \code{"overwrite"}. Defaults to
+\code{existing = "update"} or \code{"overwrite"}, or \code{tags}. Defaults to
 \code{Sys.getenv("ZOTERO_LOCAL_API_KEY")}; if empty, Zotero is asked for one.}
 
 \item{timeout}{Seconds to wait for Zotero to import one file. Default
@@ -44,6 +50,7 @@ success, \code{NA} if nothing had to be imported).}
 \item{n_items}{Number of new items imported.}
 \item{n_skipped}{Number of items skipped because they already exist.}
 \item{n_updated}{Number of existing Zotero items updated or overwritten.}
+\item{n_tagged}{Number of items whose tags were written from \code{tags}.}
 \item{message}{Character; error text if something failed.}
 }
 }
@@ -86,9 +93,29 @@ child notes and attachments, tags, collections and related items.
 Technically, the items are imported with Zotero's CSL JSON importer, their
 fields are copied onto the existing items, and the imported copies are
 deleted again.
+}
 
-\code{"update"} and \code{"overwrite"} write through Zotero's local API, which needs
-Zotero 10 or later and a key. If \code{api_key} is empty, Zotero shows a dialog asking to allow access for
+\section{Tags}{
+
+CSL JSON has no tags, so by default items arrive without tags, and existing
+items keep theirs. With \code{tags} (e.g. the \code{zotero_tags.parquet} written by
+\code{\link[=zotero_tags]{zotero_tags()}}), tags are written by OpenAlex ID, following \code{existing}:
+\itemize{
+\item new items get the tags of their OpenAlex ID;
+\item \code{"skip"}: existing items are left untouched, tags included;
+\item \code{"update"}: tags missing on the existing item are added, its own are kept;
+\item \code{"overwrite"}: the existing item's tags are replaced by those in \code{tags},
+and removed if \code{tags} has none for its OpenAlex ID.
+}
+
+Rows of several libraries are merged; a tag keeps its type (manual or
+automatic).
+}
+
+\section{Write access}{
+
+\code{"update"}, \code{"overwrite"} and \code{tags} write through Zotero's local API,
+which needs Zotero 10 or later and a key. If \code{api_key} is empty, Zotero shows a dialog asking to allow access for
 "openalexConvert": choose \strong{Always Allow} (a key allowed once is only good
 for a single write). The key is kept for the rest of the R session.
 

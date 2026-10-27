@@ -37,8 +37,23 @@
 #' fields are copied onto the existing items, and the imported copies are
 #' deleted again.
 #'
-#' `"update"` and `"overwrite"` write through Zotero's local API, which needs
-#' Zotero 10 or later and a key. If `api_key` is empty, Zotero shows a dialog asking to allow access for
+#' @section Tags:
+#' CSL JSON has no tags, so by default items arrive without tags, and existing
+#' items keep theirs. With `tags` (e.g. the `zotero_tags.parquet` written by
+#' [zotero_tags()]), tags are written by OpenAlex ID, following `existing`:
+#'
+#' - new items get the tags of their OpenAlex ID;
+#' - `"skip"`: existing items are left untouched, tags included;
+#' - `"update"`: tags missing on the existing item are added, its own are kept;
+#' - `"overwrite"`: the existing item's tags are replaced by those in `tags`,
+#'   and removed if `tags` has none for its OpenAlex ID.
+#'
+#' Rows of several libraries are merged; a tag keeps its type (manual or
+#' automatic).
+#'
+#' @section Write access:
+#' `"update"`, `"overwrite"` and `tags` write through Zotero's local API,
+#' which needs Zotero 10 or later and a key. If `api_key` is empty, Zotero shows a dialog asking to allow access for
 #' "openalexConvert": choose **Always Allow** (a key allowed once is only good
 #' for a single write). The key is kept for the rest of the R session.
 #'
@@ -74,10 +89,14 @@
 #' @param existing `"skip"` (default), `"update"` or `"overwrite"`: what to do
 #'   with items whose OpenAlex ID is already in the selected Zotero library.
 #'   See "Items already in Zotero".
+#' @param tags `NULL` (default: no tags written), or a data.frame or path to a
+#'   parquet file with columns `openalex_id`, `tag` and optionally `type`
+#'   (`0` manual, `1` automatic), such as the one written by [zotero_tags()].
+#'   See "Tags".
 #' @param url Base URL of the local Zotero server. Default
 #'   `"http://127.0.0.1:23119"`.
 #' @param api_key Key for Zotero's local API, only needed for
-#'   `existing = "update"` or `"overwrite"`. Defaults to
+#'   `existing = "update"` or `"overwrite"`, or `tags`. Defaults to
 #'   `Sys.getenv("ZOTERO_LOCAL_API_KEY")`; if empty, Zotero is asked for one.
 #' @param timeout Seconds to wait for Zotero to import one file. Default
 #'   `3600`; a 10000-item chunk can take 10 to 30 minutes (see "Speed").
@@ -92,6 +111,7 @@
 #'   \item{n_items}{Number of new items imported.}
 #'   \item{n_skipped}{Number of items skipped because they already exist.}
 #'   \item{n_updated}{Number of existing Zotero items updated or overwritten.}
+#'   \item{n_tagged}{Number of items whose tags were written from `tags`.}
 #'   \item{message}{Character; error text if something failed.}
 #' }
 #'
@@ -117,6 +137,7 @@ csljson_to_zotero <- function(
   files,
   method = c("local", "web"),
   existing = c("skip", "update", "overwrite"),
+  tags = NULL,
   url = "http://127.0.0.1:23119",
   api_key = Sys.getenv("ZOTERO_LOCAL_API_KEY"),
   timeout = 3600
@@ -134,6 +155,7 @@ csljson_to_zotero <- function(
     files <- list.files(files, pattern = "\\.json$", full.names = TRUE)
   }
   stopifnot(length(files) > 0L)
+  tag_index <- if (!is.null(tags)) .tag_index(tags)
 
   # Zotero must be running, and the selected target must accept new items
   target <- .zotero_selected(url)
@@ -155,7 +177,7 @@ csljson_to_zotero <- function(
   if (length(index)) {
     message(length(index), " OpenAlex ID(s) already in this library")
   }
-  if (existing != "skip" && length(index)) {
+  if ((existing != "skip" && length(index)) || length(tag_index)) {
     api$key <- if (nzchar(api_key)) api_key else .zotero_local_key(api)
   }
 
@@ -176,6 +198,7 @@ csljson_to_zotero <- function(
         n_items = 0L,
         n_skipped = 0L,
         n_updated = 0L,
+        n_tagged = 0L,
         message = ""
       )
 
@@ -209,6 +232,15 @@ csljson_to_zotero <- function(
         res$ok <- imp$ok
         res$n_items <- length(imp$items)
         res$message <- imp$message
+        if (imp$ok && length(tag_index)) {
+          step <- tryCatch(
+            .zotero_tag_new(api, imp$items, tag_index),
+            error = function(e) list(n = 0L, message = conditionMessage(e))
+          )
+          res$n_tagged <- step$n
+          res$ok <- !nzchar(step$message)
+          res$message <- step$message
+        }
       }
 
       if (any(known) && res$ok) {
@@ -218,11 +250,12 @@ csljson_to_zotero <- function(
           list(n = 0L, message = imp$message)
         } else {
           tryCatch(
-            .zotero_update(api, imp$items, index, blank = existing == "overwrite"),
-            error = function(e) list(n = 0L, message = conditionMessage(e))
+            .zotero_update(api, imp$items, index, blank = existing == "overwrite", tag_index),
+            error = function(e) list(n = 0L, n_tagged = 0L, message = conditionMessage(e))
           )
         }
         res$n_updated <- step$n
+        res$n_tagged <- res$n_tagged + (step$n_tagged %||% 0L)
         res$ok <- !nzchar(step$message)
         res$message <- step$message
       }
@@ -404,12 +437,12 @@ csljson_to_zotero <- function(
     httr2::req_perform()
   body <- jsonlite::fromJSON(httr2::resp_body_string(resp), simplifyVector = FALSE)
   if (httr2::resp_status(resp) != 200L || is.null(body$key)) {
-    stop("Zotero did not grant write access (needed for existing = \"update\" or \"overwrite\").", call. = FALSE)
+    stop("Zotero did not grant write access (needed for existing = \"update\" or \"overwrite\", and for tags).", call. = FALSE)
   }
   if (!isTRUE(body$remember)) {
     stop(
-      "Updating needs several writes, but a key allowed once is good for one ",
-      "only. Run again and choose 'Always Allow'.",
+      "Writing to Zotero needs several requests, but a key allowed once is good ",
+      "for one only. Run again and choose 'Always Allow'.",
       call. = FALSE
     )
   }
@@ -421,10 +454,12 @@ csljson_to_zotero <- function(
 #'
 #' Keeps the old item's identity and organisation. With `blank = TRUE`
 #' ("overwrite") text fields and creators that `new` lacks are emptied; with
-#' `blank = FALSE` ("update") they keep their old values.
+#' `blank = FALSE` ("update") they keep their old values. `tags` (from
+#' `.tag_index()`, `NULL` = leave tags alone) replace the old tags when
+#' `blank`, else the ones missing are added.
 #'
 #' @noRd
-.zotero_update_object <- function(new, old, blank) {
+.zotero_update_object <- function(new, old, blank, tags = NULL) {
   keep <- c("key", "version", "dateAdded", "dateModified", "collections", "tags", "relations", "parentItem")
   upd <- new[setdiff(names(new), keep)]
   upd <- upd[!vapply(upd, function(v) identical(v, "") || identical(v, list()), NA)]
@@ -433,6 +468,15 @@ csljson_to_zotero <- function(
       if (is.character(old[[nm]]) && length(old[[nm]]) == 1L) upd[[nm]] <- ""
     }
     if (is.null(upd$creators) && length(old$creators)) upd$creators <- list()
+  }
+  if (!is.null(tags)) {
+    if (blank) {
+      upd$tags <- tags
+    } else {
+      have <- vapply(old$tags, function(t) t$tag, "")
+      add <- Filter(function(t) !t$tag %in% have, tags)
+      if (length(add)) upd$tags <- c(old$tags, add)
+    }
   }
   upd$key <- old$key
   upd$version <- old$version
@@ -468,17 +512,21 @@ csljson_to_zotero <- function(
 
 #' Copy freshly imported items onto the existing ones, then delete the copies
 #'
-#' Returns list(n = items updated, message = "" or error text).
+#' Returns list(n = items updated, n_tagged = items whose tags were written,
+#' message = "" or error text).
 #'
 #' @noRd
-.zotero_update <- function(api, imported, index, blank) {
+.zotero_update <- function(api, imported, index, blank, tag_index = NULL) {
   updates <- list()
   for (new in imported) {
-    for (old in index[[.extra_openalex_id(new$extra)]]) {
-      updates[[length(updates) + 1L]] <- .zotero_update_object(new, old, blank)
+    id <- .extra_openalex_id(new$extra)
+    tags <- if (!is.null(tag_index)) c(list(), tag_index[[id]])
+    for (old in index[[id]]) {
+      updates[[length(updates) + 1L]] <- .zotero_update_object(new, old, blank, tags)
     }
   }
   out <- .zotero_post_items(api, updates)
+  out$n_tagged <- sum(vapply(updates, function(u) !is.null(u$tags), NA))
 
   # the imported copies served only as Zotero's mapping; remove them again
   keys <- vapply(imported, function(x) x$key, "")
@@ -501,4 +549,51 @@ csljson_to_zotero <- function(
     }
   }
   out
+}
+
+#' Tags by OpenAlex ID: named list of Zotero tag objects list(tag, type)
+#'
+#' `tags` is a data.frame or parquet path with `openalex_id`, `tag` and
+#' optionally `type`. A tag appears once per work; manual (0) wins over
+#' automatic (1).
+#'
+#' @noRd
+.tag_index <- function(tags) {
+  if (is.character(tags)) tags <- as.data.frame(arrow::read_parquet(tags))
+  stopifnot(all(c("openalex_id", "tag") %in% names(tags)))
+  type <- as.integer(if (is.null(tags$type)) 0L else tags$type)
+  tags <- data.frame(id = toupper(tags$openalex_id), tag = tags$tag, type = type)
+  tags <- tags[order(tags$type), ]
+  tags <- tags[!duplicated(tags[c("id", "tag")]) & nzchar(tags$tag), ]
+  lapply(split(tags, tags$id), function(d) {
+    Map(function(tag, type) if (type == 0L) list(tag = tag) else list(tag = tag, type = type), d$tag, d$type, USE.NAMES = FALSE)
+  })
+}
+
+#' Write tags onto items just imported (they have none yet)
+#'
+#' Returns list(n = items tagged, message = "" or error text).
+#'
+#' @noRd
+.zotero_tag_new <- function(api, imported, tag_index) {
+  todo <- Filter(function(it) length(tag_index[[.extra_openalex_id(it$extra)]]), imported)
+  if (!length(todo)) {
+    return(list(n = 0L, message = ""))
+  }
+  # the connector does not return item versions; the local API does
+  versions <- list()
+  keys <- vapply(todo, function(it) it$key, "")
+  for (batch in split(keys, ceiling(seq_along(keys) / 50L))) {
+    items <- .zotero_local_req(api, "/items") |>
+      httr2::req_url_query(itemKey = paste(batch, collapse = ","), format = "json", limit = 50L) |>
+      httr2::req_perform() |>
+      httr2::resp_body_string() |>
+      jsonlite::fromJSON(simplifyVector = FALSE)
+    for (it in items) versions[[it$data$key]] <- it$data$version
+  }
+  .zotero_post_items(api, lapply(todo, function(it) list(
+    key = it$key,
+    version = versions[[it$key]],
+    tags = tag_index[[.extra_openalex_id(it$extra)]]
+  )))
 }
