@@ -66,7 +66,8 @@ reference documents.
     - Avoid duplicating DOI URL in `URL` when `DOI` is set.
     - Derive pages (`first_page`–`last_page`) and ISSN (prefer
       `issn_l`).
-    - Aggregate open‑access/citation indicators in `note` when present.
+    - Write `note` as lines: first `OpenAlex: W...` (Zotero imports it
+      into Extra), then open‑access/citation indicators when present.
 6.  Write each chunk to `chunk_k.json` using
     [`jsonlite::write_json()`](https://jeroen.r-universe.dev/jsonlite/reference/read_json.html)
     with `auto_unbox = TRUE` for compactness.

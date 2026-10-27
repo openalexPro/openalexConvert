@@ -61,6 +61,7 @@ resilient to missing columns by falling back to `NULL`/empty values in
 SQL. Mapping includes: title, year, DOI, container-title (venue),
 volume/issue/pages, authors (with basic given/family split and ORCID
 when present), URL/abstract, publisher and ISSN, language, keywords
-(collapsed to a single string), and an aggregated `note` with OA status
+(collapsed to a single string), and an `note` whose first line is
+`OpenAlex: W...` (imported by Zotero into Extra), followed by OA status
 and citation count. Records are processed in DuckDB-backed chunks for
 low memory usage.

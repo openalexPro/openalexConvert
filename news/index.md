@@ -1,5 +1,88 @@
 # Changelog
 
+## openalexConvert 0.1.0
+
+### Zotero import rewritten
+
+`csljson_to_zotero_upload()` is removed. It POSTed CSL JSON to the
+Zotero Web API, which only accepts Zotero item JSON and at most 50 items
+per request, so real uploads could not succeed; its tests only exercised
+mocked responses.
+
+New `csljson_to_zotero(files, method = c("local", "web"))`:
+
+- `method = "local"` imports CSL JSON files (e.g. the chunks from
+  [`corpus_to_csljson()`](https://openalexpro.github.io/openalexConvert/reference/corpus_to_csljson.md))
+  into the running Zotero desktop app via its local connector endpoint.
+  Zotero’s own CSL JSON importer does the mapping, and items go into the
+  library or collection selected in Zotero; select a group library to
+  import into the group. Verified against Zotero 10.0.6.
+- Each item’s OpenAlex ID ends up in Zotero’s Extra field as
+  `OpenAlex: W...` (see below).
+- Re-exports: `existing = c("skip", "update", "overwrite")` decides what
+  happens to items whose OpenAlex ID is already in the selected Zotero
+  library. `"skip"` (default) leaves them alone; `"update"` writes the
+  new metadata but keeps fields it lacks; `"overwrite"` replaces all
+  fields and empties those it lacks. Both keep the Zotero item key,
+  notes, attachments, tags and collections. They need Zotero 10’s local
+  API and a one-time “Always Allow” in Zotero.
+- Existing items are recognised whichever form their Extra uses for the
+  ID: `OpenAlex: W...` (written by this package),
+  `OpenAlex: https://openalex.org/W...` (Zotero’s OpenAlex translators),
+  `openalex.work_id: W...` (zotero-openalex plugin) or
+  `OpenAlex Work ID: W...` (open-alex-work-id plugin).
+- `corpus_to_zotero(project_dir)` does both steps in one call: corpus to
+  temporary CSL JSON (1000 works per file) to Zotero, into the
+  collection `<project>` \> `<corpus>`.
+- Collections: `csljson_to_zotero(collection = c("project", "corpus"))`
+  puts the works into a nested collection, created if missing and reused
+  on re-export. Works already in the library join it too, whatever
+  `existing` says.
+  [`corpus_to_zotero()`](https://openalexpro.github.io/openalexConvert/reference/corpus_to_zotero.md)
+  does this by default, naming the collections after the project
+  directory and the corpus, so an accidental export is easy to find and
+  delete.
+- Tags: `csljson_to_zotero(tags = )` and
+  [`corpus_to_zotero()`](https://openalexpro.github.io/openalexConvert/reference/corpus_to_zotero.md)
+  write tags by OpenAlex ID (e.g. from `zotero_tags.parquet`, which
+  [`corpus_to_zotero()`](https://openalexpro.github.io/openalexConvert/reference/corpus_to_zotero.md)
+  picks up from the project directory). New items get their tags;
+  existing items follow `existing`: `"skip"` leaves them alone,
+  `"update"` adds missing tags, `"overwrite"` replaces them. New result
+  column `n_tagged`.
+- `method = "web"` (headless upload via the Zotero Web API) is not
+  implemented yet and raises an error.
+- The help page’s “Speed” section gives measured import times: Zotero
+  slows as the library grows (17.5 works/s at 440 items, 6.1 works/s at
+  4440), so 100000 works take hours.
+
+### OpenAlex ID in the CSL `note`
+
+[`corpus_to_csljson()`](https://openalexpro.github.io/openalexConvert/reference/corpus_to_csljson.md)
+now writes `note` as lines, the first being `OpenAlex: W...` (followed
+by the existing `OA:...; OA_status:...; Citations:...` line). Zotero
+imports `note` into Extra, so the ID is kept however the CSL JSON
+reaches Zotero, including File → Import. The CSL test fixtures were
+regenerated; only `note` changed. BibTeX/BibLaTeX output is unchanged
+(pandoc does not write `note`).
+
+### Zotero tags back into the project
+
+New `zotero_tags(project_dir)` reads the tags of every item in the
+Zotero library selected in Zotero that has an OpenAlex ID in Extra (any
+of the four forms) and writes them to `zotero_tags.parquet` in the
+project directory: one row per work and tag, with the tag type
+(manual/automatic), the library (group ID, `0` = personal library) and
+the Zotero item key. Join it with the corpus on `openalex_id`.
+Re-running replaces that library’s rows and keeps those of other
+libraries. Reading needs no API key.
+
+### DuckDB lambda syntax
+
+[`corpus_to_csljson()`](https://openalexpro.github.io/openalexConvert/reference/corpus_to_csljson.md)
+failed with current DuckDB (“Deprecated lambda arrow (-\>) detected”).
+It now uses the `lambda x: ...` syntax.
+
 ## openalexConvert 0.0.5
 
 ### Tests no longer compare pandoc’s exact output
@@ -106,7 +189,6 @@ The suite now passes: 119 pass / 0 fail, from 105 pass / 14 fail.
   and `test-coverage.yaml` added.
 - Test coverage raised to ~86%, with new tests for
   [`corpus_export_via_pandoc()`](https://openalexpro.github.io/openalexConvert/reference/corpus_export_via_pandoc.md),
-  Pandoc rendering paths, and
-  [`csljson_to_zotero_upload()`](https://openalexpro.github.io/openalexConvert/reference/csljson_to_zotero_upload.md).
+  Pandoc rendering paths, and `csljson_to_zotero_upload()`.
 - Leftover `_problems/` test artefacts from a previous failed run
   removed.
