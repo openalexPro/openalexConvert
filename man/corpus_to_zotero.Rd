@@ -8,6 +8,7 @@ corpus_to_zotero(
   project_dir,
   corpus = file.path(project_dir, "parquet"),
   existing = c("skip", "update", "overwrite"),
+  tags,
   chunk_size = 1000,
   ...
 )
@@ -21,6 +22,11 @@ data.frame/tibble of works. Default \code{file.path(project_dir, "parquet")}.}
 
 \item{existing}{\code{"skip"} (default), \code{"update"} or \code{"overwrite"}: what to do
 with works already in the Zotero library. See \code{\link[=csljson_to_zotero]{csljson_to_zotero()}}.}
+
+\item{tags}{Tags to write, by OpenAlex ID (see "Tags" in
+\code{\link[=csljson_to_zotero]{csljson_to_zotero()}}): a data.frame, a parquet path, or \code{NULL} for none.
+Default: \verb{<project_dir>/zotero_tags.parquet} (written by \code{\link[=zotero_tags]{zotero_tags()}})
+if it exists, else \code{NULL}.}
 
 \item{chunk_size}{Works per file sent to Zotero. Default \code{1000}, which
 gives progress per 1000 works and stays well within \code{timeout}.}

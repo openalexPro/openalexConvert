@@ -28,6 +28,11 @@ New `csljson_to_zotero(files, method = c("local", "web"))`:
   plugin) or `OpenAlex Work ID: W...` (open-alex-work-id plugin).
 - `corpus_to_zotero(project_dir)` does both steps in one call: corpus to
   temporary CSL JSON (1000 works per file) to Zotero.
+- Tags: `csljson_to_zotero(tags = )` and `corpus_to_zotero()` write tags by
+  OpenAlex ID (e.g. from `zotero_tags.parquet`, which `corpus_to_zotero()`
+  picks up from the project directory). New items get their tags; existing
+  items follow `existing`: `"skip"` leaves them alone, `"update"` adds
+  missing tags, `"overwrite"` replaces them. New result column `n_tagged`.
 - `method = "web"` (headless upload via the Zotero Web API) is not implemented
   yet and raises an error.
 - The help page's "Speed" section gives measured import times: Zotero slows

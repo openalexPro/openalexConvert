@@ -1,5 +1,6 @@
 # Fake Zotero (connector + local API). `routes` maps "METHOD path-regex" to a
-# response list(status, body, headers); every request is logged.
+# response list(status, body, headers), or a function(req) returning one;
+# every request is logged.
 mock_zotero <- function(routes = list(), env = parent.frame()) {
   log <- new.env()
   log$requests <- list()
@@ -20,6 +21,7 @@ mock_zotero <- function(routes = list(), env = parent.frame()) {
       for (r in names(routes)) {
         if (grepl(paste0("^", r, "$"), paste(method, path))) {
           x <- routes[[r]]
+          if (is.function(x)) x <- x(req)
           return(structure(
             list(status = x$status %||% 200L, body = x$body %||% "", headers = x$headers %||% list()),
             class = "fake_resp"
@@ -315,4 +317,97 @@ test_that("corpus_to_zotero sends the corpus in chunks and cleans up", {
   }))
   expect_length(unique(ids), 369L)
   expect_setequal(list.files(tempdir(), pattern = "^csljson_"), before)
+})
+
+# POST /items requests sent, as parsed objects
+posted <- function(log) {
+  unlist(lapply(
+    Filter(function(r) r$method == "POST" && grepl("/items$", r$path), log$requests),
+    function(r) jsonlite::fromJSON(sent(r), simplifyVector = FALSE)
+  ), recursive = FALSE)
+}
+
+test_that("tags: one per work, manual wins over automatic", {
+  idx <- .tag_index(data.frame(
+    openalex_id = c("W1", "W1", "W1", "w2", "W3"),
+    tag = c("a", "b", "a", "c", ""),
+    type = c(1L, 1L, 0L, 0L, 0L)
+  ))
+  expect_named(idx, c("W1", "W2"))
+  expect_equal(idx$W1, list(list(tag = "a"), list(tag = "b", type = 1L)))
+  expect_equal(idx$W2, list(list(tag = "c")))
+})
+
+test_that("tags: new items get the tags of their OpenAlex ID", {
+  log <- mock_zotero(list(
+    "GET /api/users/0/items" = function(req) {
+      list(body = if (grepl("itemKey=N1", req$url)) {
+        '[{"data":{"key":"N1","version":3}}]'
+      } else {
+        "[]"
+      })
+    },
+    "POST /connector/import" = list(
+      status = 201L,
+      body = '[{"key":"N1","extra":"OpenAlex: W1"},{"key":"N2","extra":"OpenAlex: W2"}]'
+    ),
+    "POST /api/users/0/items" = list(body = '{"success":{"0":"N1"},"unchanged":{},"failed":{}}')
+  ))
+  tags <- data.frame(openalex_id = "W1", tag = c("a", "b"), type = c(0L, 1L))
+  res <- suppressMessages(csljson_to_zotero(
+    csl_files(1L, ids = c("W1", "W2")), tags = tags, api_key = "KEY"
+  ))
+  expect_true(res$ok)
+  expect_equal(res$n_items, 2L)
+  expect_equal(res$n_tagged, 1L)
+  p <- posted(log)
+  expect_length(p, 1L)
+  expect_equal(p[[1]], list(key = "N1", version = 3L, tags = list(
+    list(tag = "a"), list(tag = "b", type = 1L)
+  )))
+})
+
+test_that("tags: skip leaves existing items alone", {
+  log <- mock_zotero(list("GET /api/users/0/items" = list(body = existing_items("W1"))))
+  res <- suppressMessages(csljson_to_zotero(
+    csl_files(1L, ids = "W1"),
+    tags = data.frame(openalex_id = "W1", tag = "new"), api_key = "KEY"
+  ))
+  expect_equal(res$n_skipped, 1L)
+  expect_equal(res$n_tagged, 0L)
+  expect_length(posted(log), 0L)
+})
+
+test_that("tags: update adds missing tags, overwrite replaces them", {
+  run <- function(mode, tags) {
+    log <- mock_zotero(list(
+      "GET /api/users/0/items" = list(body = existing_items("W1")),
+      "POST /connector/import" = list(
+        status = 201L, body = '[{"key":"TMP","title":"t","extra":"OpenAlex: W1"}]'
+      ),
+      "POST /api/users/0/items" = list(body = '{"success":{"0":"OLD1"},"unchanged":{},"failed":{}}'),
+      "DELETE /api/users/0/items" = list(status = 204L)
+    ))
+    res <- suppressMessages(csljson_to_zotero(
+      csl_files(1L, ids = "W1"), existing = mode, tags = tags, api_key = "KEY"
+    ))
+    list(res = res, upd = posted(log)[[1]])
+  }
+  tags <- data.frame(openalex_id = "W1", tag = c("mine", "new"))
+
+  u <- run("update", tags) # old item is tagged "mine"
+  expect_equal(u$upd$tags, list(list(tag = "mine"), list(tag = "new")))
+  expect_equal(u$res$n_tagged, 1L)
+
+  o <- run("overwrite", tags[2, ])
+  expect_equal(o$upd$tags, list(list(tag = "new")))
+
+  # overwrite with no tags for the work removes them
+  o <- run("overwrite", data.frame(openalex_id = "W9", tag = "x"))
+  expect_equal(o$upd$tags, list())
+
+  # update with nothing new leaves tags alone
+  u <- run("update", tags[1, ])
+  expect_null(u$upd$tags)
+  expect_equal(u$res$n_tagged, 0L)
 })
