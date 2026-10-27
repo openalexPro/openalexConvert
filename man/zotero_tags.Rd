@@ -46,7 +46,9 @@ so the file always holds the library's current tags. Items without an
 OpenAlex ID in Extra are not included.
 
 Needs the running Zotero desktop app (Zotero 10 or later, for the local
-API); reading needs no API key.
+API); reading needs no API key. It runs the same search as
+\code{\link[=csljson_to_zotero]{csljson_to_zotero()}} (see its "Speed" section): a few seconds for a
+library of 5000 works.
 }
 \examples{
 \dontrun{

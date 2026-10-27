@@ -32,7 +32,7 @@ See "Items already in Zotero".}
 \code{Sys.getenv("ZOTERO_LOCAL_API_KEY")}; if empty, Zotero is asked for one.}
 
 \item{timeout}{Seconds to wait for Zotero to import one file. Default
-\code{3600}; a 10000-item chunk takes several minutes.}
+\code{3600}; a 10000-item chunk can take 10 to 30 minutes (see "Speed").}
 }
 \value{
 Invisibly, a data.frame with one row per file and columns:
@@ -93,6 +93,31 @@ Zotero 10 or later and a key. If \code{api_key} is empty, Zotero shows a dialog 
 for a single write). The key is kept for the rest of the R session.
 
 Progress is reported via the \pkg{progressr} package.
+}
+
+\section{Speed}{
+
+Zotero gets slower as the library grows. Measured with Zotero 10.0.6 on a
+Mac, importing 5000 works in files of 1000 into a library starting at about
+440 items:\tabular{rrrr}{
+   file \tab items in library before \tab time \tab works/s \cr
+   1 \tab 440 \tab 57 s \tab 17.5 \cr
+   2 \tab 1440 \tab 89 s \tab 11.2 \cr
+   3 \tab 2440 \tab 121 s \tab 8.3 \cr
+   4 \tab 3440 \tab 145 s \tab 6.9 \cr
+   5 \tab 4440 \tab 163 s \tab 6.1 \cr
+}
+
+
+Zotero's memory use grew to 3.4 GB during that run. For 100000 works, plan
+for several hours to more than a day, and consider restarting Zotero every
+few files.
+
+The search for items already in the library (run once per call, for every
+value of \code{existing}) took 0.2 s for 369 IDs and 6.6 s for 5369; it grows
+faster than the library, so expect tens of minutes for 100000. Re-running
+all 5000 works with \code{existing = "skip"} took 4.7 s, mostly that search.
+\code{\link[=corpus_to_csljson]{corpus_to_csljson()}} itself takes about 1 ms per work.
 }
 
 \examples{

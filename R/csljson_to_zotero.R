@@ -44,6 +44,29 @@
 #'
 #' Progress is reported via the \pkg{progressr} package.
 #'
+#' @section Speed:
+#' Zotero gets slower as the library grows. Measured with Zotero 10.0.6 on a
+#' Mac, importing 5000 works in files of 1000 into a library starting at about
+#' 440 items:
+#'
+#' | file | items in library before | time | works/s |
+#' |---:|---:|---:|---:|
+#' | 1 | 440 | 57 s | 17.5 |
+#' | 2 | 1440 | 89 s | 11.2 |
+#' | 3 | 2440 | 121 s | 8.3 |
+#' | 4 | 3440 | 145 s | 6.9 |
+#' | 5 | 4440 | 163 s | 6.1 |
+#'
+#' Zotero's memory use grew to 3.4 GB during that run. For 100000 works, plan
+#' for several hours to more than a day, and consider restarting Zotero every
+#' few files.
+#'
+#' The search for items already in the library (run once per call, for every
+#' value of `existing`) took 0.2 s for 369 IDs and 6.6 s for 5369; it grows
+#' faster than the library, so expect tens of minutes for 100000. Re-running
+#' all 5000 works with `existing = "skip"` took 4.7 s, mostly that search.
+#' [corpus_to_csljson()] itself takes about 1 ms per work.
+#'
 #' @param files Character vector. Paths to CSL JSON files. If a single element
 #'   points to an existing directory, all `*.json` files in that directory
 #'   (non-recursive) are used.
@@ -57,7 +80,7 @@
 #'   `existing = "update"` or `"overwrite"`. Defaults to
 #'   `Sys.getenv("ZOTERO_LOCAL_API_KEY")`; if empty, Zotero is asked for one.
 #' @param timeout Seconds to wait for Zotero to import one file. Default
-#'   `3600`; a 10000-item chunk takes several minutes.
+#'   `3600`; a 10000-item chunk can take 10 to 30 minutes (see "Speed").
 #'
 #' @return
 #' Invisibly, a data.frame with one row per file and columns:

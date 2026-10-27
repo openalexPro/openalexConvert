@@ -2,6 +2,7 @@
 
 export(corpus_export_via_pandoc)
 export(corpus_to_csljson)
+export(corpus_to_zotero)
 export(csljson_convert_pandoc)
 export(csljson_to_zotero)
 export(zotero_tags)

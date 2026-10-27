@@ -299,3 +299,20 @@ test_that("zotero_tags writes an empty table when nothing is tagged", {
   expect_equal(nrow(arrow::read_parquet(out)), 0L)
   expect_named(tags, c("openalex_id", "tag", "type", "zotero_library", "zotero_key"))
 })
+
+test_that("corpus_to_zotero sends the corpus in chunks and cleans up", {
+  log <- mock_zotero()
+  before <- list.files(tempdir(), pattern = "^csljson_")
+  res <- suppressMessages(corpus_to_zotero(
+    corpus = testthat::test_path("..", "fixtures", "corpus"),
+    chunk_size = 200
+  ))
+  expect_equal(nrow(res), 2L) # 369 works
+  expect_true(all(res$ok))
+  imp <- Filter(function(r) r$path == "/connector/import", log$requests)
+  ids <- unlist(lapply(imp, function(r) {
+    vapply(jsonlite::fromJSON(sent(r), simplifyVector = FALSE), `[[`, "", "id")
+  }))
+  expect_length(unique(ids), 369L)
+  expect_setequal(list.files(tempdir(), pattern = "^csljson_"), before)
+})

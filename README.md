@@ -7,7 +7,8 @@
 
 Convert an [OpenAlex](https://openalex.org) parquet corpus (produced by
 [openalexPro](https://github.com/openalexPro/openalexPro)) into bibliography formats via
-[Pandoc](https://pandoc.org): CSL JSON, BibTeX, BibLaTeX, Markdown, LaTeX, HTML, or PDF.
+[Pandoc](https://pandoc.org): CSL JSON, BibTeX, BibLaTeX, Markdown, LaTeX, HTML, or PDF, and into
+[Zotero](https://www.zotero.org).
 
 ## Installation
 
@@ -38,6 +39,20 @@ csljson_convert_pandoc(
   output = "path/to/bibliography.bib",
   to     = "bibtex"
 )
+```
+
+## Zotero
+
+With the Zotero desktop app (Zotero 10) running, select the target library or
+collection in Zotero, then:
+
+```r
+# 3. Import the CSL JSON into Zotero; the OpenAlex ID goes into Extra
+csljson_to_zotero("path/to/csljson")
+# or both steps in one: corpus_to_zotero("path/to/project")
+
+# 4. After tagging in Zotero: read the tags back, by OpenAlex ID
+zotero_tags("path/to/project")  # writes path/to/project/zotero_tags.parquet
 ```
 
 ## Documentation
