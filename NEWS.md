@@ -1,5 +1,7 @@
 # openalexConvert (development version)
 
+- License changed from GPL (>= 2) to MIT.
+
 # openalexConvert 0.1.0
 
 ## Zotero import rewritten
