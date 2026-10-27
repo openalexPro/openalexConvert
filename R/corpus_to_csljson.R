@@ -526,6 +526,10 @@ corpus_to_csljson <- function(
 #'
 #' @noRd
 .sanitize_csl_item <- function(x) {
+  if (is.list(x) && is.null(names(x))) {
+    # unnamed (e.g. date-parts): positions matter, sanitize each element
+    return(lapply(x, .sanitize_csl_item))
+  }
   if (is.list(x)) {
     out <- list()
     for (nm in names(x)) {
@@ -611,8 +615,9 @@ corpus_to_csljson <- function(
 
   t <- rec$type %||% ""
   vt <- rec$venue_type %||% ""
-  has_isbn <- !is.null(rec$isbn) && nzchar(as.character(rec$isbn))
-  has_issn <- (!is.null(rec$issn_l) && nzchar(rec$issn_l)) ||
+  # nzchar(NA) is TRUE: missing (NA) ISBN/ISSN must not count as present
+  has_isbn <- !is.null(rec$isbn) && !is.na(rec$isbn) && nzchar(as.character(rec$isbn))
+  has_issn <- (!is.null(rec$issn_l) && !is.na(rec$issn_l) && nzchar(rec$issn_l)) ||
     (!is.null(rec$issns[[1]]) && length(rec$issns[[1]]) > 0)
   has_container <- nzchar(rec$venue %||% "")
   has_vol_issue <- nzchar(rec$volume %||% "") || nzchar(rec$number %||% "")
@@ -665,7 +670,7 @@ corpus_to_csljson <- function(
   }
 
   # ISSN
-  issn_val <- if (!is.null(rec$issn_l) && nzchar(rec$issn_l)) {
+  issn_val <- if (!is.null(rec$issn_l) && !is.na(rec$issn_l) && nzchar(rec$issn_l)) {
     rec$issn_l
   } else if (!is.null(rec$issns[[1]]) && length(rec$issns[[1]]) > 0) {
     paste(as.character(rec$issns[[1]]), collapse = ",")
@@ -684,7 +689,7 @@ corpus_to_csljson <- function(
     if (!is.null(rec$is_oa) && !is.na(rec$is_oa)) {
       parts_note <- c(parts_note, paste0("OA:", as.character(rec$is_oa)))
     }
-    if (!is.null(rec$oa_status) && nzchar(rec$oa_status)) {
+    if (!is.null(rec$oa_status) && !is.na(rec$oa_status) && nzchar(rec$oa_status)) {
       parts_note <- c(parts_note, paste0("OA_status:", rec$oa_status))
     }
     if (!is.null(rec$cited_by_count) && !is.na(rec$cited_by_count)) {

@@ -497,3 +497,166 @@ test_that("corpus_to_zotero: default collection is <project> > <corpus>", {
     list(name = "corpus", parentCollection = "C_fixtures")
   ))
 })
+
+test_that("import errors: unreachable connector and unexpected status", {
+  mock_zotero(list("POST /connector/import" = function(req) stop("connection reset")))
+  res <- suppressMessages(csljson_to_zotero(csl_files(1L)))
+  expect_false(res$ok)
+  expect_true(is.na(res$status_code))
+  expect_match(res$message, "connection reset")
+
+  mock_zotero(list("POST /connector/import" = list(status = 500L, body = "Internal error")))
+  res <- suppressMessages(csljson_to_zotero(csl_files(1L)))
+  expect_false(res$ok)
+  expect_equal(res$status_code, 500L)
+  expect_equal(res$message, "Internal error")
+})
+
+test_that("update: a failed import of the known works is reported", {
+  mock_zotero(list(
+    "GET /api/users/0/items" = list(body = existing_items("W1")),
+    "POST /connector/import" = list(status = 500L, body = "busy")
+  ))
+  res <- suppressMessages(csljson_to_zotero(
+    csl_files(1L, ids = "W1"), existing = "update", api_key = "KEY"
+  ))
+  expect_false(res$ok)
+  expect_equal(res$n_updated, 0L)
+  expect_equal(res$message, "busy")
+})
+
+test_that("update: copies that cannot be deleted are reported", {
+  mock_zotero(list(
+    "GET /api/users/0/items" = list(body = existing_items("W1")),
+    "POST /connector/import" = list(
+      status = 201L, body = '[{"key":"TMP","title":"t","extra":"OpenAlex: W1"}]'
+    ),
+    "POST /api/users/0/items" = list(body = '{"success":{"0":"OLD1"},"unchanged":{},"failed":{}}'),
+    "DELETE /api/users/0/items" = list(status = 412L)
+  ))
+  res <- suppressMessages(csljson_to_zotero(
+    csl_files(1L, ids = "W1"), existing = "update", api_key = "KEY"
+  ))
+  expect_false(res$ok)
+  expect_equal(res$n_updated, 1L) # the update itself went through
+  expect_equal(res$message, "Could not delete temporary copies: TMP")
+})
+
+test_that("overwrite empties text fields and creators the new item lacks", {
+  old <- list(
+    key = "OLD", version = 4L, title = "old", abstractNote = "old abstract",
+    creators = list(list(lastName = "Doe")), tags = list(list(tag = "keep")),
+    collections = list("C"), numPages = 3L
+  )
+  new <- list(key = "TMP", version = 0L, title = "new", url = "", tags = list())
+  upd <- .zotero_update_object(new, old, blank = TRUE)
+  expect_equal(upd$title, "new")
+  expect_equal(upd$abstractNote, "")
+  expect_equal(upd$creators, list())
+  expect_null(upd$url) # empty new values are not written
+  expect_null(upd$numPages) # only text fields are emptied
+  expect_null(upd$tags)
+  expect_null(upd$collections)
+  expect_equal(upd[c("key", "version")], list(key = "OLD", version = 4L))
+
+  # update keeps what the new item lacks
+  upd <- .zotero_update_object(new, old, blank = FALSE)
+  expect_named(upd, c("title", "key", "version"))
+})
+
+test_that(".zotero_post_items fails on a rejected write", {
+  api <- list(url = "http://127.0.0.1:23119", prefix = "/api/users/0", server_id = "SID", key = "KEY")
+  mock_zotero(list("POST /api/users/0/items" = list(status = 403L, body = "Forbidden")))
+  expect_error(
+    .zotero_post_items(api, list(list(key = "K", version = 1L))),
+    "Writing to Zotero failed: Forbidden"
+  )
+})
+
+test_that("tags can be read from a parquet file", {
+  f <- tempfile(fileext = ".parquet")
+  arrow::write_parquet(data.frame(openalex_id = "w1", tag = "a", type = 1L), f)
+  expect_equal(.tag_index(f), list(W1 = list(list(tag = "a", type = 1L))))
+})
+
+test_that("new items without tags or collection need no second write", {
+  api <- list(url = "u", prefix = "/api/users/0", server_id = "SID", key = "KEY")
+  log <- mock_zotero()
+  res <- .zotero_finish_new(api, list(list(key = "N1", extra = "OpenAlex: W2")), list(W1 = list(list(tag = "a"))))
+  expect_equal(res, list(n = 0L, n_tagged = 0L, message = ""))
+  expect_length(log$requests, 0L)
+})
+
+test_that("collection: a refused creation is an error", {
+  api <- list(url = "http://127.0.0.1:23119", prefix = "/api/users/0", server_id = "SID", key = "KEY")
+  mock_zotero(list(
+    "GET /api/users/0/collections" = list(body = "[]"),
+    "POST /api/users/0/collections" = list(
+      body = '{"success":{},"unchanged":{},"failed":{"0":{"message":"bad name"}}}'
+    )
+  ))
+  expect_error(.zotero_collection(api, "proj"), "Could not create Zotero collection 'proj'")
+})
+
+test_that("collection: a non-JSON error response gives the Zotero message", {
+  api <- list(url = "http://127.0.0.1:23119", prefix = "/api/users/0", server_id = "SID", key = "KEY")
+  mock_zotero(list(
+    "GET /api/users/0/collections" = list(body = "[]"),
+    "POST /api/users/0/collections" = list(status = 403L, body = "Forbidden")
+  ))
+  expect_error(.zotero_collection(api, "proj"), "Could not create Zotero collection 'proj': Forbidden")
+})
+
+test_that("local API key: asked once, then cached for the session", {
+  on.exit(.zotero_env$key <- NULL, add = TRUE)
+  .zotero_env$key <- NULL
+  api <- list(url = "http://127.0.0.1:23119", prefix = "/api/users/0", server_id = "SID")
+  log <- mock_zotero(list(
+    "POST /api/local/authorize" = list(body = '{"key":"NEWKEY","remember":true}')
+  ))
+  expect_message(key <- .zotero_local_key(api), "Always Allow")
+  expect_equal(key, "NEWKEY")
+  auth <- log$requests[[1]]
+  expect_equal(auth$req$headers$`Zotero-Server-ID`, "SID")
+  expect_equal(sent(auth)$appName, "openalexConvert")
+
+  expect_equal(.zotero_local_key(api), "NEWKEY")
+  expect_length(log$requests, 1L) # no second dialog
+})
+
+test_that("local API key: refused or one-off access is an error", {
+  on.exit(.zotero_env$key <- NULL, add = TRUE)
+  .zotero_env$key <- NULL
+  api <- list(url = "http://127.0.0.1:23119", prefix = "/api/users/0", server_id = "SID")
+  mock_zotero(list("POST /api/local/authorize" = list(status = 403L, body = "{}")))
+  expect_error(suppressMessages(.zotero_local_key(api)), "did not grant write access")
+  # a plain-text (non-JSON) error body gives the same message
+  mock_zotero(list("POST /api/local/authorize" = list(status = 403L, body = "Forbidden")))
+  expect_error(suppressMessages(.zotero_local_key(api)), "did not grant write access")
+
+  mock_zotero(list(
+    "POST /api/local/authorize" = list(body = '{"key":"ONCE","remember":false}')
+  ))
+  expect_error(suppressMessages(.zotero_local_key(api)), "choose 'Always Allow'")
+  expect_null(.zotero_env$key)
+})
+
+test_that("update without api_key asks Zotero for one", {
+  on.exit(.zotero_env$key <- NULL, add = TRUE)
+  .zotero_env$key <- NULL
+  log <- mock_zotero(list(
+    "POST /api/local/authorize" = list(body = '{"key":"ASKED","remember":true}'),
+    "GET /api/users/0/items" = list(body = existing_items("W1")),
+    "POST /connector/import" = list(
+      status = 201L, body = '[{"key":"TMP","title":"t","extra":"OpenAlex: W1"}]'
+    ),
+    "POST /api/users/0/items" = list(body = '{"success":{"0":"OLD1"},"unchanged":{},"failed":{}}'),
+    "DELETE /api/users/0/items" = list(status = 204L)
+  ))
+  res <- suppressMessages(csljson_to_zotero(
+    csl_files(1L, ids = "W1"), existing = "update", api_key = ""
+  ))
+  expect_true(res$ok)
+  post <- Filter(function(r) r$method == "POST" && r$path == "/api/users/0/items", log$requests)[[1]]
+  expect_equal(post$req$headers$`Zotero-API-Key`, "ASKED")
+})
