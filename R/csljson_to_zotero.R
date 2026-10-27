@@ -51,8 +51,24 @@
 #' Rows of several libraries are merged; a tag keeps its type (manual or
 #' automatic).
 #'
+#' @section Collection:
+#' With `collection`, e.g. `c("my_project", "corpus_a")`, the works are also
+#' put into that collection, nested from the top level of the selected
+#' library (`my_project` > `corpus_a`). Missing collections are created,
+#' existing ones of the same name reused, so a re-export goes into the same
+#' collection. Works already in the library join the collection too, with
+#' every value of `existing`: collections are independent of the item, and
+#' one work can be in several. Other collections of an item are kept.
+#'
+#' New items also land in whatever is selected in Zotero, so select the
+#' library itself (not a collection) to have them only in `collection`.
+#' Deleting the collection in Zotero with its items removes an accidental
+#' export again; items that were already in the library before stay in their
+#' other collections.
+#'
 #' @section Write access:
-#' `"update"`, `"overwrite"` and `tags` write through Zotero's local API,
+#' `"update"`, `"overwrite"`, `tags` and `collection` write through Zotero's
+#' local API,
 #' which needs Zotero 10 or later and a key. If `api_key` is empty, Zotero shows a dialog asking to allow access for
 #' "openalexConvert": choose **Always Allow** (a key allowed once is only good
 #' for a single write). The key is kept for the rest of the R session.
@@ -93,10 +109,13 @@
 #'   parquet file with columns `openalex_id`, `tag` and optionally `type`
 #'   (`0` manual, `1` automatic), such as the one written by [zotero_tags()].
 #'   See "Tags".
+#' @param collection `NULL` (default: only the target selected in Zotero), or
+#'   the path of a collection to put the works in, e.g.
+#'   `c("my_project", "corpus_a")`. See "Collection".
 #' @param url Base URL of the local Zotero server. Default
 #'   `"http://127.0.0.1:23119"`.
 #' @param api_key Key for Zotero's local API, only needed for
-#'   `existing = "update"` or `"overwrite"`, or `tags`. Defaults to
+#'   `existing = "update"` or `"overwrite"`, `tags` or `collection`. Defaults to
 #'   `Sys.getenv("ZOTERO_LOCAL_API_KEY")`; if empty, Zotero is asked for one.
 #' @param timeout Seconds to wait for Zotero to import one file. Default
 #'   `3600`; a 10000-item chunk can take 10 to 30 minutes (see "Speed").
@@ -138,6 +157,7 @@ csljson_to_zotero <- function(
   method = c("local", "web"),
   existing = c("skip", "update", "overwrite"),
   tags = NULL,
+  collection = NULL,
   url = "http://127.0.0.1:23119",
   api_key = Sys.getenv("ZOTERO_LOCAL_API_KEY"),
   timeout = 3600
@@ -177,8 +197,13 @@ csljson_to_zotero <- function(
   if (length(index)) {
     message(length(index), " OpenAlex ID(s) already in this library")
   }
-  if ((existing != "skip" && length(index)) || length(tag_index)) {
+  if ((existing != "skip" && length(index)) || length(tag_index) || length(collection)) {
     api$key <- if (nzchar(api_key)) api_key else .zotero_local_key(api)
+  }
+  coll <- NULL
+  if (length(collection)) {
+    coll <- .zotero_collection(api, collection)
+    message("Adding the works to collection ", paste(collection, collapse = " / "))
   }
 
   session <- paste0("openalexConvert-", format(Sys.time(), "%Y%m%d%H%M%OS3"))
@@ -219,25 +244,34 @@ csljson_to_zotero <- function(
 
       ids <- vapply(items, function(it) .csl_openalex_id(it$id), "")
       known <- nzchar(ids) & ids %in% names(index)
+      res$ok <- TRUE
       if (existing == "skip") {
         res$n_skipped <- sum(known)
+        if (!is.null(coll) && any(known)) {
+          # collections are independent of the item: skipped works join too
+          step <- tryCatch(
+            .zotero_add_to_collection(api, unlist(unname(index[ids[known]]), recursive = FALSE), coll),
+            error = function(e) list(n = 0L, message = conditionMessage(e))
+          )
+          res$ok <- !nzchar(step$message)
+          res$message <- step$message
+        }
         items <- items[!known]
         known <- known[!known]
       }
-      res$ok <- TRUE
 
-      if (any(!known)) {
+      if (any(!known) && res$ok) {
         imp <- .zotero_import(url, items[!known], paste0(session, "-", i), timeout)
         res$status_code <- imp$status_code
         res$ok <- imp$ok
         res$n_items <- length(imp$items)
         res$message <- imp$message
-        if (imp$ok && length(tag_index)) {
+        if (imp$ok && (length(tag_index) || !is.null(coll))) {
           step <- tryCatch(
-            .zotero_tag_new(api, imp$items, tag_index),
-            error = function(e) list(n = 0L, message = conditionMessage(e))
+            .zotero_finish_new(api, imp$items, tag_index, coll),
+            error = function(e) list(n = 0L, n_tagged = 0L, message = conditionMessage(e))
           )
-          res$n_tagged <- step$n
+          res$n_tagged <- step$n_tagged
           res$ok <- !nzchar(step$message)
           res$message <- step$message
         }
@@ -250,7 +284,7 @@ csljson_to_zotero <- function(
           list(n = 0L, message = imp$message)
         } else {
           tryCatch(
-            .zotero_update(api, imp$items, index, blank = existing == "overwrite", tag_index),
+            .zotero_update(api, imp$items, index, blank = existing == "overwrite", tag_index, coll),
             error = function(e) list(n = 0L, n_tagged = 0L, message = conditionMessage(e))
           )
         }
@@ -459,7 +493,7 @@ csljson_to_zotero <- function(
 #' `blank`, else the ones missing are added.
 #'
 #' @noRd
-.zotero_update_object <- function(new, old, blank, tags = NULL) {
+.zotero_update_object <- function(new, old, blank, tags = NULL, coll = NULL) {
   keep <- c("key", "version", "dateAdded", "dateModified", "collections", "tags", "relations", "parentItem")
   upd <- new[setdiff(names(new), keep)]
   upd <- upd[!vapply(upd, function(v) identical(v, "") || identical(v, list()), NA)]
@@ -477,6 +511,9 @@ csljson_to_zotero <- function(
       add <- Filter(function(t) !t$tag %in% have, tags)
       if (length(add)) upd$tags <- c(old$tags, add)
     }
+  }
+  if (!is.null(coll) && !coll %in% unlist(old$collections)) {
+    upd$collections <- as.list(c(unlist(old$collections), coll))
   }
   upd$key <- old$key
   upd$version <- old$version
@@ -516,13 +553,13 @@ csljson_to_zotero <- function(
 #' message = "" or error text).
 #'
 #' @noRd
-.zotero_update <- function(api, imported, index, blank, tag_index = NULL) {
+.zotero_update <- function(api, imported, index, blank, tag_index = NULL, coll = NULL) {
   updates <- list()
   for (new in imported) {
     id <- .extra_openalex_id(new$extra)
     tags <- if (!is.null(tag_index)) c(list(), tag_index[[id]])
     for (old in index[[id]]) {
-      updates[[length(updates) + 1L]] <- .zotero_update_object(new, old, blank, tags)
+      updates[[length(updates) + 1L]] <- .zotero_update_object(new, old, blank, tags, coll)
     }
   }
   out <- .zotero_post_items(api, updates)
@@ -570,18 +607,21 @@ csljson_to_zotero <- function(
   })
 }
 
-#' Write tags onto items just imported (they have none yet)
+#' Write tags and collection onto items just imported
 #'
-#' Returns list(n = items tagged, message = "" or error text).
+#' Tags come from `tag_index` (the items have none yet); `coll` (a collection
+#' key or NULL) is added to the collections the connector put them in.
+#' Returns list(n = items written, n_tagged, message = "" or error text).
 #'
 #' @noRd
-.zotero_tag_new <- function(api, imported, tag_index) {
-  todo <- Filter(function(it) length(tag_index[[.extra_openalex_id(it$extra)]]), imported)
+.zotero_finish_new <- function(api, imported, tag_index, coll = NULL) {
+  tags_of <- function(it) tag_index[[.extra_openalex_id(it$extra)]]
+  todo <- if (is.null(coll)) Filter(function(it) length(tags_of(it)), imported) else imported
   if (!length(todo)) {
-    return(list(n = 0L, message = ""))
+    return(list(n = 0L, n_tagged = 0L, message = ""))
   }
   # the connector does not return item versions; the local API does
-  versions <- list()
+  current <- list()
   keys <- vapply(todo, function(it) it$key, "")
   for (batch in split(keys, ceiling(seq_along(keys) / 50L))) {
     items <- .zotero_local_req(api, "/items") |>
@@ -589,11 +629,74 @@ csljson_to_zotero <- function(
       httr2::req_perform() |>
       httr2::resp_body_string() |>
       jsonlite::fromJSON(simplifyVector = FALSE)
-    for (it in items) versions[[it$data$key]] <- it$data$version
+    for (it in items) current[[it$data$key]] <- it$data
   }
+  objects <- lapply(todo, function(it) {
+    obj <- list(key = it$key, version = current[[it$key]]$version)
+    if (length(tags_of(it))) obj$tags <- tags_of(it)
+    if (!is.null(coll)) {
+      obj$collections <- as.list(union(unlist(current[[it$key]]$collections), coll))
+    }
+    obj
+  })
+  out <- .zotero_post_items(api, objects)
+  out$n_tagged <- sum(vapply(objects, function(o) !is.null(o$tags), NA))
+  out
+}
+
+#' Add existing items (their `data`, as in the index) to collection `coll`
+#'
+#' Returns list(n = items written, message = "" or error text).
+#'
+#' @noRd
+.zotero_add_to_collection <- function(api, items, coll) {
+  items <- items[!duplicated(vapply(items, function(it) it$key, ""))]
+  todo <- Filter(function(it) !coll %in% unlist(it$collections), items)
   .zotero_post_items(api, lapply(todo, function(it) list(
     key = it$key,
-    version = versions[[it$key]],
-    tags = tag_index[[.extra_openalex_id(it$extra)]]
+    version = it$version,
+    collections = as.list(c(unlist(it$collections), coll))
   )))
+}
+
+#' Key of the collection `path` (e.g. c("project", "corpus")), nested from
+#' the library's top level; missing levels are created, existing ones reused.
+#'
+#' @noRd
+.zotero_collection <- function(api, path) {
+  all <- list()
+  start <- 0L
+  repeat {
+    batch <- .zotero_local_req(api, "/collections") |>
+      httr2::req_url_query(format = "json", limit = 100L, start = start) |>
+      httr2::req_perform() |>
+      httr2::resp_body_string() |>
+      jsonlite::fromJSON(simplifyVector = FALSE)
+    all <- c(all, lapply(batch, `[[`, "data"))
+    start <- start + length(batch)
+    if (length(batch) < 100L) break
+  }
+  parent <- FALSE
+  for (name in path) {
+    hit <- Filter(function(d) {
+      identical(d$name, name) && identical(d$parentCollection, parent) && !isTRUE(d$deleted)
+    }, all)
+    if (length(hit)) {
+      parent <- hit[[1]]$key
+      next
+    }
+    resp <- .zotero_local_req(api, "/collections") |>
+      httr2::req_body_raw(
+        as.character(jsonlite::toJSON(list(list(name = name, parentCollection = parent)), auto_unbox = TRUE)),
+        type = "application/json"
+      ) |>
+      httr2::req_error(is_error = function(resp) FALSE) |>
+      httr2::req_perform()
+    body <- jsonlite::fromJSON(httr2::resp_body_string(resp), simplifyVector = FALSE)
+    if (httr2::resp_status(resp) != 200L || !length(body$success)) {
+      stop("Could not create Zotero collection '", name, "': ", substr(httr2::resp_body_string(resp), 1L, 500L), call. = FALSE)
+    }
+    parent <- body$success[[1]]
+  }
+  parent
 }

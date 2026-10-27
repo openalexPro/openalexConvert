@@ -307,7 +307,8 @@ test_that("corpus_to_zotero sends the corpus in chunks and cleans up", {
   before <- list.files(tempdir(), pattern = "^csljson_")
   res <- suppressMessages(corpus_to_zotero(
     corpus = testthat::test_path("..", "fixtures", "corpus"),
-    chunk_size = 200
+    chunk_size = 200,
+    collection = NULL
   ))
   expect_equal(nrow(res), 2L) # 369 works
   expect_true(all(res$ok))
@@ -410,4 +411,89 @@ test_that("tags: update adds missing tags, overwrite replaces them", {
   u <- run("update", tags[1, ])
   expect_null(u$upd$tags)
   expect_equal(u$res$n_tagged, 0L)
+})
+
+# POST /collections answers with a key made from the name
+collections_route <- function(existing = "[]") {
+  list(
+    "GET /api/users/0/collections" = list(body = existing),
+    "POST /api/users/0/collections" = function(req) {
+      name <- jsonlite::fromJSON(req$body$data, simplifyVector = FALSE)[[1]]$name
+      list(body = sprintf('{"success":{"0":"C_%s"},"unchanged":{},"failed":{}}', name))
+    }
+  )
+}
+
+collections_posted <- function(log) {
+  lapply(
+    Filter(function(r) r$method == "POST" && r$path == "/api/users/0/collections", log$requests),
+    function(r) jsonlite::fromJSON(sent(r), simplifyVector = FALSE)[[1]]
+  )
+}
+
+test_that("collection: nested path is created, existing levels reused", {
+  log <- mock_zotero(collections_route(
+    '[{"data":{"key":"P","name":"proj","parentCollection":false}},
+      {"data":{"key":"OLD","name":"corpus","parentCollection":false}},
+      {"data":{"key":"GONE","name":"corpus","parentCollection":"P","deleted":true}}]'
+  ))
+  api <- list(url = "http://127.0.0.1:23119", prefix = "/api/users/0", server_id = "SID", key = "KEY")
+  expect_equal(.zotero_collection(api, c("proj", "corpus")), "C_corpus")
+  expect_equal(collections_posted(log), list(list(name = "corpus", parentCollection = "P")))
+  expect_equal(.zotero_collection(api, "proj"), "P")
+})
+
+test_that("collection: new, skipped and updated works all join it", {
+  for (mode in c("skip", "update")) {
+    log <- mock_zotero(c(collections_route(), list(
+      "GET /api/users/0/items" = function(req) {
+        list(body = if (grepl("itemKey=N1", req$url)) {
+          '[{"data":{"key":"N1","version":3,"collections":["SEL"]}}]'
+        } else {
+          existing_items("W1")
+        })
+      },
+      "POST /connector/import" = function(req) {
+        list(status = 201L, body = if (grepl("W2", req$body$data)) {
+          '[{"key":"N1","extra":"OpenAlex: W2"}]'
+        } else {
+          '[{"key":"TMP","title":"t","extra":"OpenAlex: W1"}]'
+        })
+      },
+      "POST /api/users/0/items" = list(body = '{"success":{"0":"X"},"unchanged":{},"failed":{}}'),
+      "DELETE /api/users/0/items" = list(status = 204L)
+    )))
+    res <- suppressMessages(csljson_to_zotero(
+      csl_files(1L, ids = c("W1", "W2")), existing = mode,
+      collection = c("proj", "corpus"), api_key = "KEY"
+    ))
+    expect_true(res$ok, label = mode)
+    expect_length(collections_posted(log), 2L)
+    p <- posted(log)
+    old <- Filter(function(o) o$key == "OLD1", p)[[1]]
+    expect_equal(old$collections, list("C_corpus"), label = mode)
+    new <- Filter(function(o) o$key == "N1", p)[[1]]
+    expect_equal(new, list(key = "N1", version = 3L, collections = list("SEL", "C_corpus")))
+  }
+})
+
+test_that("collection: works already in it are not written again", {
+  api <- list(url = "u", prefix = "/api/users/0", server_id = "SID", key = "KEY")
+  log <- mock_zotero()
+  res <- .zotero_add_to_collection(api, list(list(key = "K", version = 1L, collections = list("C"))), "C")
+  expect_equal(res$n, 0L)
+  expect_length(log$requests, 0L)
+})
+
+test_that("corpus_to_zotero: default collection is <project> > <corpus>", {
+  log <- mock_zotero(collections_route())
+  suppressMessages(corpus_to_zotero(
+    project_dir = testthat::test_path("..", "fixtures"),
+    corpus = testthat::test_path("..", "fixtures", "corpus"),
+    api_key = "KEY"
+  ))
+  expect_equal(collections_posted(log), list(
+    list(name = "fixtures", parentCollection = FALSE),
+    list(name = "corpus", parentCollection = "C_fixtures")
+  ))
 })

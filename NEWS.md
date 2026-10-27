@@ -27,7 +27,14 @@ New `csljson_to_zotero(files, method = c("local", "web"))`:
   (Zotero's OpenAlex translators), `openalex.work_id: W...` (zotero-openalex
   plugin) or `OpenAlex Work ID: W...` (open-alex-work-id plugin).
 - `corpus_to_zotero(project_dir)` does both steps in one call: corpus to
-  temporary CSL JSON (1000 works per file) to Zotero.
+  temporary CSL JSON (1000 works per file) to Zotero, into the collection
+  `<project>` > `<corpus>`.
+- Collections: `csljson_to_zotero(collection = c("project", "corpus"))` puts
+  the works into a nested collection, created if missing and reused on
+  re-export. Works already in the library join it too, whatever `existing`
+  says. `corpus_to_zotero()` does this by default, naming the collections
+  after the project directory and the corpus, so an accidental export is easy
+  to find and delete.
 - Tags: `csljson_to_zotero(tags = )` and `corpus_to_zotero()` write tags by
   OpenAlex ID (e.g. from `zotero_tags.parquet`, which `corpus_to_zotero()`
   picks up from the project directory). New items get their tags; existing

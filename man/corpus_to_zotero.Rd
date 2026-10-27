@@ -9,6 +9,7 @@ corpus_to_zotero(
   corpus = file.path(project_dir, "parquet"),
   existing = c("skip", "update", "overwrite"),
   tags,
+  collection,
   chunk_size = 1000,
   ...
 )
@@ -28,6 +29,11 @@ with works already in the Zotero library. See \code{\link[=csljson_to_zotero]{cs
 Default: \verb{<project_dir>/zotero_tags.parquet} (written by \code{\link[=zotero_tags]{zotero_tags()}})
 if it exists, else \code{NULL}.}
 
+\item{collection}{Path of the Zotero collection to export into. Default:
+\verb{c(<name of project_dir>, <name of corpus>)}, leaving out what has no
+name (a corpus given as a data.frame); \code{.parquet} is dropped from the
+corpus name. \code{NULL} puts the works only into what is selected in Zotero.}
+
 \item{chunk_size}{Works per file sent to Zotero. Default \code{1000}, which
 gives progress per 1000 works and stays well within \code{timeout}.}
 
@@ -41,8 +47,14 @@ row per chunk.
 \description{
 Convenience wrapper: maps a corpus to CSL JSON with \code{\link[=corpus_to_csljson]{corpus_to_csljson()}}
 (in a temporary directory, removed afterwards) and imports it into the
-library or collection selected in Zotero with \code{\link[=csljson_to_zotero]{csljson_to_zotero()}}. See
-there for re-exports (\code{existing}) and the import speed.
+library selected in Zotero with \code{\link[=csljson_to_zotero]{csljson_to_zotero()}}. See there for
+re-exports (\code{existing}), tags, collections and the import speed.
+}
+\details{
+By default the works go into their own nested collection, named after the
+project directory and the corpus (\verb{<project>} > \verb{<corpus>}), so an
+accidental export is easy to find and delete. Select the library itself in
+Zotero (not a collection) before exporting.
 }
 \examples{
 \dontrun{

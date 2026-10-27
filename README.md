@@ -49,7 +49,8 @@ collection in Zotero, then:
 ```r
 # 3. Import the CSL JSON into Zotero; the OpenAlex ID goes into Extra
 csljson_to_zotero("path/to/csljson")
-# or both steps in one: corpus_to_zotero("path/to/project")
+# or both steps in one, into the collection <project> > <corpus>:
+corpus_to_zotero("path/to/project")
 
 # 4. After tagging in Zotero: read the tags back, by OpenAlex ID
 zotero_tags("path/to/project")  # writes path/to/project/zotero_tags.parquet
