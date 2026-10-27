@@ -1,6 +1,11 @@
 # openalexConvert (development version)
 
 - License changed from GPL (>= 2) to MIT.
+- `corpus_to_csljson()` wrote every item's publication date as an empty
+  `"issued": {"date-parts": []}`: the internal sanitizer only kept named list
+  elements, so the unnamed date-parts list was emptied. All dates were lost in
+  the CSL JSON and in everything converted from it (BibTeX/BibLaTeX had no
+  usable year, citations showed "n.d."). Dates are now written.
 - `csljson_to_zotero()`: when Zotero refused to create a collection or to
   grant write access with a plain-text error (e.g. `Forbidden`), the response
   was parsed as JSON before its status was checked, so the user saw an

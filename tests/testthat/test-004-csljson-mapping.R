@@ -285,7 +285,6 @@ test_that(".map_record_to_csl builds issued from the date, else the year", {
 })
 
 test_that("issued date-parts survive into the written CSL JSON", {
-  skip("Known bug: .sanitize_csl_item() empties unnamed lists, so every CSL `issued` date-parts is written as []")
   it <- .map_record_to_csl(csl_rec(id = "W1", publication_date = "2020-05-17"))
   expect_equal(it$issued, list(`date-parts` = list(list(2020L, 5L, 17L))))
 })

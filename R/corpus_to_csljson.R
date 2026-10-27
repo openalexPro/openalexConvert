@@ -526,6 +526,10 @@ corpus_to_csljson <- function(
 #'
 #' @noRd
 .sanitize_csl_item <- function(x) {
+  if (is.list(x) && is.null(names(x))) {
+    # unnamed (e.g. date-parts): positions matter, sanitize each element
+    return(lapply(x, .sanitize_csl_item))
+  }
   if (is.list(x)) {
     out <- list()
     for (nm in names(x)) {
