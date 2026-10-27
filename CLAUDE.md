@@ -64,10 +64,58 @@ single-file conversion — so `output` is one file (e.g. `corpus.bib`), not a
 directory of per-chunk files. (Passing the chunk directory straight to
 `csljson_convert_pandoc()` would instead produce a directory of `chunk_*.bib`.)
 
-`csljson_to_zotero_upload()` ([R/csljson_to_zotero_upload.R](R/csljson_to_zotero_upload.R))
-is independent of the above: it POSTs CSL JSON files to the Zotero Web API
-(`/groups/{id}/items`) using `httr2`, with `progressr` progress. API key comes
-from `ZOTERO_API_KEY`.
+`csljson_to_zotero()` ([R/csljson_to_zotero.R](R/csljson_to_zotero.R))
+imports CSL JSON files into Zotero. `method = "local"` POSTs each file to the
+running Zotero desktop app's connector endpoint
+(`http://127.0.0.1:23119/connector/import`); Zotero's own CSL JSON translator
+does the mapping, and items land in whatever library/collection is selected in
+Zotero (checked first via `/connector/getSelectedCollection`). Zotero imports CSL `note` into Extra, so
+the `OpenAlex: W...` line from `corpus_to_csljson()` ends up there. The body **must**
+be sent as `text/plain`: with `application/json` Zotero parses it itself, no
+translator matches, and every import returns 400. `method = "web"` (Zotero Web
+API) is a stub that errors "not implemented yet"; when built it needs Zotero
+item JSON (not CSL JSON) and at most 50 items per request.
+
+Re-exports (`existing = "skip"/"update"/"overwrite"`) use Zotero 10's **local
+API** (`/api/users/0/...` or `/api/groups/<id>/...`), which accepts writes in
+Web API format. The selected library is matched to a group by *name* (the
+connector only reports the local libraryID). The index of existing items comes
+from a `q=OpenAlex&qmode=everything` search, filtered by `.extra_openalex_id()`.
+Convention across the ecosystem: **write** `OpenAlex: W...`, **read** all four
+forms in use -- `OpenAlex: W...` (ours, IPBES pipeline),
+`OpenAlex: https://openalex.org/W...` (Zotero's OpenAlex translators, which
+replace all of Extra), `openalex.work_id: W...` (zotero-openalex plugin) and
+`OpenAlex Work ID: W...` (open-alex-work-id plugin). A new form found in the
+wild belongs in `.extra_openalex_id()` and its test. "update"/"overwrite" never write Zotero JSON themselves: they
+import the items via the connector (so Zotero maps CSL -> Zotero), POST the
+resulting fields onto the old item (key/version of the old item; tags,
+collections, relations untouched), then DELETE the imported copies. Writes
+need the `Zotero-Server-ID` header (from any response) and a key from
+`POST /api/local/authorize` (user dialog; only "Always Allow" gives a reusable
+key, cached in `.zotero_env` for the session).
+
+Tags (`tags =`, via `.tag_index()`): new items get theirs in a second write
+(`.zotero_tag_new()`; the connector returns no item versions, so they are
+fetched with `?itemKey=`); existing items get them inside the update object
+(`.zotero_update_object(tags =)`: update = union by tag name, overwrite =
+replace). Without `tags`, tags are never touched. Note the package's `%||%`
+also treats NA/"" as missing, so it errors on lists longer than 1.
+
+Collections (`collection =`): `.zotero_collection()` finds or creates the
+nested path from the library's top level (match on name + parentCollection,
+trashed ones ignored). New items get it in the same write as their tags
+(`.zotero_finish_new()`), skipped ones via `.zotero_add_to_collection()`,
+updated ones in the update object. Always add to `collections`, never replace.
+
+`corpus_to_zotero()` ([R/corpus_to_zotero.R](R/corpus_to_zotero.R)) is the
+one-shot wrapper (corpus -> temp CSL JSON, 1000 works per chunk -> `csljson_to_zotero()`).
+
+`zotero_tags()` ([R/zotero_tags.R](R/zotero_tags.R)) goes the other way for
+tags only: it reuses `.zotero_openalex_index()` (whose item data carries the
+tags), flattens them to one row per OpenAlex ID x tag x Zotero item, and writes
+`<project_dir>/zotero_tags.parquet` -- a sidecar next to `parquet/`, never a
+column in the corpus, because openalexPro rewrites the corpus on re-fetch.
+Rows of the current library are replaced, other libraries' rows kept.
 
 ### Key design points in the corpus→CSL mapping
 
@@ -89,7 +137,8 @@ mapping never assumes a column exists. The function:
   applies to venue name, venue type, publisher, `issn_l`, and `issn`. If you touch
   venue handling, keep all five expressions consistent.
 - Uses DuckDB struct/list navigation directly in SQL: dotted paths like
-  `primary_location.source.display_name`, and `list_transform(authorships, x -> ...)`
+  `primary_location.source.display_name`, and `list_transform(authorships, lambda x: ...)`
+  (not `x -> ...`: current DuckDB rejects the arrow form)
   to pluck author display names and ORCIDs into parallel arrays.
 - `url` is a `COALESCE` priority chain: `doi_url` → `open_access.oa_url` →
   `primary_location.landing_page_url` → `id`.
@@ -112,8 +161,10 @@ Converts one SQL result row to a CSL item list. Notable behaviors:
   array, matched by index.
 - `issued` date-parts: prefers `publication_date` (split on `-` into year/month/day),
   falling back to `year` alone.
-- An aggregated `note` field encodes OA status and citation count
-  (`OA:true; OA_status:gold; Citations:42`) since CSL has no native fields for these.
+- `note` is newline-separated "Key: value" lines (Zotero imports it into
+  Extra): first `OpenAlex: W...` from `id`, then OA status and citation count
+  (`OA:true; OA_status:gold; Citations:42`) since CSL has no native fields for
+  these. `.sanitize_csl_item` sanitizes `note` per line so the newline survives.
 - Keywords (from `concepts`) are collapsed to a single `"; "`-joined string.
 - ISBN is only emitted for `book`/`chapter`/`report` types — but since the SQL
   always nulls ISBN, this branch is currently dead unless the SQL is changed too.
