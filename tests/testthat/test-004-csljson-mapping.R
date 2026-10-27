@@ -73,8 +73,9 @@ test_that("corpus_to_csljson accepts a data.frame and maps CSL types", {
   msgs <- capture_messages(
     res <- corpus_to_csljson(corpus = df, output = out, verbose = TRUE)
   )
-  expect_match(msgs[1], "Wrote chunk_1.json (2/2 records)", fixed = TRUE)
-  expect_match(msgs[2], "Done: 2 records across 1 files", fixed = TRUE)
+  # match anywhere: duckdb may add its own one-time notice first
+  expect_match(msgs, "Wrote chunk_1.json (2/2 records)", fixed = TRUE, all = FALSE)
+  expect_match(msgs, "Done: 2 records across 1 files", fixed = TRUE, all = FALSE)
   expect_identical(res, normalizePath(out))
   items <- jsonlite::read_json(file.path(out, "chunk_1.json"))
   expect_equal(vapply(items, `[[`, "", "type"), c("dataset", "paper-conference"))
