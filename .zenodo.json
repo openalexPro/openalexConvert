@@ -1,0 +1,25 @@
+{
+  "title": "openalexConvert: Convert OpenAlex Parquet (from openalexPro) to other Formats",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "Krug, Rainer M",
+      "orcid": "0000-0002-7490-0066"
+    }
+  ],
+  "license": "MIT",
+  "keywords": ["OpenAlex", "bibliometrics", "R", "Parquet", "format conversion", "openalexPro ecosystem"],
+  "related_identifiers": [
+    {
+      "identifier": "https://openalexpro.github.io/",
+      "relation": "isPartOf",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "10.5281/zenodo.17453180",
+      "relation": "requires",
+      "scheme": "doi",
+      "resource_type": "software"
+    }
+  ]
+}
