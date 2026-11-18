@@ -8,3 +8,5 @@
 ^\.github$
 ^vignettes$
 ^.claude
+^CITATION\.cff$
+^\.zenodo\.json$
