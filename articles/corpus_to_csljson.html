@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openalexConvert</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,7 +61,7 @@
 
 
 
-      <small class="dont-index">Source: <a href="https://github.com/openalexPro/openalexConvert/blob/v0.1.1/vignettes/corpus_to_csljson.qmd" class="external-link"><code>vignettes/corpus_to_csljson.qmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openalexPro/openalexConvert/blob/main/vignettes/corpus_to_csljson.qmd" class="external-link"><code>vignettes/corpus_to_csljson.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
     </div>
 
@@ -124,7 +124,7 @@
 <li>Write <code>note</code> as lines: first <code>OpenAlex: W...</code> (Zotero imports it into Extra), then open‑access/citation indicators when present.</li>
 </ul>
 </li>
-<li>Write each chunk to <code>chunk_k.json</code> using <code><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html" class="external-link">jsonlite::write_json()</a></code> with <code>auto_unbox = TRUE</code> for compactness.</li>
+<li>Write each chunk to <code>chunk_k.json</code> using <code><a href="https://rdrr.io/pkg/jsonlite/man/read_json.html" class="external-link">jsonlite::write_json()</a></code> with <code>auto_unbox = TRUE</code> for compactness.</li>
 </ol>
 <section class="level3"><h4 id="endtoend-pipeline">End‑to‑end pipeline<a class="anchor" aria-label="anchor" href="#endtoend-pipeline"></a>
 </h4>
@@ -134,6 +134,7 @@
 <p></p>
 <figure class=""><p></p>
 <div>
+
 <pre class="mermaid mermaid-js">flowchart TD
   A(["Input corpus&lt;br/&gt;(path &amp;#124; Arrow Dataset &amp;#124; data.frame)"]) --&gt; B[Arrow Table/Dataset]
   B --&gt; C["Register with DuckDB (src)"]
@@ -175,6 +176,7 @@
 <p></p>
 <figure class=""><p></p>
 <div>
+
 <pre class="mermaid mermaid-js">flowchart TD
   subgraph Title
     T1[Has display_name?] --&gt;|yes| T_ok[title := display_name]
@@ -293,6 +295,7 @@
 <p></p>
 <figure class=""><p></p>
 <div>
+
 <pre class="mermaid mermaid-js">flowchart TD
   A[Start record] --&gt; B{OpenAlex type?}
   B -- posted-content / preprint --&gt; T1[manuscript]
@@ -343,6 +346,7 @@
 <p></p>
 <figure class=""><p></p>
 <div>
+
 <pre class="mermaid mermaid-js">flowchart TD
   S0[CSL item] --&gt; S1{Recurse over fields}
   S1 --&gt;|NULL or NA scalar| Sskip[drop]
@@ -367,7 +371,7 @@
 </div>
 </section></section><section class="level2"><h3 id="output-format">Output format<a class="anchor" aria-label="anchor" href="#output-format"></a>
 </h3>
-<p>The output directory contains one or more files named <code>chunk_1.json</code>, <code>chunk_2.json</code>, … Each file is a JSON array of CSL items with compact formatting, suitable for direct use by Pandoc (<code>from = "csljson"</code>) or for inspection with <code><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">jsonlite::fromJSON()</a></code>.</p>
+<p>The output directory contains one or more files named <code>chunk_1.json</code>, <code>chunk_2.json</code>, … Each file is a JSON array of CSL items with compact formatting, suitable for direct use by Pandoc (<code>from = "csljson"</code>) or for inspection with <code><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">jsonlite::fromJSON()</a></code>.</p>
 <section class="level3"><h4 id="chunking-mechanics">Chunking mechanics<a class="anchor" aria-label="anchor" href="#chunking-mechanics"></a>
 </h4>
 <div class="cell" data-layout-align="default">
@@ -376,6 +380,7 @@
 <p></p>
 <figure class=""><p></p>
 <div>
+
 <pre class="mermaid mermaid-js">flowchart LR
   N["n_total := COUNT(*)"] --&gt; C1{n_total == 0?}
   C1 --&gt;|yes| Done[write nothing]
@@ -418,7 +423,7 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">out</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">out</span>, <span class="st">"chunk_1.json"</span><span class="op">)</span>, simplifyVector <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">out</span>, <span class="st">"chunk_1.json"</span><span class="op">)</span>, simplifyVector <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </details>
 </div>
 </section><section class="level2"><h3 id="isbn-exclusion">ISBN exclusion<a class="anchor" aria-label="anchor" href="#isbn-exclusion"></a>
@@ -447,6 +452,7 @@
 <p></p>
 <figure class=""><p></p>
 <div>
+
 <pre class="mermaid mermaid-js">flowchart TD
   A[Start] --&gt; B{corpus provided?}
   B --&gt;|no| E1[stop: corpus must be provided]
@@ -553,7 +559,8 @@
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
       // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
       for (var i=0; i<links.length; i++) {
         const link = links[i];
         if (!isInternal(link.href)) {
@@ -562,8 +569,69 @@
           if (link.dataset.originalHref !== undefined) {
             link.href = link.dataset.originalHref;
           }
+          if (!link.classList.contains('no-external-icon')) {
+          }
         }
       }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
     function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
       const config = {
         allowHTML: true,
@@ -577,6 +645,7 @@
         interactiveBorder: 10,
         theme: 'light-border',
         placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
       };
       if (contentFn) {
         config.content = contentFn;

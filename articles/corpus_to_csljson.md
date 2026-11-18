@@ -69,7 +69,7 @@ reference documents.
     - Write `note` as lines: first `OpenAlex: W...` (Zotero imports it
       into Extra), then open‑access/citation indicators when present.
 6.  Write each chunk to `chunk_k.json` using
-    [`jsonlite::write_json()`](https://jeroen.r-universe.dev/jsonlite/reference/read_json.html)
+    [`jsonlite::write_json()`](https://rdrr.io/pkg/jsonlite/man/read_json.html)
     with `auto_unbox = TRUE` for compactness.
 
 #### End‑to‑end pipeline
@@ -273,7 +273,7 @@ The output directory contains one or more files named `chunk_1.json`,
 `chunk_2.json`, … Each file is a JSON array of CSL items with compact
 formatting, suitable for direct use by Pandoc (`from = "csljson"`) or
 for inspection with
-[`jsonlite::fromJSON()`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html).
+[`jsonlite::fromJSON()`](https://rdrr.io/pkg/jsonlite/man/fromJSON.html).
 
 #### Chunking mechanics
 
