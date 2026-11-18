@@ -1,7 +1,7 @@
 Type: Package
 Package: openalexConvert
 Title: Convert OpenAlex Parquet (from openalexPro) to other Formats
-Version: 0.1.1.9000
+Version: 0.1.2
 Authors@R:
     person("Rainer M", "Krug", , "Rainer@krugs.de", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7490-0066"))
