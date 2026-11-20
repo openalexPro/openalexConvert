@@ -8,17 +8,17 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/openalexPro/openalexConvert/blob/v0.1.2/inst/CITATION)
+[`inst/CITATION`](https://github.com/openalexPro/openalexConvert/blob/main/inst/CITATION)
 
 Krug, R. M. (2026). openalexConvert: Convert OpenAlex Parquet (from
-openalexPro) to other Formats. R package version 0.1.2.
+openalexPro) to other Formats. R package version 0.1.3.
 https://doi.org/10.5281/zenodo.20448988
 
     @Manual{openalexConvert,
       title = {{openalexConvert}: Convert OpenAlex Parquet (from openalexPro) to other Formats},
       author = {Rainer M Krug},
       year = {2026},
-      note = {R package version 0.1.2},
+      note = {R package version 0.1.3},
       doi = {10.5281/zenodo.20448988},
       url = {https://github.com/openalexPro/openalexConvert},
     }
