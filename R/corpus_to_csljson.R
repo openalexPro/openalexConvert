@@ -60,7 +60,7 @@ corpus_to_csljson <- function(
   }
   dir.create(output, recursive = TRUE, showWarnings = FALSE)
 
-  con <- DBI::dbConnect(duckdb::duckdb())
+  con <- DBI::dbConnect(.oac_duckdb())
   on.exit(
     try(DBI::dbDisconnect(con, shutdown = TRUE), silent = TRUE),
     add = TRUE
@@ -152,6 +152,29 @@ corpus_to_csljson <- function(
 # -----------------------------------------------------------------------------
 # Internal helpers (non-exported)
 # -----------------------------------------------------------------------------
+
+#' DuckDB driver without the storage-location message
+#'
+#' duckdb >= 2.0.0 announces where it keeps extensions and secrets every
+#' time `duckdb()` has to pick that location itself (up to 60 times per
+#' non-interactive session, and it may prompt to create `~/.duckdb` in an
+#' interactive one). Making the choice explicit silences it. We pick exactly
+#' what duckdb would have picked -- the shared `~/.duckdb` if it exists, a
+#' per-session temporary directory otherwise -- and leave a user's own
+#' choice (`duckdb.home` option, `DUCKDB_R_HOME`) alone. Same as
+#' openalexPro's `.pro_duckdb()`.
+#'
+#' @return A duckdb driver object.
+#' @keywords internal
+#' @noRd
+.oac_duckdb <- function() {
+  user_chose <- !is.null(getOption("duckdb.home")) ||
+    nzchar(Sys.getenv("DUCKDB_R_HOME"))
+  if (user_chose || !"shared_home" %in% names(formals(duckdb::duckdb))) {
+    return(duckdb::duckdb())
+  }
+  duckdb::duckdb(shared_home = dir.exists("~/.duckdb"))
+}
 
 #' Build a SELECT statement mapping corpus fields to normalized columns
 #'
