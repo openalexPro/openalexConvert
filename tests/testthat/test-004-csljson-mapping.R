@@ -30,7 +30,7 @@ test_that(".build_select_sql falls back to typed NULLs for missing columns", {
   expect_match(sql, "[] AS authors", fixed = TRUE)
 
   # ... and the statement is valid SQL returning every expected column
-  con <- DBI::dbConnect(duckdb::duckdb())
+  con <- DBI::dbConnect(.oac_duckdb())
   on.exit(DBI::dbDisconnect(con, shutdown = TRUE), add = TRUE)
   DBI::dbExecute(con, "CREATE TABLE src AS SELECT 1 AS dummy")
   res <- DBI::dbGetQuery(con, sql)
@@ -297,4 +297,13 @@ test_that("issued date-parts survive into the written CSL JSON", {
 test_that("a missing OA status is left out of the note", {
   it <- .map_record_to_csl(csl_rec(id = "W1", is_oa = TRUE, oa_status = NA_character_))
   expect_equal(it$note, "OpenAlex: W1\nOA:TRUE")
+})
+
+test_that(".oac_duckdb() opens a connection without the storage message", {
+  old <- options(duckdb.home = NULL); on.exit(options(old), add = TRUE)
+  skip_if(nzchar(Sys.getenv("DUCKDB_R_HOME")))
+  expect_silent(drv <- .oac_duckdb())
+  con <- DBI::dbConnect(drv)
+  on.exit(DBI::dbDisconnect(con, shutdown = TRUE), add = TRUE)
+  expect_equal(DBI::dbGetQuery(con, "SELECT 1 AS x")$x, 1)
 })
